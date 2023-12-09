@@ -1,0 +1,12 @@
+[requires]
+glfw/3.3.8
+glew/2.2.0
+opengl/system
+nlohmann_json/3.11.2
+magic_enum/0.9.5
+yaml-cpp/0.7.0
+pugixml/1.14
+
+
+[generators]
+cmake

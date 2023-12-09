@@ -1,0 +1,26 @@
+{
+ "options": [
+  [
+   "glfw:fPIC",
+   "True"
+  ],
+  [
+   "glfw:shared",
+   "False"
+  ],
+  [
+   "glfw:vulkan_static",
+   "False"
+  ],
+  [
+   "glfw:with_wayland",
+   "False"
+  ]
+ ],
+ "root": {
+  "name": null,
+  "version": null,
+  "user": null,
+  "channel": null
+ }
+}

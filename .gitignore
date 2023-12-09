@@ -1,0 +1,8 @@
+# Ignore Visual Studio Code settings folder
+.vscode/
+
+# Ignore output folders
+out/
+
+# Ignore test folders
+test/
