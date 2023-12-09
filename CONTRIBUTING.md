@@ -15,7 +15,7 @@ Thank you for considering contributing to Cen'py! To ensure a smooth collaborati
 2. **Clone your Fork:** Clone your forked repository to your local machine:
 
     ```bash
-    git clone https://github.com/Djoe-Denne/Cenpy.git
+    git clone https://github.com/[your-username]/Cenpy.git
     cd Cenpy
     ```
 
