@@ -25,7 +25,7 @@ Thank you for considering contributing to Cen'py! To ensure a smooth collaborati
     git checkout -b feature/your-feature
     ```
 
-4. **Make Changes:** Implement your changes, ensuring the code follows the project's coding guidelines.
+4. **Make Changes:** Implement your changes, ensuring the code follows the project's [Coding Guidelines](GUIDELINE.md).
 
 5. **Test Your Changes:** Before creating a pull request, test your changes thoroughly to ensure they work as expected.
 
