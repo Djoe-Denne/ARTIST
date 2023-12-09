@@ -55,7 +55,7 @@ namespace cenpy::common::persistence::preferences
 - Begin function definitions with a brief comment describing the purpose of the function.
 - Use consistent indentation and formatting.
 - Group related functions together.
-- use `[[nodiscard]]` when youb fill it's needed
+- Use `[[nodiscard]]` when you fill it's needed
 
 ## Templated Code
 
