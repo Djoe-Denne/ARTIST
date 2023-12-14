@@ -7,8 +7,8 @@ namespace cenpy::common::persistence::preferences::serializer
 
     std::string getAppDataPath()
     {
-#ifdef TEST
-        return "./test/persistence/preferences";
+#ifdef __mock_appdata__
+        return ".";
 #elif defined(OS_WINDOWS)
         return std::getenv("APPDATA");
 #elif defined(OS_LINUX) || defined(OS_MACOSX)
@@ -24,7 +24,8 @@ namespace cenpy::common::persistence::preferences::serializer
 
     bool Serializer::saveToFile(const Preferences &preferences) const
     {
-        std::ofstream file(getFilename(preferences.getAppName(), preferences.getFilename()));
+        ensureSeriability(preferences);
+        std::ofstream file(getPreferencesFilePath(preferences));
         if (file.is_open())
         {
             serialize(file, preferences);
@@ -36,11 +37,9 @@ namespace cenpy::common::persistence::preferences::serializer
 
     bool Serializer::loadFromFile(Preferences &preferences) const
     {
-        std::string appname = preferences.getAppName();
-        std::string filename = preferences.getFilename();
-        if (fileExists(appname, filename))
+        if (fileExists(preferences))
         {
-            std::ifstream file(getFilename(appname, filename));
+            std::ifstream file(getPreferencesFilePath(preferences));
             if (file.is_open())
             {
                 deserialize(file, preferences);
@@ -52,15 +51,30 @@ namespace cenpy::common::persistence::preferences::serializer
         return false;
     }
 
-    bool Serializer::fileExists(const std::string &appname, const std::string &filename) const
+    void Serializer::ensureSeriability(const Preferences &preferences) const
     {
-        std::filesystem::path filePath(getFilename(appname, filename));
-        return std::filesystem::exists(filePath);
+        std::filesystem::path path(getAppDir(preferences));
+        if (!std::filesystem::exists(path))
+        {
+            std::filesystem::create_directories(path);
+        }
     }
 
-    std::string Serializer::getFilename(const std::string &appname, const std::string &filename) const
+    bool Serializer::fileExists(const Preferences &preferences) const
     {
-        return getAppDataPath() + "/" + appname + "/" + filename + "." + getExtension();
+        std::cout << "Serializer::fileExists" << getPreferencesFilePath(preferences) << std::endl;
+        std::filesystem::path path(getPreferencesFilePath(preferences));
+        return std::filesystem::exists(path);
+    }
+
+    std::string Serializer::getAppDir(const Preferences &preferences) const
+    {
+        return getAppDataPath() + "/" + preferences.getAppName();
+    }
+
+    std::string Serializer::getPreferencesFilePath(const Preferences &preferences) const
+    {
+        return getAppDir(preferences) + "/" + preferences.getFilename() + "." + getExtension();
     }
 
     std::string Serializer::trim(const std::string &str) const

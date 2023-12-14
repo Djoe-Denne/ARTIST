@@ -20,7 +20,6 @@
             : cenpy::common::pattern::observer::Subject<T>(), T##Delegate(instance,                                                                                            \
                                                                           nullptr,                                                                                             \
                                                                           cenpy::common::pattern::delegate::MethodDelegateBase::HookType(&notifyObserversFor<T##Delegate>)) {} \
-        ~T##Subject() {}                                                                                                                                                       \
         template <typename Args>                                                                                                                                               \
         static void notifyObserversFor(Args *it)                                                                                                                               \
         {                                                                                                                                                                      \
@@ -78,11 +77,6 @@ namespace cenpy::common::pattern::observer
         Subject()
         {
         }
-
-        /**
-         * @brief Default destructor
-         */
-        ~Subject() {}
 
         std::vector<std::shared_ptr<Observer<T>>> &getObservers()
         {

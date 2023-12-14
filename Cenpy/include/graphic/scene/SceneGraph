@@ -1,0 +1,29 @@
+#pragma once
+#include <memory>
+#include <vector>
+
+class SceneNode
+{
+public:
+    virtual void draw() const = 0;
+    virtual ~SceneNode() = default;
+};
+
+class SceneGraph
+{
+    std::vector<std::unique_ptr<SceneNode>> nodes;
+
+public:
+    void addNode(std::unique_ptr<SceneNode> node)
+    {
+        nodes.push_back(std::move(node));
+    }
+
+    void draw() const
+    {
+        for (const auto &node : nodes)
+        {
+            node->draw();
+        }
+    }
+};

@@ -34,6 +34,7 @@ target_include_directories(
         ${PROJECT_NAME}
         PUBLIC
         include
+        mock
 )
 
 target_include_directories(
@@ -47,6 +48,13 @@ target_link_libraries(${PROJECT_NAME} PRIVATE -lstdc++_libbacktrace)
 #    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PROJECT_NAME}> "C:/Users/djden/source/repos/Cenpy/out/build/x86-debug/Cenpy/tests/${PROJECT_NAME}.dll"
 #        COMMENT "Copying ${PROJECT_NAME} to output directory" VERBATIM
 #)
+
+if(MOCK_GL)
+        target_compile_definitions(${PROJECT_NAME} PRIVATE __mock_gl__)
+endif()
+if(MOCK_APPDATA)
+        target_compile_definitions(${PROJECT_NAME} PRIVATE __mock_appdata__)
+endif()
 
 add_subdirectory(tests)
 add_subdirectory(game-tests)

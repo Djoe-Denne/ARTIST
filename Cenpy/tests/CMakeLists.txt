@@ -27,10 +27,18 @@ enable_testing()
 # Add your test files
 file(GLOB_RECURSE test_files ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include
-${CMAKE_CURRENT_SOURCE_DIR}/include)
+${CMAKE_CURRENT_SOURCE_DIR}/include
+${CMAKE_CURRENT_SOURCE_DIR}/../mock)
 
 add_executable(${PROJECT_NAME}_tests ${test_files})
 
 target_link_libraries(${PROJECT_NAME}_tests PRIVATE ${PROJECT_NAME} ${SYSLIBS} GTest::gtest_main)
+
+if(MOCK_GL)
+        target_compile_definitions(${PROJECT_NAME}_tests PRIVATE __mock_gl__)
+endif()
+if(MOCK_APPDATA)
+        target_compile_definitions(${PROJECT_NAME}_tests PRIVATE __mock_appdata__)
+endif()
 
 gtest_discover_tests(${PROJECT_NAME}_tests)

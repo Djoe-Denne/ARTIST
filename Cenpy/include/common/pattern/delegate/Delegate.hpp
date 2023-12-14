@@ -139,6 +139,11 @@ namespace cenpy::common::pattern::delegate
             : MethodDelegateBase(beforeFunc, afterFunc), m_method(method), m_classLevelDelegate() {}
 
         /**
+         * @brief Destructor for the MethodDelegate.
+         */
+        virtual ~MethodDelegate() = default;
+
+        /**
          * @brief Invokes the member function represented by the delegate.
          *
          * If the instance is not set, a runtime_error exception is thrown.
@@ -193,11 +198,6 @@ namespace cenpy::common::pattern::delegate
         }
 
     protected:
-        /**
-         * @brief Destructor for the MethodDelegate.
-         */
-        virtual ~MethodDelegate() = default;
-
         friend class ClassDelegate<T>;
     };
 
@@ -212,6 +212,20 @@ namespace cenpy::common::pattern::delegate
     template <typename T>
     class ClassDelegate
     {
+    public:
+        /**
+         * @brief Destroys the ClassDelegate object.
+         *
+         * Deletes all the method delegates associated with this ClassDelegate.
+         */
+        virtual ~ClassDelegate()
+        {
+            for (const auto &pair : m_methods)
+            {
+                delete pair.second;
+            }
+        }
+
     private:
         std::shared_ptr<T> m_instance;                         // The instance of the class on which the delegates will be invoked.
         std::map<std::string, MethodDelegateBase *> m_methods; // A map of method delegates associated with their names.
@@ -240,19 +254,6 @@ namespace cenpy::common::pattern::delegate
                 m_methods[pair.first]->setAfterFunc(afterFunc);
                 m_methods[pair.first]->setClassLevelDelegate(this);
                 m_methods[pair.first]->setInstance(m_instance);
-            }
-        }
-
-        /**
-         * @brief Destroys the ClassDelegate object.
-         *
-         * Deletes all the method delegates associated with this ClassDelegate.
-         */
-        virtual ~ClassDelegate()
-        {
-            for (const auto &pair : m_methods)
-            {
-                delete pair.second;
             }
         }
 

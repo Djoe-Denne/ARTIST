@@ -3,6 +3,11 @@
 #
 cmake_minimum_required (VERSION 3.25)
 
+option(MOCK_GL "Mock OpenGL" OFF)
+option(MOCK_APPDATA "Mock AppData" OFF)
+#option(TEST_DATA_PATH "Test data path" "")
+
+
 project("cenpy")
 
 set(ENV{LDFLAGS} "-m64")

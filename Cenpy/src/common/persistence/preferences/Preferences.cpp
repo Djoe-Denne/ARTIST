@@ -1,6 +1,5 @@
 // preferences.cpp
 
-#include <filesystem>
 #include <common/persistence/preferences/Preferences.hpp>
 
 namespace cenpy::common::persistence::preferences
@@ -96,7 +95,7 @@ namespace cenpy::common::persistence::preferences
 
     bool Preferences::fileExists() const
     {
-        return m_serializer->fileExists(m_appName, m_filename);
+        return m_serializer->fileExists(*this);
     }
 
     bool Preferences::load()

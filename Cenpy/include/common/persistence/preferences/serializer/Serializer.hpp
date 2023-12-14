@@ -17,8 +17,10 @@ namespace cenpy::common::persistence::preferences
         public:
             virtual ~Serializer() = default;
 
-            bool fileExists(const std::string &appname, const std::string &filename) const;
-            std::string getFilename(const std::string &appname, const std::string &filename) const;
+            bool fileExists(const Preferences &preferences) const;
+            void ensureSeriability(const Preferences &preferences) const;
+            std::string getAppDir(const Preferences &preferences) const;
+            std::string getPreferencesFilePath(const Preferences &preferences) const;
 
             bool saveToFile(const Preferences &preferences) const;
             bool loadFromFile(Preferences &preferences) const;

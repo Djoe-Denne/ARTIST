@@ -77,14 +77,8 @@ using namespace cenpy::common::persistence::preferences;
 class PreferencesTest : public ::testing::Test
 {
 public:
-    constexpr static const char *TEST_APP_NAME = "PreferencesTest";
-    constexpr static const char *TEST_FILE_NAME = "test";
-
-    void SetUp() override
-    {
-        // Create the test directory if it doesn't exist
-        std::filesystem::create_directory(serializer::getAppDataPath() + "/" + TEST_APP_NAME);
-    }
+    constexpr static const std::string TEST_APP_NAME = "PreferencesTest";
+    constexpr static const std::string TEST_FILE_NAME = "test";
 
     void TearDown() override
     {
@@ -217,6 +211,7 @@ TEST_F(PreferencesTest, SaveXml)
 
 TEST_F(PreferencesTest, Load)
 {
+    std::filesystem::create_directories(PreferencesTest::TEST_APP_NAME);
     std::ofstream file(serializer::getAppDataPath() + "/" + PreferencesTest::TEST_APP_NAME + "/" + PreferencesTest::TEST_FILE_NAME + ".ini");
     file << "[section]\n"
             "key=10\n"
@@ -240,6 +235,7 @@ TEST_F(PreferencesTest, Load)
 
 TEST_F(PreferencesTest, LoadWithInvalidKey)
 {
+    std::filesystem::create_directories(PreferencesTest::TEST_APP_NAME);
     std::ofstream file(serializer::getAppDataPath() + "/" + PreferencesTest::TEST_APP_NAME + "/" + PreferencesTest::TEST_FILE_NAME + ".ini");
     file << "[section]\n"
             "key=10\n"
@@ -300,7 +296,8 @@ TEST_F(PreferencesTest, SaveWithCustomPropery)
 
 TEST_F(PreferencesTest, LoadWithCustomPropery)
 {
-    std::ofstream file(serializer::getAppDataPath() + "/" + PreferencesTest::TEST_APP_NAME + "/" + PreferencesTest::TEST_FILE_NAME + ".ini");
+    std::filesystem::create_directories(PreferencesTest::TEST_APP_NAME);
+    std::ofstream file(PreferencesTest::TEST_APP_NAME + "/" + PreferencesTest::TEST_FILE_NAME + ".ini");
     file << "[section]\n"
             "key=1920x1080\n";
     file.close();
