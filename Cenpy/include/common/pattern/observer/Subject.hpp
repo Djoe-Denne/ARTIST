@@ -24,7 +24,7 @@
         {                                                                                                                                                      \
             T##Delegate::bind(this);                                                                                                                           \
         }                                                                                                                                                      \
-        static void notifyObserversFor(std::any it)                                                                                                            \
+        static void notifyObserversFor(const std::any &it)                                                                                                     \
         {                                                                                                                                                      \
             std::any_cast<FakeClassSubject *>(it)->notifyObservers();                                                                                          \
         }                                                                                                                                                      \

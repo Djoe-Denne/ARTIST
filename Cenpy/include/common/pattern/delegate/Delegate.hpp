@@ -26,7 +26,7 @@ namespace cenpy::common::pattern::delegate
     class MethodDelegateBase
     {
     public:
-        using HookType = void (*)(...);
+        using HookType = void (*)(const std::any &);
         virtual ~MethodDelegateBase() = default;
 
         /**
@@ -34,14 +34,14 @@ namespace cenpy::common::pattern::delegate
          *
          * @param instance The instance to set.
          */
-        virtual void setInstance(std::any instance) = 0;
+        virtual void setInstance(const std::any &instance) = 0;
 
         /**
          * @brief Set the class-level delegate for the method delegate.
          *
          * @param hookInstance The class-level delegate to set.
          */
-        virtual void bind(std::any hookInstance) = 0;
+        virtual void bind(const std::any &hookInstance) = 0;
 
         /**
          * @brief Set the before function hook.
@@ -83,7 +83,7 @@ namespace cenpy::common::pattern::delegate
          * @tparam T The type of the instance.
          * @param it The instance to pass to the before function hook.
          */
-        void executeBeforeFunc(std::any it)
+        void executeBeforeFunc(const std::any &it)
         {
             if (m_beforeFunc && *m_beforeFunc)
             {
@@ -97,7 +97,7 @@ namespace cenpy::common::pattern::delegate
          * @tparam T The type of the instance.
          * @param it The instance to pass to the after function hook.
          */
-        void executeAfterFunc(std::any it)
+        void executeAfterFunc(const std::any &it)
         {
             if (m_afterFunc && *m_afterFunc)
             {
@@ -134,9 +134,8 @@ namespace cenpy::common::pattern::delegate
          * @param afterFunc Optional hook function to be executed after invoking the member function.
          */
         MethodDelegate(MethodType method, HookType beforeFunc = nullptr, HookType afterFunc = nullptr)
-            : MethodDelegateBase(beforeFunc, afterFunc), m_method(method)
+            : MethodDelegateBase(beforeFunc, afterFunc), m_method(method), m_hookInstance(nullptr)
         {
-            m_hookInstance = nullptr;
         }
 
         /**
@@ -182,7 +181,7 @@ namespace cenpy::common::pattern::delegate
          * @brief Sets the instance for the MethodDelegate hooks
          * @param hookInstance The instance to be set.
          */
-        void bind(std::any hookInstance) override
+        void bind(const std::any &hookInstance) override
         {
             m_hookInstance = hookInstance;
         }
@@ -192,7 +191,7 @@ namespace cenpy::common::pattern::delegate
          *
          * @param instance The instance to be set.
          */
-        void setInstance(std::any instance) override
+        void setInstance(const std::any &instance) override
         {
             m_instance = std::any_cast<std::shared_ptr<T>>(instance);
         }
@@ -212,7 +211,6 @@ namespace cenpy::common::pattern::delegate
     template <typename T>
     class ClassDelegate
     {
-    public:
     private:
         std::shared_ptr<T> m_instance;                                        // The instance of the class on which the delegates will be invoked.
         std::map<std::string, std::shared_ptr<MethodDelegateBase>> m_methods; // A map of method delegates and their associated names.
@@ -246,7 +244,7 @@ namespace cenpy::common::pattern::delegate
          * @brief Sets the instance for the MethodDelegate hooks
          * @param hookInstance The instance to be set.
          */
-        void bind(std::any hookInstance)
+        void bind(const std::any &hookInstance) const
         {
             for (const auto &[name, method] : m_methods)
             {
