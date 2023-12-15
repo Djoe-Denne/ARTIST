@@ -134,7 +134,7 @@ namespace cenpy::common::pattern::delegate
          * @param afterFunc Optional hook function to be executed after invoking the member function.
          */
         MethodDelegate(MethodType method, HookType beforeFunc = nullptr, HookType afterFunc = nullptr)
-            : MethodDelegateBase(beforeFunc, afterFunc), m_method(method), m_hookInstance(nullptr)
+            : MethodDelegateBase(beforeFunc, afterFunc), m_method(method)
         {
         }
 

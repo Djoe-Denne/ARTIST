@@ -1,4 +1,6 @@
 #include <algorithm>
+#include <ranges>
+#include <common/exception/TraceableException.hpp>
 #include <common/persistence/preferences/Preferences.hpp>
 #include <common/persistence/preferences/serializer/IniSerializer.hpp>
 
@@ -29,7 +31,7 @@ namespace cenpy::common::persistence::preferences::serializer
             }
             else
             {
-                throw std::runtime_error("Invalid key, it's only possible to read pre-defined keys: " + key);
+                throw exception::TraceableException<std::runtime_error>("Invalid key, it's only possible to read pre-defined keys: " + key);
             }
         }
     }
@@ -51,7 +53,7 @@ namespace cenpy::common::persistence::preferences::serializer
         {
             line = trim(line);
             // Trim leading and trailing whitespaces
-            line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end());
+            std::erase_if(line, ::isspace);
 
             // Ignore comments and empty lines
             if (line.empty() || line[0] == ';')
@@ -69,7 +71,7 @@ namespace cenpy::common::persistence::preferences::serializer
                 }
                 else
                 {
-                    throw std::runtime_error("Invalid key, it's only possible to read pre-defined keys: " + key);
+                    throw exception::TraceableException<std::runtime_error>("Invalid key, it's only possible to read pre-defined keys: " + key);
                 }
             }
 
@@ -99,7 +101,7 @@ namespace cenpy::common::persistence::preferences::serializer
             std::vector<std::string> sectionNames = preferences.getSections();
             // Trim leading and trailing whitespaces
             std::string trimmedLine = line;
-            trimmedLine.erase(std::remove_if(trimmedLine.begin(), trimmedLine.end(), ::isspace), trimmedLine.end());
+            std::erase_if(trimmedLine, ::isspace);
 
             // Ignore comments and empty lines
             if (trimmedLine.empty() || trimmedLine[0] == ';')
@@ -109,18 +111,18 @@ namespace cenpy::common::persistence::preferences::serializer
             if (trimmedLine[0] == '[' && trimmedLine.back() == ']')
             {
                 std::string sectionName = trimmedLine.substr(1, trimmedLine.size() - 2);
-                if (std::find(sectionNames.begin(), sectionNames.end(), sectionName) != sectionNames.end())
+                if (std::ranges::find(sectionNames, sectionName) != sectionNames.end())
                 {
                     deserialize(is, preferences.getSection(sectionName));
                 }
                 else
                 {
-                    throw std::runtime_error("Section doesn't exist, can read only pre-defined sections");
+                    throw exception::TraceableException<std::runtime_error>("Section doesn't exist, can read only pre-defined sections");
                 }
             }
             else
             {
-                throw std::runtime_error("Invalid line, it's only possible to read sections and properties");
+                throw exception::TraceableException<std::runtime_error>("Invalid line, it's only possible to read sections and properties");
             }
         }
     }

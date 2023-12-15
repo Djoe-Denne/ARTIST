@@ -122,16 +122,6 @@ namespace cenpy
         using function_info = memfun_type<decltype(&F::operator())>;
     }
 
-    /*/
-    namespace collection_utils {
-        template <template <typename, typename, typename...> class MapType, typename KeyMapper, typename ValueMapper, class IM,
-                  typename = std::enable_if_t<std::is_base_of_v<MapType<typename IM::key_type, typename IM::mapped_type>, IM>>>
-        auto map(const IM& mapToMap, const KeyMapper& keyMapper, const ValueMapper& valueMapper)
-            -> RETURN_TYPES(MapType, Kestdexcept
-            return ReturnType(result.begin(), result.end());
-        }
-    }
-    */
     namespace json_utils
     {
 

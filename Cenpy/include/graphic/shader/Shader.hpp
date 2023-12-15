@@ -12,6 +12,7 @@
 #include <stdexcept>
 #include <type_traits>
 #include <unordered_map>
+#include <utils.hpp>
 #include <common/exception/TraceableException.hpp>
 #include <graphic/shader/Uniform.hpp>
 
@@ -38,7 +39,8 @@ namespace cenpy::graphic::shader
          * @param vertexPath The path to the vertex shader source code.
          * @param fragmentPath The path to the fragment shader source code.
          */
-        template <typename T, typename = std::enable_if_t<std::is_same_v<T, const char *> || std::is_same_v<T, std::string>>>
+        template <typename T>
+            requires std::is_same_v<T, const char *> || std::is_same_v<T, std::string>
         Shader(const char *vertexPath, const T &fragmentPath) : m_program(1)
         {
             createPragram(vertexPath, fragmentPath);
@@ -54,7 +56,8 @@ namespace cenpy::graphic::shader
          * @param fragmentPath The path to the fragment shader source code.
          * @param args Additional fragement shader paths.
          */
-        template <typename T, typename... Args, typename = std::enable_if_t<std::is_same_v<T, const char *> || std::is_same_v<T, std::string>>>
+        template <typename T, typename... Args>
+            requires std::is_same_v<T, const char *> || std::is_same_v<T, std::string>
         Shader(const T &vertexPath, const T &fragmentPath, Args &&...args) : m_program(sizeof...(args) + 1)
         {
             createPragram(vertexPath, fragmentPath, std::forward<Args>(args)...);
@@ -82,7 +85,7 @@ namespace cenpy::graphic::shader
         template <typename T>
         Shader &withUniform(const std::string &name, const T &value, const int &number = 1)
         {
-            if (m_uniforms[m_program[m_currentProgram]].find(name) != m_uniforms[m_program[m_currentProgram]].end())
+            if (m_uniforms[m_program[m_currentProgram]].contains(name))
             {
                 m_uniforms[m_program[m_currentProgram]][name].set(value, number);
             }
@@ -145,12 +148,8 @@ namespace cenpy::graphic::shader
         }
 
     protected:
-        std::vector<GLuint> m_program;
-        std::unordered_map<GLuint, std::unordered_map<std::string, opengl::Uniform>> m_uniforms;
-        u_int16_t m_currentProgram = 0;
-        std::vector<std::string> m_shaderPaths;
-
-        template <typename T, typename... Args, typename = std::enable_if_t<std::is_same_v<T, const char *> || std::is_same_v<T, std::string>>>
+        template <typename T, typename... Args>
+            requires std::is_same_v<T, const char *> || std::is_same_v<T, std::string>
         void createPragram(const T &vertexPath, const T &fragmentPath, Args &&...args)
         {
             GLuint vertexShader = loadShader(vertexPath, GL_VERTEX_SHADER);
@@ -172,7 +171,7 @@ namespace cenpy::graphic::shader
                 // get number of uniforms
                 glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &count);
 
-                std::unordered_map<std::string, opengl::Uniform> uniforms = std::unordered_map<std::string, opengl::Uniform>(count);
+                auto uniforms = std::unordered_map<std::string, opengl::Uniform, collection_utils::StringHash, collection_utils::StringEqual>(count);
 
                 for (int i = 0; i < count; i++)
                 {
@@ -185,7 +184,7 @@ namespace cenpy::graphic::shader
                     glGetActiveUniform(program, i, sizeof(name), &length, &size, &type, name);
                     name[length] = '\0';
                     // add uniform on time only, meaning different fragment shader o a multipass shader can have the same uniform, but it must be the exact same type and size
-                    if (uniforms.find(name) == uniforms.end())
+                    if (uniforms.contains(name))
                     {
                         GLuint location = glGetUniformLocation(program, name);
                         uniforms[name] = opengl::Uniform(location, type, size);
@@ -210,7 +209,8 @@ namespace cenpy::graphic::shader
          * @param fragmentPath The path to the first fragment shader.
          * @param args Additional fragment shader paths.
          */
-        template <typename T, typename... Args, typename = std::enable_if_t<std::is_same_v<T, const char *> || std::is_same_v<T, std::string>>>
+        template <typename T, typename... Args>
+            requires std::is_same_v<T, const char *> || std::is_same_v<T, std::string>
         void createPragram(const GLuint &vertexShader, const T &fragmentPath, Args &&...args)
         {
             createPragram(vertexShader, fragmentPath);
@@ -269,7 +269,7 @@ namespace cenpy::graphic::shader
 
             glDeleteShader(fragmentShader);
 
-            m_program.push_back(program);
+            m_program.emplace_back(program);
         }
 
         /**
@@ -348,5 +348,11 @@ namespace cenpy::graphic::shader
             }
         }
         /** END Utility functions */
+
+    private:
+        std::vector<GLuint> m_program;
+        std::unordered_map<GLuint, std::unordered_map<std::string, opengl::Uniform, collection_utils::StringHash, collection_utils::StringEqual>> m_uniforms;
+        u_int16_t m_currentProgram = 0;
+        std::vector<std::string> m_shaderPaths;
     };
 } // namespace cenpy::graphic::shader

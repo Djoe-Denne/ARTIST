@@ -14,7 +14,7 @@ namespace cenpy::entity
     {
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dis(0, 15);
+        std::uniform_int_distribution dis(0, 15);
 
         const std::string hexChars = "0123456789abcdef";
         std::string uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
@@ -41,7 +41,7 @@ namespace cenpy::entity
 
     const std::string &Entity::getId() const { return m_id; }
 
-    bool Entity::isType(const std::string &type) const
+    bool Entity::isType(const std::string_view &type) const
     {
         return m_type == type;
     }
@@ -59,8 +59,5 @@ namespace cenpy::entity
             components.push_back(component);
         }
         return components;
-        /*auto components = m_components | std::views::transform([](const auto &sharedPtr)
-                                                               { return std::weak_ptr<component::Component>(sharedPtr); });
-        co_yield components;*/
     }
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <string_view>
 #include <memory>
 #include <vector>
 #include <initializer_list>
@@ -53,7 +54,7 @@ namespace cenpy::entity
          * @param type The type to check against.
          * @return true if the entity is of the specified type, false otherwise.
          */
-        [[nodiscard]] bool isType(const std::string &type) const;
+        [[nodiscard]] bool isType(const std::string_view &type) const;
 
         /**
          * @brief Adds a component to the entity.

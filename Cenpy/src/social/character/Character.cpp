@@ -1,42 +1,43 @@
 #include <social/character/Character.hpp>
 #include <iostream>
+#include <format>
 
 namespace csc = cenpy::social::character;
 
 csc::Character::Character(const std::string &name, int age, const std::string &origin, bool sex, const csc::Personality &personality)
-    : name(name), age(age), origin(origin), sex(sex), personality(personality), displayable(""), relationships() /*, mood(MoodStateMachine::createMoodStateMachine())*/ {}
+    : name(name), age(age), origin(origin), sex(sex), personality(personality) {}
 
-std::string csc::Character::getName() const
+const std::string &csc::Character::getName() const
 {
     return name;
 }
 
-void csc::Character::setName(const std::string &value)
+void csc::Character::setName(const std::string_view &value)
 {
     name = value;
 }
 
-int csc::Character::getAge() const
+const int &csc::Character::getAge() const
 {
     return age;
 }
 
-void csc::Character::setAge(int value)
+void csc::Character::setAge(const int &value)
 {
     age = value;
 }
 
-std::string csc::Character::getOrigin() const
+const std::string &csc::Character::getOrigin() const
 {
     return origin;
 }
 
-bool csc::Character::getSex() const
+const bool &csc::Character::getSex() const
 {
     return sex;
 }
 
-csc::Personality csc::Character::getPersonality() const
+const csc::Personality &csc::Character::getPersonality() const
 {
     return personality;
 }
@@ -46,12 +47,12 @@ std::string csc::Character::getType() const
     return "character";
 }
 
-std::string csc::Character::getDisplayable() const
+const std::string &csc::Character::getDisplayable() const
 {
     return name; //+ "/" + mood.getState();
 }
 
-std::unordered_map<std::string, std::shared_ptr<Relationship>> csc::Character::getRelationships() const
+const std::unordered_map<std::string, std::shared_ptr<Relationship>, cenpy::collection_utils::StringHash, cenpy::collection_utils::StringEqual> &csc::Character::getRelationships() const
 {
     return relationships;
 }
@@ -61,27 +62,12 @@ void csc::Character::addRelationship(const std::string &characterName, const std
     relationships[characterName] = relationship;
 }
 
-/*MoodStateMachine csc::Character::getMood() const {
-    return mood;
-}
-
-template <typename T>
-void csc::Character::setMood(const T& trigger) {
-    mood.trigger(trigger);
-}
-/*
-RenPyCharacter csc::Character::getRenPyCharacter() const {
-    return RenPyCharacter(name);
-}*/
-
-void csc::Character::say(const std::string &text)
+void csc::Character::say(const std::string_view &text) const
 {
-    // getRenPyCharacter()(text);
+    throw std::logic_error("The method or operation is not implemented. sentence: " + std::string(text) + "");
 }
 
 std::string csc::Character::toString() const
 {
-    return "Name: " /*+ name + "\nAge: " + std::to_string(age) + "\nOrigin: " + origin + "\nSex: " + (sex ? "Male" : "Female") + "\n"
-        + "Personality: " + personality.toString() + "\nSprite Folder: " + spriteFolder + "\nRelationships: " + concatenateRelationships()*/
-        ;
+    return std::format("");
 }

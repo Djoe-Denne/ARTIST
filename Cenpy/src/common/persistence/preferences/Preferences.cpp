@@ -1,5 +1,6 @@
 // preferences.cpp
 
+#include <common/exception/TraceableException.hpp>
 #include <common/persistence/preferences/Preferences.hpp>
 
 namespace cenpy::common::persistence::preferences
@@ -23,7 +24,7 @@ namespace cenpy::common::persistence::preferences
     {
         if (!isValidKey(key))
         {
-            throw std::runtime_error("Invalid key: " + key);
+            throw exception::TraceableException<std::runtime_error>("Invalid key: " + key);
         }
         return m_properties.at(key);
     }
@@ -40,7 +41,7 @@ namespace cenpy::common::persistence::preferences
 
     bool Section::isValidKey(const std::string &key) const
     {
-        return m_properties.find(key) != m_properties.end();
+        return m_properties.contains(key);
     }
 
     /*******************************************************************
@@ -61,7 +62,7 @@ namespace cenpy::common::persistence::preferences
         }
         else
         {
-            throw std::runtime_error("Invalid section: " + name);
+            throw exception::TraceableException<std::runtime_error>("Invalid section: " + name);
         }
     }
 
@@ -74,7 +75,7 @@ namespace cenpy::common::persistence::preferences
         }
         else
         {
-            throw std::runtime_error("Invalid section: " + name);
+            throw exception::TraceableException<std::runtime_error>("Invalid section: " + name);
         }
     }
 

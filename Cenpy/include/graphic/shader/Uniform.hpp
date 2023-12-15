@@ -44,7 +44,7 @@ namespace cenpy::graphic::shader
          *.
          * @param uniform The uniform to set.
          */
-        static const auto set = [](const T &uniform)
+        static const auto set = [](const T &)
         { static_assert(false, "Unsupported uniform type"); };
     };
 
@@ -73,7 +73,8 @@ namespace cenpy::graphic::shader
          * This function enforces type safety and delegates the setting
          * of the value to the specialized setter provided by the derived class.
          */
-        template <typename U, typename T, template <typename> typename C, typename = std::enable_if<C<U>::value>>
+        template <typename U, typename T, template <typename> typename C>
+            requires C<U>::value
         void set(const U &value)
         {
             if (m_value.has_value() && std::any_cast<U>(&m_value) == nullptr)
@@ -110,7 +111,7 @@ namespace cenpy::graphic::shader
             }
         }
 
-    protected:
+    private:
         std::any m_value; ///< The value of the uniform variable.
     };
 
@@ -184,7 +185,7 @@ namespace cenpy::graphic::shader
                 BaseUniform::set<T, Uniform, setter>(value);
             }
 
-        protected:
+        private:
             GLint m_location; ///< The map of program IDs to uniform locations.
             GLenum m_type;    ///< The type of the uniform variable.
             GLuint m_size;    ///< The size of the uniform variable.

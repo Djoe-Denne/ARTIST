@@ -8,8 +8,6 @@ namespace cenpy::manager
     class GameManager
     {
     public:
-        GameManager() : m_window(nullptr), m_isRunning(false) {}
-
         void startMainLoop();
 
     private:

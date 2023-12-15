@@ -82,7 +82,7 @@ namespace cenpy::common::persistence::preferences::serializer
     void XmlSerializer::serialize(std::ostream &os, const Preferences &preferences) const
     {
         pugi::xml_document doc;
-        pugi::xml_node xmlPreferences = doc.append_child("preferences");
+        doc.append_child("preferences");
 
         for (const auto &sectionName : preferences.getSections())
         {

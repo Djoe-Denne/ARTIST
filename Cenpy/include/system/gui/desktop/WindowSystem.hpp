@@ -19,7 +19,7 @@ namespace cenpy::system::gui::desktop
          * @brief Constructs a WindowSizeSystem object.
          * @param window The GLFWwindow object representing the window.
          */
-        WindowSizeSystem(GLFWwindow *window) : window(window)
+        explicit WindowSizeSystem(GLFWwindow *window) : window(window)
         {
         }
 
@@ -47,7 +47,7 @@ namespace cenpy::system::gui::desktop
          *
          * @param window The GLFWwindow object representing the window to manage fullscreen for.
          */
-        WindowFullscreenSystem(GLFWwindow *window) : window(window) {}
+        explicit WindowFullscreenSystem(GLFWwindow *window) : window(window) {}
 
         /**
          * @brief Updates the fullscreen state of the window.
