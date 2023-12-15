@@ -27,14 +27,79 @@
     MapType<typename LAMBDA_TYPES_RETURN(KeyLambda), typename LAMBDA_TYPES_RETURN(ValueLambda)>
 
 #include <string>
+#include <cstring>
+#include <string_view>
 #include <ranges>
 #include <map>
+#include <functional>
 #include <unordered_map>
 #include <stdexcept>
 #include <common/exception/TraceableException.hpp>
 
 namespace cenpy
 {
+
+    namespace collection_utils
+    {
+
+        struct StringHash
+        {
+            using is_transparent = void; // This makes it a transparent hash function
+
+            size_t operator()(const std::string &s) const noexcept
+            {
+                return std::hash<std::string>{}(s);
+            }
+
+            size_t operator()(std::string_view s) const noexcept
+            {
+                return std::hash<std::string_view>{}(s);
+            }
+
+            size_t operator()(const char *s) const noexcept
+            {
+                // Be sure to handle null pointers if they are a possibility
+                return std::hash<std::string_view>{}(s ? std::string_view(s) : std::string_view());
+            }
+        };
+
+        struct StringEqual
+        {
+            using is_transparent = void; // This makes it a transparent equality comparator
+
+            bool operator()(const std::string &lhs, const std::string &rhs) const noexcept
+            {
+                return lhs == rhs;
+            }
+
+            bool operator()(std::string_view lhs, const std::string &rhs) const noexcept
+            {
+                return lhs == rhs;
+            }
+
+            bool operator()(const std::string &lhs, std::string_view rhs) const noexcept
+            {
+                return lhs == rhs;
+            }
+
+            bool operator()(const char *lhs, const std::string &rhs) const noexcept
+            {
+                return lhs ? rhs == lhs : false;
+            }
+
+            bool operator()(const std::string &lhs, const char *rhs) const noexcept
+            {
+                return rhs ? lhs == rhs : false;
+            }
+
+            bool operator()(const char *lhs, const char *rhs) const noexcept
+            {
+                // Handle null pointers if they are a possibility
+                return lhs && rhs ? std::strcmp(lhs, rhs) == 0 : lhs == rhs;
+            }
+        };
+
+    }
 
     namespace common_utils
     {

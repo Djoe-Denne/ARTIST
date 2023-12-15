@@ -8,6 +8,7 @@
 #include <vector>
 #include <memory>
 #include <variant>
+#include <utils.hpp>
 #include <common/exception/TraceableException.hpp>
 #include <common/persistence/preferences/PreferencesCommon.hpp>
 #include <common/persistence/preferences/PropertyValidators.hpp>
@@ -139,7 +140,7 @@ namespace cenpy::common::persistence::preferences
          */
         void setValue(const T &value)
         {
-            if ((m_validator) && !m_validator->isValid(value))
+            if (m_validator && !m_validator->isValid(value))
             {
                 throw std::invalid_argument("Invalid value");
             }
@@ -221,23 +222,23 @@ namespace cenpy::common::persistence::preferences
             }
         }
 
-        void write(void *ptr) const
+        void write(std::any ptr) const
         {
             if (m_value.type() == typeid(int))
             {
-                *static_cast<int *>(ptr) = std::any_cast<int>(m_value);
+                *std::any_cast<int *>(ptr) = std::any_cast<int>(m_value);
             }
             else if (m_value.type() == typeid(double))
             {
-                *static_cast<double *>(ptr) = std::any_cast<double>(m_value);
+                *std::any_cast<double *>(ptr) = std::any_cast<double>(m_value);
             }
             else if (m_value.type() == typeid(std::string))
             {
-                *static_cast<std::string *>(ptr) = std::any_cast<std::string>(m_value);
+                *std::any_cast<std::string *>(ptr) = std::any_cast<std::string>(m_value);
             }
             else if (m_value.type() == typeid(bool))
             {
-                *static_cast<bool *>(ptr) = std::any_cast<bool>(m_value);
+                *std::any_cast<bool *>(ptr) = std::any_cast<bool>(m_value);
             }
             else
             {
@@ -246,7 +247,7 @@ namespace cenpy::common::persistence::preferences
                 {
                     std::ostringstream oss;
                     oss << *propertyValue;
-                    *static_cast<std::string *>(ptr) = oss.str();
+                    *std::any_cast<std::string *>(ptr) = oss.str();
                 }
                 else
                 {
@@ -349,8 +350,8 @@ namespace cenpy::common::persistence::preferences
         [[nodiscard]] bool isValidKey(const std::string &key) const;
 
     private:
-        std::string m_name;                                                      // The name of the section
-        std::unordered_map<std::string, std::shared_ptr<Property>> m_properties; // The properties in the section
+        std::string m_name;                                                                                                                   // The name of the section
+        std::unordered_map<std::string, std::shared_ptr<Property>, collection_utils::StringHash, collection_utils::StringEqual> m_properties; // The properties in the section
     };
 
     /**

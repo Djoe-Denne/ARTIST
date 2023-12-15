@@ -5,6 +5,7 @@
 #include <string>
 #include <functional>
 #include <memory>
+#include <utils.hpp>
 #include <common/macros.hpp>
 #include <common/exception/TraceableException.hpp>
 
@@ -26,6 +27,7 @@ namespace cenpy::common::pattern::delegate
     {
     public:
         using HookType = void (*)(...);
+        virtual ~MethodDelegateBase() = default;
 
         /**
          * @brief Set the instance for the method delegate.
@@ -37,9 +39,9 @@ namespace cenpy::common::pattern::delegate
         /**
          * @brief Set the class-level delegate for the method delegate.
          *
-         * @param classLevelDelegate The class-level delegate to set.
+         * @param hookInstance The class-level delegate to set.
          */
-        virtual void setClassLevelDelegate(std::any classLevelDelegate) = 0;
+        virtual void bind(std::any hookInstance) = 0;
 
         /**
          * @brief Set the before function hook.
@@ -61,8 +63,6 @@ namespace cenpy::common::pattern::delegate
             m_afterFunc = afterFunc;
         }
 
-        virtual ~MethodDelegateBase() {}
-
     private:
         std::optional<HookType> m_beforeFunc; /**< Optional before function hook. */
         std::optional<HookType> m_afterFunc;  /**< Optional after function hook. */
@@ -83,8 +83,7 @@ namespace cenpy::common::pattern::delegate
          * @tparam T The type of the instance.
          * @param it The instance to pass to the before function hook.
          */
-        template <typename T>
-        void executeBeforeFunc(T *it)
+        void executeBeforeFunc(std::any it)
         {
             if (m_beforeFunc && *m_beforeFunc)
             {
@@ -98,8 +97,7 @@ namespace cenpy::common::pattern::delegate
          * @tparam T The type of the instance.
          * @param it The instance to pass to the after function hook.
          */
-        template <typename T>
-        void executeAfterFunc(T *it)
+        void executeAfterFunc(std::any it)
         {
             if (m_afterFunc && *m_afterFunc)
             {
@@ -122,10 +120,10 @@ namespace cenpy::common::pattern::delegate
     class MethodDelegate : public MethodDelegateBase
     {
     private:
-        std::shared_ptr<T> m_instance;          // Shared pointer to the instance of the class
-        using MethodType = R (T::*)(Args...);   // Pointer to the member function type
-        MethodType m_method;                    // Pointer to the member function
-        ClassDelegate<T> *m_classLevelDelegate; // Pointer to the class-level delegate
+        std::shared_ptr<T> m_instance;        // Shared pointer to the instance of the class
+        using MethodType = R (T::*)(Args...); // Pointer to the member function type
+        MethodType m_method;                  // Pointer to the member function
+        std::any m_hookInstance;              // Pointer to the class-level delegate
 
     public:
         /**
@@ -136,12 +134,15 @@ namespace cenpy::common::pattern::delegate
          * @param afterFunc Optional hook function to be executed after invoking the member function.
          */
         MethodDelegate(MethodType method, HookType beforeFunc = nullptr, HookType afterFunc = nullptr)
-            : MethodDelegateBase(beforeFunc, afterFunc), m_method(method), m_classLevelDelegate() {}
+            : MethodDelegateBase(beforeFunc, afterFunc), m_method(method)
+        {
+            m_hookInstance = nullptr;
+        }
 
         /**
          * @brief Destructor for the MethodDelegate.
          */
-        virtual ~MethodDelegate() = default;
+        ~MethodDelegate() override = default;
 
         /**
          * @brief Invokes the member function represented by the delegate.
@@ -161,30 +162,29 @@ namespace cenpy::common::pattern::delegate
                 throw exception::TraceableException<std::runtime_error>("Instance not set");
             }
 
-            executeBeforeFunc(this->m_classLevelDelegate);
+            executeBeforeFunc(this->m_hookInstance);
 
             if constexpr (std::is_void<R>::value)
             {
                 (m_instance.get()->*m_method)(args...);
-                executeAfterFunc(this->m_classLevelDelegate);
+                executeAfterFunc(this->m_hookInstance);
                 return;
             }
             else
             {
                 R result = (m_instance.get()->*m_method)(args...);
-                executeAfterFunc(this->m_classLevelDelegate);
+                executeAfterFunc(this->m_hookInstance);
                 return result;
             }
         }
 
         /**
-         * @brief Sets the class-level delegate for the MethodDelegate.
-         *
-         * @param classLevelDelegate The class-level delegate to be set.
+         * @brief Sets the instance for the MethodDelegate hooks
+         * @param hookInstance The instance to be set.
          */
-        void setClassLevelDelegate(std::any classLevelDelegate) override
+        void bind(std::any hookInstance) override
         {
-            m_classLevelDelegate = std::any_cast<ClassDelegate<T> *>(classLevelDelegate);
+            m_hookInstance = hookInstance;
         }
 
         /**
@@ -213,47 +213,44 @@ namespace cenpy::common::pattern::delegate
     class ClassDelegate
     {
     public:
+    private:
+        std::shared_ptr<T> m_instance;                                        // The instance of the class on which the delegates will be invoked.
+        std::map<std::string, std::shared_ptr<MethodDelegateBase>> m_methods; // A map of method delegates and their associated names.
+        typename MethodDelegateBase::HookType m_beforeFunc;                   // The hook function to be executed before invoking a method delegate.
+        typename MethodDelegateBase::HookType m_afterFunc;                    // The hook function to be executed after invoking a method delegate.
+
+    protected:
+        ClassDelegate(std::shared_ptr<T> instance, typename MethodDelegateBase::HookType beforeFunc = nullptr, typename MethodDelegateBase::HookType afterFunc = nullptr)
+            : m_instance(instance), m_beforeFunc(beforeFunc), m_afterFunc(afterFunc) {}
+
         /**
-         * @brief Destroys the ClassDelegate object.
+         * @brief Initializes the class delegate with the specified method delegates.
          *
-         * Deletes all the method delegates associated with this ClassDelegate.
+         * @param methods The method delegates to be added to the class delegate.
          */
-        virtual ~ClassDelegate()
+        void init(std::initializer_list<std::pair<std::string, std::shared_ptr<MethodDelegateBase>>> methods)
         {
-            for (const auto &pair : m_methods)
+            for (const auto &[name, method] : methods)
             {
-                delete pair.second;
+                m_methods[name] = method;
+            }
+            for (const auto &[name, method] : m_methods)
+            {
+                m_methods[name]->setBeforeFunc(m_beforeFunc);
+                m_methods[name]->setAfterFunc(m_afterFunc);
+                m_methods[name]->setInstance(m_instance);
             }
         }
 
-    private:
-        std::shared_ptr<T> m_instance;                         // The instance of the class on which the delegates will be invoked.
-        std::map<std::string, MethodDelegateBase *> m_methods; // A map of method delegates associated with their names.
-        typename MethodDelegateBase::HookType m_beforeFunc;    // The hook function to be executed before invoking a method delegate.
-        typename MethodDelegateBase::HookType m_afterFunc;     // The hook function to be executed after invoking a method delegate.
-
-    protected:
         /**
-         * @brief Constructs a ClassDelegate object.
-         *
-         * @param instance The instance of the class on which the delegates will be invoked.
-         * @param methods An initializer list of method delegates and their associated names.
-         * @param beforeFunc The hook function to be executed before invoking a method delegate.
-         * @param afterFunc The hook function to be executed after invoking a method delegate.
+         * @brief Sets the instance for the MethodDelegate hooks
+         * @param hookInstance The instance to be set.
          */
-        ClassDelegate(std::shared_ptr<T> instance, std::initializer_list<std::pair<std::string, MethodDelegateBase *>> methods, typename MethodDelegateBase::HookType beforeFunc = nullptr, typename MethodDelegateBase::HookType afterFunc = nullptr)
-            : m_instance(instance), m_beforeFunc(beforeFunc), m_afterFunc(afterFunc)
+        void bind(std::any hookInstance)
         {
-            for (const auto &pair : methods)
+            for (const auto &[name, method] : m_methods)
             {
-                m_methods[pair.first] = pair.second;
-            }
-            for (const auto &pair : m_methods)
-            {
-                m_methods[pair.first]->setBeforeFunc(beforeFunc);
-                m_methods[pair.first]->setAfterFunc(afterFunc);
-                m_methods[pair.first]->setClassLevelDelegate(this);
-                m_methods[pair.first]->setInstance(m_instance);
+                method->bind(hookInstance);
             }
         }
 
@@ -273,7 +270,7 @@ namespace cenpy::common::pattern::delegate
          * @param name The name of the method delegate.
          * @return A pointer to the MethodDelegateBase object.
          */
-        MethodDelegateBase *getMethod(const std::string &name)
+        const std::shared_ptr<MethodDelegateBase> &getMethod(const std::string &name)
         {
             return m_methods[name];
         }
@@ -285,13 +282,13 @@ namespace cenpy::common::pattern::delegate
  * @param T The class type.
  * @param METHOD The method to be implemented.
  */
-#define METHOD_IMPLEMENTATION(T, METHOD)                                                                                                                                                                                      \
-    template <typename... Args>                                                                                                                                                                                               \
-    auto METHOD(Args... args)                                                                                                                                                                                                 \
-        -> decltype(cenpy::common::pattern::delegate::ClassDelegate<T>::getInstance()->METHOD(args...))                                                                                                                       \
-    {                                                                                                                                                                                                                         \
-        auto methodDelegate = dynamic_cast<cenpy::common::pattern::delegate::MethodDelegate<decltype(cenpy::common::pattern::delegate::ClassDelegate<T>::getInstance()->METHOD(args...)), T, Args...> *>(getMethod(#METHOD)); \
-        return (*methodDelegate)(args...);                                                                                                                                                                                    \
+#define METHOD_IMPLEMENTATION(T, METHOD)                                                                                                                                                                                            \
+    template <typename... Args>                                                                                                                                                                                                     \
+    auto METHOD(Args... args)                                                                                                                                                                                                       \
+        -> decltype(cenpy::common::pattern::delegate::ClassDelegate<T>::getInstance()->METHOD(args...))                                                                                                                             \
+    {                                                                                                                                                                                                                               \
+        auto methodDelegate = dynamic_cast<cenpy::common::pattern::delegate::MethodDelegate<decltype(cenpy::common::pattern::delegate::ClassDelegate<T>::getInstance()->METHOD(args...)), T, Args...> *>(getMethod(#METHOD).get()); \
+        return (*methodDelegate)(args...);                                                                                                                                                                                          \
     }
 } // namespace cenpy::common::pattern::delegate
 
@@ -307,44 +304,105 @@ namespace cenpy::common::pattern::delegate
     class T##Delegate : public cenpy::common::pattern::delegate::ClassDelegate<T>                                                                                                                     \
     {                                                                                                                                                                                                 \
     public:                                                                                                                                                                                           \
-        T##Delegate(std::shared_ptr<T> instance)                                                                                                                                                      \
-            : cenpy::common::pattern::delegate::ClassDelegate<T>(instance, {NAMED_METHOD_PAIR(T, __VA_ARGS__)}, BEFORE, AFTER) {}                                                                     \
+        T##Delegate(std::shared_ptr<T> instance) : cenpy::common::pattern::delegate::ClassDelegate<T>(instance, BEFORE, AFTER)                                                                        \
+        {                                                                                                                                                                                             \
+            init();                                                                                                                                                                                   \
+        }                                                                                                                                                                                             \
         T##Delegate(std::shared_ptr<T> instance, cenpy::common::pattern::delegate::MethodDelegateBase::HookType beforeFunc, cenpy::common::pattern::delegate::MethodDelegateBase::HookType afterFunc) \
-            : cenpy::common::pattern::delegate::ClassDelegate<T>(instance, {NAMED_METHOD_PAIR(T, __VA_ARGS__)}, beforeFunc, afterFunc) {}                                                             \
-        ~T##Delegate() {}                                                                                                                                                                             \
+            : cenpy::common::pattern::delegate::ClassDelegate<T>(instance, beforeFunc, afterFunc)                                                                                                     \
+        {                                                                                                                                                                                             \
+            init();                                                                                                                                                                                   \
+        }                                                                                                                                                                                             \
+        void init()                                                                                                                                                                                   \
+        {                                                                                                                                                                                             \
+            NAMED_METHOD_VAR(T, __VA_ARGS__)                                                                                                                                                          \
+            cenpy::common::pattern::delegate::ClassDelegate<T>::init({NAMED_METHOD_PAIR(T, __VA_ARGS__)});                                                                                            \
+        }                                                                                                                                                                                             \
+        virtual ~T##Delegate() = default;                                                                                                                                                             \
                                                                                                                                                                                                       \
         METHOD_IMPLEMENTATIONS(T, __VA_ARGS__)                                                                                                                                                        \
     };
 
+#define NAMED_METHOD_VAR(T, METHOD, ...)                                                       \
+    auto METHOD = new cenpy::common::pattern::delegate::MethodDelegate(&T::METHOD);            \
+    std::shared_ptr<cenpy::common::pattern::delegate::MethodDelegateBase> METHOD##Ptr(METHOD); \
+    __VA_OPT__(NAMED_METHOD_VAR_2(T, __VA_ARGS__))
+
+#define NAMED_METHOD_VAR_2(T, METHOD, ...)                                                     \
+    auto METHOD = new cenpy::common::pattern::delegate::MethodDelegate(&T::METHOD);            \
+    std::shared_ptr<cenpy::common::pattern::delegate::MethodDelegateBase> METHOD##Ptr(METHOD); \
+    __VA_OPT__(NAMED_METHOD_VAR_3(T, __VA_ARGS__))
+
+#define NAMED_METHOD_VAR_3(T, METHOD, ...)                                                     \
+    auto METHOD = new cenpy::common::pattern::delegate::MethodDelegate(&T::METHOD);            \
+    std::shared_ptr<cenpy::common::pattern::delegate::MethodDelegateBase> METHOD##Ptr(METHOD); \
+    __VA_OPT__(NAMED_METHOD_VAR_4(T, __VA_ARGS__))
+
+#define NAMED_METHOD_VAR_4(T, METHOD, ...)                                                     \
+    auto METHOD = new cenpy::common::pattern::delegate::MethodDelegate(&T::METHOD);            \
+    std::shared_ptr<cenpy::common::pattern::delegate::MethodDelegateBase> METHOD##Ptr(METHOD); \
+    __VA_OPT__(NAMED_METHOD_VAR_5(T, __VA_ARGS__))
+
+#define NAMED_METHOD_VAR_5(T, METHOD, ...)                                                     \
+    auto METHOD = new cenpy::common::pattern::delegate::MethodDelegate(&T::METHOD);            \
+    std::shared_ptr<cenpy::common::pattern::delegate::MethodDelegateBase> METHOD##Ptr(METHOD); \
+    __VA_OPT__(NAMED_METHOD_VAR_6(T, __VA_ARGS__))
+
+#define NAMED_METHOD_VAR_6(T, METHOD, ...)                                                     \
+    auto METHOD = new cenpy::common::pattern::delegate::MethodDelegate(&T::METHOD);            \
+    std::shared_ptr<cenpy::common::pattern::delegate::MethodDelegateBase> METHOD##Ptr(METHOD); \
+    __VA_OPT__(NAMED_METHOD_VAR_7(T, __VA_ARGS__))
+
+#define NAMED_METHOD_VAR_7(T, METHOD, ...)                                                     \
+    auto METHOD = new cenpy::common::pattern::delegate::MethodDelegate(&T::METHOD);            \
+    std::shared_ptr<cenpy::common::pattern::delegate::MethodDelegateBase> METHOD##Ptr(METHOD); \
+    __VA_OPT__(NAMED_METHOD_VAR_8(T, __VA_ARGS__))
+
+#define NAMED_METHOD_VAR_8(T, METHOD, ...)                                                     \
+    auto METHOD = new cenpy::common::pattern::delegate::MethodDelegate(&T::METHOD);            \
+    std::shared_ptr<cenpy::common::pattern::delegate::MethodDelegateBase> METHOD##Ptr(METHOD); \
+    __VA_OPT__(NAMED_METHOD_VAR_9(T, __VA_ARGS__))
+
+#define NAMED_METHOD_VAR_9(T, METHOD, ...)                                                     \
+    auto METHOD = new cenpy::common::pattern::delegate::MethodDelegate(&T::METHOD);            \
+    std::shared_ptr<cenpy::common::pattern::delegate::MethodDelegateBase> METHOD##Ptr(METHOD); \
+    __VA_OPT__(NAMED_METHOD_VAR_10(T, __VA_ARGS__))
+
+#define NAMED_METHOD_VAR_10(T, METHOD, ...)                                         \
+    auto METHOD = new cenpy::common::pattern::delegate::MethodDelegate(&T::METHOD); \
+    std::shared_ptr<cenpy::common::pattern::delegate::MethodDelegateBase> METHOD##Ptr(METHOD);
+
 #define NAMED_METHOD_PAIR(T, METHOD, ...) \
-    {#METHOD, new cenpy::common::pattern::delegate::MethodDelegate(&T::METHOD)} __VA_OPT__(COMMA NAMED_METHOD_PAIR_2(T, __VA_ARGS__))
+    {#METHOD, METHOD##Ptr} __VA_OPT__(COMMA NAMED_METHOD_PAIR_2(T, __VA_ARGS__))
 
 #define NAMED_METHOD_PAIR_2(T, METHOD, ...) \
-    {#METHOD, new cenpy::common::pattern::delegate::MethodDelegate(&T::METHOD)} __VA_OPT__(COMMA NAMED_METHOD_PAIR_3(T, __VA_ARGS__))
+    {#METHOD, METHOD##Ptr} __VA_OPT__(COMMA NAMED_METHOD_PAIR_3(T, __VA_ARGS__))
 
 #define NAMED_METHOD_PAIR_3(T, METHOD, ...) \
-    {#METHOD, new cenpy::common::pattern::delegate::MethodDelegate(&T::METHOD)} __VA_OPT__(COMMA NAMED_METHOD_PAIR_4(T, __VA_ARGS__))
+    {#METHOD, METHOD##Ptr} __VA_OPT__(COMMA NAMED_METHOD_PAIR_4(T, __VA_ARGS__))
 
 #define NAMED_METHOD_PAIR_4(T, METHOD, ...) \
-    {#METHOD, new cenpy::common::pattern::delegate::MethodDelegate(&T::METHOD)} __VA_OPT__(COMMA NAMED_METHOD_PAIR_5(T, __VA_ARGS__))
+    {#METHOD, METHOD##Ptr} __VA_OPT__(COMMA NAMED_METHOD_PAIR_5(T, __VA_ARGS__))
 
 #define NAMED_METHOD_PAIR_5(T, METHOD, ...) \
-    {#METHOD, new cenpy::common::pattern::delegate::MethodDelegate(&T::METHOD)} __VA_OPT__(COMMA NAMED_METHOD_PAIR_6(T, __VA_ARGS__))
+    {#METHOD, METHOD##Ptr} __VA_OPT__(COMMA NAMED_METHOD_PAIR_6(T, __VA_ARGS__))
 
 #define NAMED_METHOD_PAIR_6(T, METHOD, ...) \
-    {#METHOD, new cenpy::common::pattern::delegate::MethodDelegate(&T::METHOD)} __VA_OPT__(COMMA NAMED_METHOD_PAIR_7(T, __VA_ARGS__))
+    {#METHOD, METHOD##Ptr} __VA_OPT__(COMMA NAMED_METHOD_PAIR_7(T, __VA_ARGS__))
 
 #define NAMED_METHOD_PAIR_7(T, METHOD, ...) \
-    {#METHOD, new cenpy::common::pattern::delegate::MethodDelegate(&T::METHOD)} __VA_OPT__(COMMA NAMED_METHOD_PAIR_8(T, __VA_ARGS__))
+    {#METHOD, METHOD##Ptr} __VA_OPT__(COMMA NAMED_METHOD_PAIR_8(T, __VA_ARGS__))
 
 #define NAMED_METHOD_PAIR_8(T, METHOD, ...) \
-    {#METHOD, new cenpy::common::pattern::delegate::MethodDelegate(&T::METHOD)} __VA_OPT__(COMMA NAMED_METHOD_PAIR_9(T, __VA_ARGS__))
+    {#METHOD, METHOD##Ptr} __VA_OPT__(COMMA NAMED_METHOD_PAIR_9(T, __VA_ARGS__))
 
 #define NAMED_METHOD_PAIR_9(T, METHOD, ...) \
-    {#METHOD, new cenpy::common::pattern::delegate::MethodDelegate(&T::METHOD)} __VA_OPT__(COMMA NAMED_METHOD_PAIR_10(T, __VA_ARGS__))
+    {#METHOD, METHOD##Ptr} __VA_OPT__(COMMA NAMED_METHOD_PAIR_10(T, __VA_ARGS__))
 
 #define NAMED_METHOD_PAIR_10(T, METHOD, ...) \
-    {#METHOD, new cenpy::common::pattern::delegate::MethodDelegate(&T::METHOD)} __VA_OPT__(COMMA NAMED_METHOD_PAIR_11(T, __VA_ARGS__))
+    {                                        \
+        #METHOD, METHOD##Ptr                 \
+    }
 
 /**
  * @def EXPAND_VARIADIC(MACRO, ...)

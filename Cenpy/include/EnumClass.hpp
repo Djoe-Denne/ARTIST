@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <ranges>
 #include <algorithm>
 #include <magic_enum/magic_enum.hpp>
 
@@ -12,12 +13,12 @@ namespace cenpy
     public:
         constexpr EnumClass(Enum value) : value(value) {}
         EnumClass(std::string value);
-        bool operator<(const EnumClass &other) const { return value < other.value; }
+        bool operator<=>(const EnumClass &other) const { return value <=> other.value; }
         bool operator==(const EnumClass &other) const { return value == other.value; }
 
         constexpr operator Enum() const { return value; }
         constexpr bool operator==(const Enum &other) const { return value == other; }
-        explicit operator std::string() const;
+        operator std::string() const;
         std::string toString() const;
 
         explicit constexpr operator bool() const = delete;
@@ -29,7 +30,7 @@ namespace cenpy
     template <class Enum>
     EnumClass<Enum>::EnumClass(std::string value)
     {
-        std::replace_if(
+        std::ranges::replace_if(
             value.begin(), value.end(), [](char c)
             { return std::string("- ").find(c) != std::string::npos; },
             '_');

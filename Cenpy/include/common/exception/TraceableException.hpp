@@ -8,7 +8,8 @@
 namespace cenpy::common::exception
 {
 
-    template <typename E, typename = std::enable_if_t<std::is_base_of_v<std::exception, E>>>
+    template <typename E>
+        requires std::is_base_of_v<std::exception, E>
     class TraceableException : public E
     {
 #if __cplusplus > 202002L && _GLIBCXX_HAVE_STACKTRACE

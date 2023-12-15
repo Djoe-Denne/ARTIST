@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <ranges>
 #include <common/pattern/observer/Observer.hpp>
 #include <common/pattern/delegate/Delegate.hpp>
 
@@ -10,28 +11,30 @@
  * @param T The class type.
  * @param ... List of MethodDelegate instances representing methods to be delegated.
  */
-#define SUBJECT(T, ...)                                                                                                                                                        \
-    DELEGATE(                                                                                                                                                                  \
-        T, nullptr, nullptr, __VA_ARGS__)                                                                                                                                      \
-    class T##Subject : public T##Delegate, public cenpy::common::pattern::observer::Subject<T>                                                                                 \
-    {                                                                                                                                                                          \
-    public:                                                                                                                                                                    \
-        T##Subject(std::shared_ptr<T> instance)                                                                                                                                \
-            : cenpy::common::pattern::observer::Subject<T>(), T##Delegate(instance,                                                                                            \
-                                                                          nullptr,                                                                                             \
-                                                                          cenpy::common::pattern::delegate::MethodDelegateBase::HookType(&notifyObserversFor<T##Delegate>)) {} \
-        template <typename Args>                                                                                                                                               \
-        static void notifyObserversFor(Args *it)                                                                                                                               \
-        {                                                                                                                                                                      \
-            dynamic_cast<T##Subject *>(it)->notifyObservers();                                                                                                                 \
-        }                                                                                                                                                                      \
-        void notifyObservers() override                                                                                                                                        \
-        {                                                                                                                                                                      \
-            for (const auto &observer : cenpy::common::pattern::observer::Subject<T>::getObservers())                                                                          \
-            {                                                                                                                                                                  \
-                observer->update(*T##Delegate::getInstance());                                                                                                                 \
-            }                                                                                                                                                                  \
-        }                                                                                                                                                                      \
+#define SUBJECT(T, ...)                                                                                                                                        \
+    DELEGATE(                                                                                                                                                  \
+        T, nullptr, nullptr, __VA_ARGS__)                                                                                                                      \
+    class T##Subject : public T##Delegate, public cenpy::common::pattern::observer::Subject<T>                                                                 \
+    {                                                                                                                                                          \
+    public:                                                                                                                                                    \
+        T##Subject(std::shared_ptr<T> instance)                                                                                                                \
+            : cenpy::common::pattern::observer::Subject<T>(), T##Delegate(instance,                                                                            \
+                                                                          nullptr,                                                                             \
+                                                                          cenpy::common::pattern::delegate::MethodDelegateBase::HookType(&notifyObserversFor)) \
+        {                                                                                                                                                      \
+            T##Delegate::bind(this);                                                                                                                           \
+        }                                                                                                                                                      \
+        static void notifyObserversFor(std::any it)                                                                                                            \
+        {                                                                                                                                                      \
+            std::any_cast<FakeClassSubject *>(it)->notifyObservers();                                                                                          \
+        }                                                                                                                                                      \
+        void notifyObservers() override                                                                                                                        \
+        {                                                                                                                                                      \
+            for (const auto &observer : cenpy::common::pattern::observer::Subject<T>::getObservers())                                                          \
+            {                                                                                                                                                  \
+                observer->update(*T##Delegate::getInstance());                                                                                                 \
+            }                                                                                                                                                  \
+        }                                                                                                                                                      \
     };
 
 namespace cenpy::common::pattern::observer
@@ -71,13 +74,6 @@ namespace cenpy::common::pattern::observer
         virtual void notifyObservers() = 0;
 
     protected:
-        /**
-         * @brief Default constructor
-         */
-        Subject()
-        {
-        }
-
         std::vector<std::shared_ptr<Observer<T>>> &getObservers()
         {
             return observers;
