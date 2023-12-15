@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <filesystem>
+#include <format>
 #include <common/persistence/preferences/Preferences.hpp>
 #include <common/persistence/preferences/serializer/JsonSerializer.hpp>
 #include <common/persistence/preferences/serializer/YamlSerializer.hpp>
@@ -22,7 +23,7 @@ namespace cenpy::common::persistence::preferences
 
         std::string toString() const
         {
-            return std::to_string(m_width) + "x" + std::to_string(m_height);
+            return std::format("{}x{}", m_width, m_height);
         }
 
         void read(std::istream &is) override

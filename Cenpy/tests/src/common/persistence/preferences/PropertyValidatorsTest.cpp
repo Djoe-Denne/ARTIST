@@ -47,7 +47,7 @@ TEST_F(BetweenPropertyValidatorTest, IsValid_ReturnsTrue)
     int max = 100;
     bool includeLowerBound = true;
     bool includeUpperBound = true;
-    BetweenPropertyValidator<int> validator(min, max, includeLowerBound, includeUpperBound);
+    BetweenPropertyValidator validator(min, max, includeLowerBound, includeUpperBound);
     std::any value = 42;
     EXPECT_TRUE(validator.isValid(value));
 }
@@ -58,7 +58,7 @@ TEST_F(BetweenPropertyValidatorTest, IsValid_OutsideLowerBound_ReturnsFalse)
     int max = 100;
     bool includeLowerBound = true;
     bool includeUpperBound = true;
-    BetweenPropertyValidator<int> validator(min, max, includeLowerBound, includeUpperBound);
+    BetweenPropertyValidator validator(min, max, includeLowerBound, includeUpperBound);
     std::any value = -1;
     EXPECT_FALSE(validator.isValid(value));
 }
@@ -69,7 +69,7 @@ TEST_F(BetweenPropertyValidatorTest, IsValid_OutsideUpperBound_ReturnsFalse)
     int max = 100;
     bool includeLowerBound = true;
     bool includeUpperBound = true;
-    BetweenPropertyValidator<int> validator(min, max, includeLowerBound, includeUpperBound);
+    BetweenPropertyValidator validator(min, max, includeLowerBound, includeUpperBound);
     std::any value = 101;
     EXPECT_FALSE(validator.isValid(value));
 }
@@ -80,7 +80,7 @@ TEST_F(BetweenPropertyValidatorTest, IsValid_EqualLowerBoundIncluded_ReturnsTrue
     int max = 100;
     bool includeLowerBound = true;
     bool includeUpperBound = true;
-    BetweenPropertyValidator<int> validator(min, max, includeLowerBound, includeUpperBound);
+    BetweenPropertyValidator validator(min, max, includeLowerBound, includeUpperBound);
     std::any value = 0;
     EXPECT_TRUE(validator.isValid(value));
 }
@@ -91,7 +91,7 @@ TEST_F(BetweenPropertyValidatorTest, IsValid_EqualLowerBoundExcluded_ReturnsFals
     int max = 100;
     bool includeLowerBound = false;
     bool includeUpperBound = true;
-    BetweenPropertyValidator<int> validator(min, max, includeLowerBound, includeUpperBound);
+    BetweenPropertyValidator validator(min, max, includeLowerBound, includeUpperBound);
     std::any value = 0;
     EXPECT_FALSE(validator.isValid(value));
 }
@@ -102,7 +102,7 @@ TEST_F(BetweenPropertyValidatorTest, IsValid_EqualUpperBoundIncluded_ReturnsTrue
     int max = 100;
     bool includeLowerBound = true;
     bool includeUpperBound = true;
-    BetweenPropertyValidator<int> validator(min, max, includeLowerBound, includeUpperBound);
+    BetweenPropertyValidator validator(min, max, includeLowerBound, includeUpperBound);
     std::any value = 100;
     EXPECT_TRUE(validator.isValid(value));
 }
@@ -113,7 +113,7 @@ TEST_F(BetweenPropertyValidatorTest, IsValid_EqualUpperBoundExcluded_ReturnsFals
     int max = 100;
     bool includeLowerBound = true;
     bool includeUpperBound = false;
-    BetweenPropertyValidator<int> validator(min, max, includeLowerBound, includeUpperBound);
+    BetweenPropertyValidator validator(min, max, includeLowerBound, includeUpperBound);
     std::any value = 100;
     EXPECT_FALSE(validator.isValid(value));
 }

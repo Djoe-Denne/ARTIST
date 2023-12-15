@@ -1,3 +1,4 @@
+#include <common/exception/TraceableException.hpp>
 #include <social/character/factory/CharacterFactory.hpp>
 #include <fstream>
 #include <iostream>
@@ -33,7 +34,7 @@ namespace cenpy
         }
         catch (const std::exception &e)
         {
-            throw std::invalid_argument("Error loading character from JSON: " + std::string(e.what()));
+            throw common::exception::TraceableException<std::runtime_error>("Error loading character from JSON: " + std::string(e.what()));
         }
     }
 

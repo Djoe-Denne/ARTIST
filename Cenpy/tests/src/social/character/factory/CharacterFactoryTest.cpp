@@ -6,8 +6,6 @@ namespace cscf = csc::factory;
 // Define a test fixture
 class CharacterFactoryTest : public ::testing::Test
 {
-protected:
-    cscf::CharacterFactory characterFactory;
 };
 
 // Test case for successful character creation
@@ -16,7 +14,7 @@ TEST_F(CharacterFactoryTest, CreateCharacterSuccess)
     // Assuming you have a valid JSON file for testing
     const std::string validCharacterName = "John Doe";
 
-    csc::Character character = characterFactory.createCharacter(validCharacterName);
+    csc::Character character = cscf::CharacterFactory::createCharacter(validCharacterName);
     // Add more assertions based on the expected values in the valid JSON file
     EXPECT_EQ(character.getName(), validCharacterName);
     EXPECT_EQ(character.getAge(), 30);
@@ -62,6 +60,6 @@ TEST_F(CharacterFactoryTest, CreateCharacterFileNotFound)
     const std::string invalidCharacterName = "nonexistent_character";
 
     ASSERT_THROW(
-        characterFactory.createCharacter(invalidCharacterName),
+        cscf::CharacterFactory::createCharacter(invalidCharacterName),
         std::invalid_argument);
 }

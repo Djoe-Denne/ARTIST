@@ -40,7 +40,7 @@ namespace cenpy::social::character
         template <typename T>
         void setMood(const T &trigger);
 
-        void say(const std::string_view &text) const;
+        [[noreturn]] void say(const std::string_view &text) const;
 
         [[nodiscard]] std::string toString() const;
     };

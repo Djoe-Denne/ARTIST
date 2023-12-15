@@ -62,7 +62,7 @@ void csc::Character::addRelationship(const std::string &characterName, const std
     relationships[characterName] = relationship;
 }
 
-void csc::Character::say(const std::string_view &text) const
+[[noreturn]] void csc::Character::say(const std::string_view &text) const
 {
     throw std::logic_error("The method or operation is not implemented. sentence: " + std::string(text) + "");
 }

@@ -4,19 +4,6 @@
 #include <common/pattern/observer/Subject.hpp>
 #include <concepts>
 
-template <typename T>
-concept Fake = requires(T t) {
-    {
-        t.getValue1()
-    } -> std::same_as<int>;
-    {
-        t.setValue(42)
-    } -> std::same_as<void>;
-    {
-        t.toggle()
-    } -> std::same_as<void>;
-};
-
 // Fake class that will be used as a subject
 class FakeClass
 {
@@ -89,6 +76,7 @@ protected:
         fakeClassSubject = std::make_shared<FakeClassSubject>(fakeClassInstance);
     }
 
+protected:
     std::shared_ptr<FakeClass> fakeClassInstance;
     std::shared_ptr<FakeObserver> fakeObserver;
     std::shared_ptr<FakeClassSubject> fakeClassSubject;

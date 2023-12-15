@@ -5,7 +5,8 @@ namespace cenpy::system::gui::desktop
 
     void WindowSizeSystem::update(component::gui::desktop::WindowComponent &windowComponent)
     {
-        int currentWidth, currentHeight;
+        int currentWidth;
+        int currentHeight;
         glfwGetWindowSize(window, &currentWidth, &currentHeight);
 
         // If the window size has changed, update it
@@ -20,7 +21,10 @@ namespace cenpy::system::gui::desktop
         if (windowComponent.isFullscreen())
         {
             // Get the current window position and size
-            int x, y, width, height;
+            int x;
+            int y;
+            int width;
+            int height;
             glfwGetWindowPos(window, &x, &y);
             glfwGetWindowSize(window, &width, &height);
 
@@ -32,7 +36,8 @@ namespace cenpy::system::gui::desktop
             GLFWmonitor *currentMonitor = nullptr;
             for (int i = 0; i < monitorCount; i++)
             {
-                int monitorX, monitorY;
+                int monitorX;
+                int monitorY;
                 glfwGetMonitorPos(monitors[i], &monitorX, &monitorY);
 
                 if (x >= monitorX && x < monitorX + width && y >= monitorY && y < monitorY + height)
@@ -48,7 +53,10 @@ namespace cenpy::system::gui::desktop
         else
         {
             // Get the current window position and size
-            int x, y, width, height;
+            int x;
+            int y;
+            int width;
+            int height;
             glfwGetWindowPos(window, &x, &y);
             glfwGetWindowSize(window, &width, &height);
 

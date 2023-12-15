@@ -305,7 +305,7 @@ namespace cenpy::graphic::shader
                 throw common::exception::TraceableException<std::runtime_error>(std::format("ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ\n{}", e.what()));
             }
 
-            m_shaderPaths.push_back(shaderPath);
+            m_shaderPaths.emplace_back(shaderPath);
 
             const char *shaderCodeCStr = shaderCode.c_str();
             GLuint shader;
