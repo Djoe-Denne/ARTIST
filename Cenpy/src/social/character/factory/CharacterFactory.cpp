@@ -20,7 +20,7 @@ namespace cenpy
             std::ifstream jsonFile("test\\game\\resources\\assets\\social\\character\\" + name + ".json");
             if (!jsonFile.is_open())
             {
-                throw std::runtime_error("Error opening JSON file");
+                throw common::exception::TraceableException<std::runtime_error>("Error loading character from JSON: File not found");
             }
             json characterData;
             jsonFile >> characterData;

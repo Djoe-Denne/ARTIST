@@ -136,7 +136,7 @@ namespace cenpy::graphic::shader
         {
 
         public:
-            Uniform() : m_location(), m_type(GL_INVALID_ENUM), m_size(0) {}
+            Uniform() noexcept = default;
 
             /**
              * @brief Constructor for creating a Uniform object with specified parameters.
@@ -145,7 +145,7 @@ namespace cenpy::graphic::shader
              * @param type The type of the uniform variable.
              * @param size The size of the uniform variable.
              */
-            Uniform(const GLint &location, const GLenum &type, const GLuint &size)
+            Uniform(const GLint &location, const GLenum &type, const GLuint &size) noexcept
                 : m_location(location), m_type(type), m_size(size)
             {
             }
