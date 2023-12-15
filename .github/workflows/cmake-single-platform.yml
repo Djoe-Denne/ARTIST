@@ -26,6 +26,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y ninja-build
+        sudo apt-get install -y libgl-dev libgl1-mesa-dev
         sudo pip install conan==1.62.0
 
     - name: Configure CMake
