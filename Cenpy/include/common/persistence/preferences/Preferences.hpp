@@ -475,7 +475,7 @@ namespace cenpy::common::persistence::preferences
     private:
         std::string m_appName;
         std::string m_filename;
-        std::unordered_map<std::string, Section> m_sections;
+        std::unordered_map<std::string, Section, collection_utils::StringHash, collection_utils::StringEqual> m_sections;
         std::shared_ptr<serializer::Serializer> m_serializer;
 
         /**
