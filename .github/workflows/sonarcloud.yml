@@ -43,10 +43,6 @@ jobs:
 
     steps:
       - uses: actions/download-artifact@v4
-        with:
-          # Name of the artifact to download.
-          # Optional. If unspecified, all artifacts for the run are downloaded.
-          name: test_results
       - name: Analyze with SonarCloud
 
         # You can pin the exact commit or the version.
