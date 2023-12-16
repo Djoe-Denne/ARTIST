@@ -25,10 +25,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get remove -y gcc-11 g++-11
-        sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-        sudo apt-get update
-        sudo apt install gcc-13 g++-13 -y
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 60
         sudo apt-get install -y ninja-build
         sudo apt-get install -y libgl-dev libgl1-mesa-dev
         sudo pip install conan==1.62.0
