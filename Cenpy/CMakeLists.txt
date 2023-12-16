@@ -43,7 +43,12 @@ target_include_directories(
         src
 )
 target_link_libraries(${PROJECT_NAME} PUBLIC ${CONAN_LIBS})
-target_link_libraries(${PROJECT_NAME} PRIVATE -lstdc++_libbacktrace)
+# if gcc >= 13.2.0
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 13.2.0)
+        target_link_libraries(${PROJECT_NAME} PRIVATE -lstdc++_libbacktrace)
+    endif()
+endif()
 #add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 #    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PROJECT_NAME}> "C:/Users/djden/source/repos/Cenpy/out/build/x86-debug/Cenpy/tests/${PROJECT_NAME}.dll"
 #        COMMENT "Copying ${PROJECT_NAME} to output directory" VERBATIM
