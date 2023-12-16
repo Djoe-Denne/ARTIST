@@ -13,7 +13,9 @@ int main()
     catch (const cenpy::common::exception::TraceableException<std::exception> &e)
     {
         std::cerr << e.what() << '\n';
+#if __cplusplus > 202002L && _GLIBCXX_HAVE_STACKTRACE
         std::cerr << e.getStackTrace() << '\n';
+#endif
         return 1;
     }
     return 0;
