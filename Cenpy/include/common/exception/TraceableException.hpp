@@ -50,11 +50,6 @@ namespace cenpy::common::exception
         {
         }
 
-        const std::stacktrace &getStackTrace() const
-        {
-            return NULL;
-        }
-
         const std::string &getStackTraceString() const
         {
             return "Stacktrace not available";
