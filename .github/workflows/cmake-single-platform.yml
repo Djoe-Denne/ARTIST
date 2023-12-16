@@ -31,6 +31,8 @@ jobs:
         sudo pip install conan==1.62.0
         conan profile new default --detect
         echo "[conf]\n" >> ~/.conan/profiles/default
+        echo "tools.system.package_manager:sudo=True\n" >> ~/.conan/profiles/default
+        echo "tools.system.package_manager:sudo_askpass=True\n" >> ~/.conan/profiles/default
         echo "tools.system.package_manager:mode=install" >> ~/.conan/profiles/default
 
 
