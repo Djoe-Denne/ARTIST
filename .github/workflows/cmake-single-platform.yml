@@ -55,7 +55,6 @@ jobs:
       run: bin/cenpy-common_tests --gtest_output=xml:test_results.xml
 
     - uses: actions/upload-artifact@v4
-      working-directory: ${{github.workspace}}/build
       with:
         name: test_results
-        path: test_results.xml
+        path: ${{github.workspace}}/build/test_results.xml
