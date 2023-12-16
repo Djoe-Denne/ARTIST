@@ -83,7 +83,7 @@ jobs:
             # mandatory
             -Dsonar.projectKey=Djoe-Denne_Cenpy
             -Dsonar.organization=djoe-denne06
-            -Dsonar.coverageReportPaths=${{github.workspace}}/build/test_results.xml
+            -Dsonar.coverageReportPaths=${{github.workspace}}/test_results.xml
             # Comma-separated paths to directories containing main source files.
             #-Dsonar.sources= # optional, default is project base directory
             # When you need the analysis to take place in a directory other than the one from which it was launched
