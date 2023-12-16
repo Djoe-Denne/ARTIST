@@ -32,7 +32,8 @@ include(${CMAKE_BINARY_DIR}/conan.cmake)
 
 conan_cmake_run(CONANFILE conanfile.txt
                 BUILD missing
-                BASIC_SETUP)
+                BASIC_SETUP
+                ARGS "-c tools.system.package_manager:mode=install")
 
 SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 if(MSVC)

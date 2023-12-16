@@ -1,6 +1,5 @@
 
 #include <iostream>
-#include <stacktrace>
 #include <manager/GameManager.hpp>
 
 namespace cenpy::manager

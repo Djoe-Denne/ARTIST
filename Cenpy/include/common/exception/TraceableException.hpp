@@ -2,7 +2,9 @@
 
 #include <string>
 #include <iostream>
+#if __cplusplus > 202002L && _GLIBCXX_HAVE_STACKTRACE
 #include <stacktrace>
+#endif
 #include <stdexcept>
 
 namespace cenpy::common::exception
