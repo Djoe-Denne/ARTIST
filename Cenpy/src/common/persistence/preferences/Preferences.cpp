@@ -60,10 +60,7 @@ namespace cenpy::common::persistence::preferences
         {
             return it->second;
         }
-        else
-        {
-            throw exception::TraceableException<std::runtime_error>("Invalid section: " + name);
-        }
+        throw exception::TraceableException<std::runtime_error>("Invalid section: " + name);
     }
 
     Section &Preferences::getSection(const std::string &name)
@@ -73,10 +70,7 @@ namespace cenpy::common::persistence::preferences
         {
             return it->second;
         }
-        else
-        {
-            throw exception::TraceableException<std::runtime_error>("Invalid section: " + name);
-        }
+        throw exception::TraceableException<std::runtime_error>("Invalid section: " + name);
     }
 
     std::vector<std::string> Preferences::getSections() const

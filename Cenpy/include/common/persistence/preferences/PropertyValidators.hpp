@@ -34,7 +34,7 @@ namespace cenpy::common::persistence::preferences
     class RegexPropertyValidator : public PropertyValidator
     {
     public:
-        explicit constexpr RegexPropertyValidator(const std::string &regex)
+        explicit RegexPropertyValidator(const std::string &regex)
             : m_regex(regex)
         {
         }

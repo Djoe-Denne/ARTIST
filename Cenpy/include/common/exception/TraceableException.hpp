@@ -46,7 +46,7 @@ namespace cenpy::common::exception
 #else
 
     public:
-        explicit TraceableException(const char *what) : E(what)
+        explicit TraceableException(const std::string &what) : E(what)
         {
         }
 
