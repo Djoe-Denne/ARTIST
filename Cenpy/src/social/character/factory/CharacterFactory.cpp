@@ -20,7 +20,7 @@ namespace cenpy
             std::ifstream jsonFile("test\\game\\resources\\assets\\social\\character\\" + name + ".json");
             if (!jsonFile.is_open())
             {
-                throw common::exception::TraceableException<std::runtime_error>("Error loading character from JSON: File not found");
+                throw common::exception::TraceableException<std::invalid_argument>("Error loading character from JSON: File not found");
             }
             json characterData;
             jsonFile >> characterData;
@@ -34,7 +34,7 @@ namespace cenpy
         }
         catch (const std::exception &e)
         {
-            throw common::exception::TraceableException<std::runtime_error>("Error loading character from JSON: " + std::string(e.what()));
+            throw common::exception::TraceableException<std::invalid_argument>("Error loading character from JSON: " + std::string(e.what()));
         }
     }
 
@@ -54,7 +54,7 @@ namespace cenpy
         }
         catch (const std::exception &e)
         {
-            throw std::invalid_argument("Error loading personality from JSON: " + std::string(e.what()));
+            throw common::exception::TraceableException<std::invalid_argument>("Error loading personality from JSON: " + std::string(e.what()));
         }
     }
 } // namespace cenpy

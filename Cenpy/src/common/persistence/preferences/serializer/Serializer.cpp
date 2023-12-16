@@ -62,7 +62,6 @@ namespace cenpy::common::persistence::preferences::serializer
 
     bool Serializer::fileExists(const Preferences &preferences) const
     {
-        std::cout << "Serializer::fileExists" << getPreferencesFilePath(preferences) << std::endl;
         std::filesystem::path path(getPreferencesFilePath(preferences));
         return std::filesystem::exists(path);
     }
