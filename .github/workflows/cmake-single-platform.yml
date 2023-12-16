@@ -34,8 +34,7 @@ jobs:
         echo "tools.system.package_manager:sudo=True\n" >> ~/.conan/profiles/default
         echo "tools.system.package_manager:sudo_askpass=True\n" >> ~/.conan/profiles/default
         echo "tools.system.package_manager:mode=install" >> ~/.conan/profiles/default
-        pip install gcovr==5.0
-
+        
     - name: Create build directory
       run: mkdir -p ${{github.workspace}} build
 
@@ -54,11 +53,21 @@ jobs:
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: bin/cenpy-common_tests --gtest_output=xml:test_results.xml
 
+    - uses: actions/upload-artifact@v4
+      with:
+        name: test_results
+        path: ${{github.workspace}}/build/test_results.xml
+
   Analysis:
     needs: build
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/download-artifact@v4
+        with:
+          # Name of the artifact to download.
+          # Optional. If unspecified, all artifacts for the run are downloaded.
+          name: test_results
       - name: Analyze with SonarCloud
 
         # You can pin the exact commit or the version.
