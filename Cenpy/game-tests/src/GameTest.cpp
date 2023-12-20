@@ -1,7 +1,6 @@
 #include <iostream>
 #include <common/exception/TraceableException.hpp>
 #include <manager/GameManager.hpp>
-#include <graphic/shader/Shader.hpp>
 
 int main()
 {

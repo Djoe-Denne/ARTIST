@@ -30,15 +30,12 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include
 ${CMAKE_CURRENT_SOURCE_DIR}/include
 ${CMAKE_CURRENT_SOURCE_DIR}/mock)
 
-add_executable(${PROJECT_NAME}_tests ${test_files})
+add_executable(${PROJECT_NAME}_component_tests ${test_files})
 
-target_link_libraries(${PROJECT_NAME}_tests PRIVATE ${PROJECT_NAME} ${SYSLIBS} GTest::gtest_main GTest::gmock_main)
+target_link_libraries(${PROJECT_NAME}_component_tests PRIVATE ${PROJECT_NAME} ${SYSLIBS} GTest::gtest_main GTest::gmock_main)
 
-if(MOCK_GL)
-        target_compile_definitions(${PROJECT_NAME}_tests PRIVATE __mock_gl__)
-endif()
 if(MOCK_APPDATA)
-        target_compile_definitions(${PROJECT_NAME}_tests PRIVATE __mock_appdata__)
+        target_compile_definitions(${PROJECT_NAME}_component_tests PRIVATE __mock_appdata__)
 endif()
 
-gtest_discover_tests(${PROJECT_NAME}_tests)
+gtest_discover_tests(${PROJECT_NAME}_component_tests)

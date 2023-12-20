@@ -34,7 +34,6 @@ target_include_directories(
         ${PROJECT_NAME}
         PUBLIC
         include
-        mock
 )
 
 target_include_directories(
@@ -62,4 +61,5 @@ if(MOCK_APPDATA)
 endif()
 
 add_subdirectory(tests)
+add_subdirectory(component-tests)
 add_subdirectory(game-tests)

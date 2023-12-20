@@ -17,9 +17,6 @@
 #include <unordered_map>
 #include <glm/glm.hpp>
 #include <common/exception/TraceableException.hpp>
-#ifdef __mock_gl__
-#include <opengl/glFunctionMock.hpp>
-#endif
 
 namespace cenpy::graphic::shader
 {
@@ -73,19 +70,16 @@ namespace cenpy::graphic::shader
          * This function enforces type safety and delegates the setting
          * of the value to the specialized setter provided by the derived class.
          */
-        template <typename U, typename T, template <typename> typename C>
-            requires C<U>::value
-        void set(const U &value)
+        template <typename T, typename U, template <typename> typename C>
+            requires C<T>::value
+        void set(const T &value)
         {
-            if (m_value.has_value() && std::any_cast<U>(&m_value) == nullptr)
+            if (m_value.has_value() && std::any_cast<T>(&m_value) == nullptr)
             {
                 throw common::exception::TraceableException<std::runtime_error>(std::format("ERROR::UNIFORM::SET::TYPE_MISMATCH: The type of the value ({}) does not match the type of the uniform variable ({})", typeid(value).name(), typeid(m_value).name()));
             }
-            else
-            {
-                m_value = value;
-            }
-            C<U>::set(*dynamic_cast<T *>(this));
+            m_value = value;
+            C<T>::set(*dynamic_cast<U *>(this));
         }
 
         /**
