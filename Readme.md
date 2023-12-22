@@ -1,3 +1,6 @@
+![Build, Test](https://github.com/Djoe-Denne/Cenpy/actions/workflows/cmake-single-platform.yml/badge.svg) ![SonarCloud Analysis](https://github.com/Djoe-Denne/Cenpy/actions/workflows/sonar.yml/badge.svg)
+
+
 # Cen'py Game Engine
 
 Cen'py is a C++23 game engine designed for visual novels, inspired by Ren'py, a Python game engine specialized in visual novels (VN). The name is a playful combination of "Ren'py" and "Senpai," paying homage to Japan, the birthplace of visual novels.
