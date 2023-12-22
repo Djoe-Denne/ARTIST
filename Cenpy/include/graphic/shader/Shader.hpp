@@ -202,21 +202,22 @@ namespace cenpy::graphic::shader
              * @return The OpenGL shader type.
              * @throws TraceableException if the shader type is unknown.
              */
-            GLenum getGLShaderType(const ShaderType &shaderType)
+            GLenum getGLShaderType(const ShaderType &shaderType) const
             {
                 switch (shaderType)
                 {
-                case ShaderType::VERTEX:
+                    using enum ShaderType;
+                case VERTEX:
                     return GL_VERTEX_SHADER;
-                case ShaderType::FRAGMENT:
+                case FRAGMENT:
                     return GL_FRAGMENT_SHADER;
-                case ShaderType::GEOMETRY:
+                case GEOMETRY:
                     return GL_GEOMETRY_SHADER;
-                case ShaderType::TESS_CONTROL:
+                case TESS_CONTROL:
                     return GL_TESS_CONTROL_SHADER;
-                case ShaderType::TESS_EVALUATION:
+                case TESS_EVALUATION:
                     return GL_TESS_EVALUATION_SHADER;
-                case ShaderType::COMPUTE:
+                case COMPUTE:
                     return GL_COMPUTE_SHADER;
                 default:
                     throw common::exception::TraceableException<std::runtime_error>(std::format("ERROR::SHADER::UNKNOWN_SHADER_TYPE"));

@@ -55,8 +55,7 @@ namespace cenpy::common::persistence::preferences
 
     const Section &Preferences::getSection(const std::string &name) const
     {
-        auto it = m_sections.find(name);
-        if (it != m_sections.end())
+        if (auto it = m_sections.find(name); it != m_sections.end())
         {
             return it->second;
         }
@@ -65,8 +64,7 @@ namespace cenpy::common::persistence::preferences
 
     Section &Preferences::getSection(const std::string &name)
     {
-        auto it = m_sections.find(name);
-        if (it != m_sections.end())
+        if (auto it = m_sections.find(name); it != m_sections.end())
         {
             return it->second;
         }
@@ -83,7 +81,7 @@ namespace cenpy::common::persistence::preferences
         return sections;
     }
 
-    void Preferences::save()
+    void Preferences::save() const
     {
         saveToFile();
     }

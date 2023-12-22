@@ -25,8 +25,7 @@ namespace cenpy::common::persistence::preferences::serializer
     bool Serializer::saveToFile(const Preferences &preferences) const
     {
         ensureSeriability(preferences);
-        std::ofstream file(getPreferencesFilePath(preferences));
-        if (file.is_open())
+        if (std::ofstream file(getPreferencesFilePath(preferences)); file.is_open())
         {
             serialize(file, preferences);
             file.close();
@@ -39,8 +38,7 @@ namespace cenpy::common::persistence::preferences::serializer
     {
         if (fileExists(preferences))
         {
-            std::ifstream file(getPreferencesFilePath(preferences));
-            if (file.is_open())
+            if (std::ifstream file(getPreferencesFilePath(preferences)); file.is_open())
             {
                 deserialize(file, preferences);
                 file.close();

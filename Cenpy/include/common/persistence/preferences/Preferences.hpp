@@ -385,8 +385,7 @@ namespace cenpy::common::persistence::preferences
         template <typename T>
         [[nodiscard]] auto get(const std::string &section, const std::string &key) const -> std::conditional_t<std::is_base_of_v<PropertyValue, T>, std::shared_ptr<T>, T>
         {
-            auto it = m_sections.find(section);
-            if (it != m_sections.end())
+            if (auto it = m_sections.find(section); it != m_sections.end())
             {
                 return it->second.get<T>(key);
             }
@@ -458,7 +457,7 @@ namespace cenpy::common::persistence::preferences
         /**
          * @brief Saves the preferences to the file.
          */
-        void save();
+        void save() const;
 
         /**
          * @brief Loads the preferences from the file.
