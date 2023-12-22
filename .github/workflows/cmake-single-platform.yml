@@ -56,13 +56,19 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: test_results
-        path: ${{github.workspace}}/build/test_results.xml
+        path: ${{github.workspace}}/test_results.xml
 
   Analysis:
     needs: build
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/download-artifact@v4
+        with:
+          # Name of the artifact to download.
+          # Optional. If unspecified, all artifacts for the run are downloaded.
+          name: test_results
+          path: ${{github.workspace}}
       - name: Analyze with SonarCloud
         # You can pin the exact commit or the version.
         # uses: SonarSource/sonarcloud-github-action@de2e56b42aa84d0b1c5b622644ac17e505c9a049
