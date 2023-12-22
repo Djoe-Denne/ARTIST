@@ -34,8 +34,6 @@ jobs:
         echo "tools.system.package_manager:sudo=True\n" >> ~/.conan/profiles/default
         echo "tools.system.package_manager:sudo_askpass=True\n" >> ~/.conan/profiles/default
         echo "tools.system.package_manager:mode=install" >> ~/.conan/profiles/default
-        echo "${{github.workspace}}"
-        ls -r ${{github.workspace}}
         
     - name: Create build directory
       run: mkdir -p ${{github.workspace}} build

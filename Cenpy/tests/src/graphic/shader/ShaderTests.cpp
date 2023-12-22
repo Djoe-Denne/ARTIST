@@ -132,7 +132,16 @@ TEST_F(ShaderTest, GetShaderCode)
     // Act
     ASSERT_NO_THROW(shader.load());
 
-    ASSERT_EQ(shader.getShaderCode(), "#version 330 core\n\nvoid main()\n{\n    gl_Position = vec4(0.0, 0.0, 0.0, 1.0);\n}\n");
+    std::string code = R"(#version 330 core
+layout (location = 0) in vec3 aPos;
+
+void main()
+{
+    gl_Position = vec4(aPos, 1.0);
+}
+)";
+
+    ASSERT_EQ(shader.getShaderCode(), code);
 
     shader.free();
 }
