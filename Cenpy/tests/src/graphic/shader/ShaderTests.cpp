@@ -12,6 +12,10 @@ namespace mock = cenpy::mock;
 class ShaderTest : public ::testing::Test
 {
 public:
+    void SetUp() override
+    {
+        mock::opengl::glFunctionMock::reset();
+    }
 };
 
 TEST_F(ShaderTest, CreateShaderVert)

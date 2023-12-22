@@ -1,6 +1,10 @@
 /**
  * @file uniform.hpp
+ * @brief Defines classes and templates for managing shader uniform variables across various graphics APIs.
  *
+ * The uniform management system is designed to be flexible and extensible to support multiple graphics APIs
+ * such as OpenGL, Vulkan, DirectX, and Metal. This file contains the BaseUniform class, which serves as an
+ * abstract foundation, and various template specializations and type traits for handling different uniform types.
  *
  * @author Djoé DENNE
  * @date 13/12/2023
@@ -49,9 +53,10 @@ namespace cenpy::graphic::shader
      * @class BaseUniform
      * @brief Abstract base class for representing uniform variables in shaders.
      *
-     * This class serves as the foundation for handling uniform variables across
-     * different graphics APIs such as OpenGL, Vulkan, and DirectX. Derived classes
-     * are expected to implement API-specific functionality by inheriting from this class.
+     * This class provides a foundational interface for handling uniform variables.
+     * It is designed to be extended by specific implementations for different graphics APIs
+     * such as OpenGL, Vulkan, DirectX, and Metal. The class includes template methods for
+     * setting and getting uniform values with type safety, enforced through specialized setters.
      */
     class BaseUniform
     {

@@ -14,6 +14,7 @@ class UniformTest : public ::testing::Test
 public:
     void SetUp() override
     {
+        mock::glFunctionMock::reset();
     }
 };
 

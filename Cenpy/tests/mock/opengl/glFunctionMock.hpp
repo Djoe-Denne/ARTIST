@@ -65,6 +65,11 @@ namespace cenpy::mock::opengl
             return instance;
         }
 
+        static void reset()
+        {
+            ::testing::Mock::VerifyAndClearExpectations(instance().get());
+        }
+
         glFunctionMock()
         {
             ON_CALL(*this, glGetProgramiv_mock).WillByDefault([this](GLuint program, GLenum pname, GLint *params)
@@ -87,6 +92,9 @@ namespace cenpy::mock::opengl
                 }
                 (*size) = 1;
                 (*type) = GL_FLOAT; });
+
+            ON_CALL(*this, glGetUniformiv_mock).WillByDefault([this](GLuint program, GLint location, GLint *params)
+                                                              { (*params) = 1; });
 
             ON_CALL(*this, glGetActiveUniform_mock)
                 .WillByDefault([this](GLuint program, GLuint index, GLsizei bufSize, GLsizei *length, GLint *size, GLenum *type, GLchar *name)
