@@ -74,6 +74,20 @@ namespace cenpy::graphic::shader
             return m_shaderCode;
         }
 
+        /**
+         * @brief Load the shader.
+         */
+        virtual void load()
+        {
+        }
+
+        /**
+         * @brief Free the resources used by the shader.
+         */
+        virtual void free()
+        {
+        }
+
     protected:
         /**
          * @brief Constructor for BaseShader.
@@ -114,16 +128,6 @@ namespace cenpy::graphic::shader
             return m_shaderCode;
         }
 
-        /**
-         * @brief Free the resources used by the shader.
-         */
-        virtual void free() = 0;
-
-        /**
-         * @brief Load the shader.
-         */
-        virtual void load() = 0;
-
     private:
         std::string m_shaderPath; ///< The path of the shader file.
         ShaderType m_shaderType;  ///< The type of the shader.
@@ -151,6 +155,21 @@ namespace cenpy::graphic::shader
             {
             }
 
+            ~Shader()
+            {
+                free();
+            }
+
+            /**
+             * @brief Gets the location of the shader object.
+             *
+             * @return The location of the shader object.
+             */
+            [[nodiscard]] virtual GLuint getLocation() const
+            {
+                return m_location;
+            }
+
             /**
              * @brief Loads and compiles the shader.
              *
@@ -171,7 +190,7 @@ namespace cenpy::graphic::shader
                 glShaderSource(m_location, 1, &shaderCodeCStr, nullptr);
                 glCompileShader(m_location);
 
-                checkCompileErrors(m_location);
+                checkCompileErrors();
             }
 
             /**
@@ -182,16 +201,6 @@ namespace cenpy::graphic::shader
             void free() override
             {
                 glDeleteShader(m_location);
-            }
-
-            /**
-             * @brief Gets the location of the shader object.
-             *
-             * @return The location of the shader object.
-             */
-            [[nodiscard]] virtual GLuint getLocation() const
-            {
-                return m_location;
             }
 
         protected:
@@ -232,30 +241,16 @@ namespace cenpy::graphic::shader
              * @param shader The shader to check for errors.
              * @throws TraceableException if the shader cannot be compiled.
              */
-            void checkCompileErrors(GLuint shader) const
-            {
-                checkCompileErrors(shader, "SHADER");
-            }
-
-            /**
-             * @brief Checks for compile errors in a shader.
-             *
-             * This function checks for compile errors in a shader and throws an exception if any errors are found.
-             *
-             * @param shader The shader to check for errors.
-             * @param errorMessage The error message to include in the exception.
-             * @throws TraceableException if the shader cannot be compiled.
-             */
-            void checkCompileErrors(GLuint shader, const std::string &errorMessage) const
+            void checkCompileErrors() const
             {
                 GLint success;
                 GLchar infoLog[512];
-                glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+                glGetShaderiv(m_location, GL_COMPILE_STATUS, &success);
 
                 if (!success)
                 {
-                    glGetShaderInfoLog(shader, 512, nullptr, infoLog);
-                    throw common::exception::TraceableException<std::runtime_error>(std::format("ERROR::{}::COMPILATION_FAILED\n{}", errorMessage, infoLog));
+                    glGetShaderInfoLog(m_location, 512, nullptr, infoLog);
+                    throw common::exception::TraceableException<std::runtime_error>(std::format("ERROR::SHADER::COMPILATION_FAILED\n{}", infoLog));
                 }
             }
 

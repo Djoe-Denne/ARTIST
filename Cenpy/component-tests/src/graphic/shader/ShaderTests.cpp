@@ -1,51 +1,11 @@
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
 #include <string>
-#include <gtest/gtest.h>
 #include <graphic/shader/Shader.hpp>
+#include <OpenGLComponentTests.hpp>
 
 namespace shader = cenpy::graphic::shader;
 
-class ShaderTest : public ::testing::Test
+class ShaderTest : public OpenGLComponentTest
 {
-public:
-    GLFWwindow *window;
-    void SetUp() override
-    {
-        // Initialize GLFW
-        if (!glfwInit())
-        {
-            // Initialization failed
-        }
-
-        // Set OpenGL version, e.g., for OpenGL 3.3
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-        // Create a windowed mode window and its OpenGL context
-        window = glfwCreateWindow(640, 480, "Test", NULL, NULL);
-        if (!window)
-        {
-            glfwTerminate();
-            // Window or OpenGL context creation failed
-        }
-
-        // Make the window's context current
-        glfwMakeContextCurrent(window);
-
-        // Initialize GLEW
-        if (glewInit() != GLEW_OK)
-        {
-            throw std::runtime_error("Failed to initialize GLEW.");
-        }
-    }
-
-    void TearDown() override
-    {
-        glfwDestroyWindow(window);
-        glfwTerminate();
-    }
 };
 
 TEST_F(ShaderTest, CreateShaderVert)

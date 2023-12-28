@@ -16,7 +16,7 @@ namespace mock_shader = cenpy::mock::graphic::shader;
 class PassTest : public ::testing::Test
 {
 protected:
-    void SetUp() override
+    void TearDown() override
     {
         mock::opengl::glFunctionMock::reset();
     }
@@ -47,19 +47,20 @@ TEST_F(PassTest, attachShaders)
     // Assertions can be done here if there are any effects to be checked
 }
 
-TEST_F(PassTest, FreeShaders)
+TEST_F(PassTest, DeleteMustFree)
 {
     // Arrange
     auto vertexShader = std::make_shared<mock_shader::MockShader>("vertex_shader_path", shader::ShaderType::VERTEX);
     auto fragmentShader = std::make_shared<mock_shader::MockShader>("fragment_shader_path", shader::ShaderType::FRAGMENT);
 
-    EXPECT_CALL(*vertexShader, free()).Times(1);
-    EXPECT_CALL(*fragmentShader, free()).Times(1);
+    EXPECT_CALL(*vertexShader, free()).Times(2);
+    EXPECT_CALL(*fragmentShader, free()).Times(2);
+    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glDeleteProgram_mock(::testing::_)).Times(1);
 
     // Act
-    shader::opengl::Pass<mock_shader::MockShader> pass(vertexShader, fragmentShader);
+    auto pass = new shader::opengl::Pass<mock_shader::MockShader>(vertexShader, fragmentShader);
 
-    // Assertions can be done here if there are any effects to be checked
+    delete pass;
 }
 
 TEST_F(PassTest, ShaderAttachment)
@@ -81,7 +82,7 @@ TEST_F(PassTest, ReadUniformsGetUniformiv)
     auto vertexShader = std::make_shared<mock_shader::MockShader>("vertex_shader_path", shader::ShaderType::VERTEX);
     auto fragmentShader = std::make_shared<mock_shader::MockShader>("fragment_shader_path", shader::ShaderType::FRAGMENT);
 
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glGetUniformiv_mock(1, ::testing::_, ::testing::_)).Times(1);
+    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glGetProgramiv_mock(1, ::testing::_, ::testing::_)).Times(2);
 
     // Act
     shader::opengl::Pass<mock_shader::MockShader> pass(vertexShader, fragmentShader);

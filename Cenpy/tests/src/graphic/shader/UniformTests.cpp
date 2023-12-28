@@ -12,7 +12,7 @@ namespace mock = cenpy::mock::opengl;
 class UniformTest : public ::testing::Test
 {
 public:
-    void SetUp() override
+    void TearDown() override
     {
         mock::glFunctionMock::reset();
     }

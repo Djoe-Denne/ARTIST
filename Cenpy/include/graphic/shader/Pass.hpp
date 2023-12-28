@@ -44,7 +44,10 @@ namespace cenpy::graphic::shader
         /**
          * @brief Destructor for BasePass.
          */
-        virtual ~BasePass() = default;
+        virtual ~BasePass()
+        {
+            freeShader();
+        }
 
         /**
          * @brief Adds a uniform with the specified name and value to the pass.
@@ -62,7 +65,7 @@ namespace cenpy::graphic::shader
             if (m_uniforms.contains(name))
             {
                 m_uniforms[name]->set<T, U, C>(value);
-                return *this;
+                return static_cast<D &>(*this);
             }
             throw common::exception::TraceableException<std::runtime_error>(std::format("ERROR::SHADER::UNIFORM_NOT_FOUND\nUniform {} not found", name));
         }
@@ -130,7 +133,24 @@ namespace cenpy::graphic::shader
          *
          * Derived classes must implement this method to attach the shaders to the pass.
          */
-        virtual void attachShaders() = 0;
+        virtual void attachShaders()
+        {
+        }
+
+        /**
+         * @brief Frees any resources associated with the shader pass.
+         *
+         * This function is responsible for releasing any resources that were allocated
+         * during the lifetime of the shader pass. It should be called when the shader
+         * pass is no longer needed to prevent memory leaks.
+         */
+        virtual void freeShader()
+        {
+            for (std::shared_ptr<S> &shader : BasePass<S, U, C, D>::getShaders())
+            {
+                shader->free();
+            }
+        }
 
         /**
          * @brief Reads the uniforms from the shaders.
@@ -178,6 +198,11 @@ namespace cenpy::graphic::shader
                 BasePass<S, U, C, Pass<S, U, C>>::load();
             }
 
+            ~Pass()
+            {
+                free();
+            }
+
         protected:
             /**
              * @brief Reads the uniforms for the pass and stores them in the provided map.
@@ -190,7 +215,7 @@ namespace cenpy::graphic::shader
             {
                 GLint count;
                 // get number of uniforms
-                glGetUniformiv(m_pass, GL_ACTIVE_UNIFORMS, &count);
+                glGetProgramiv(m_pass, GL_ACTIVE_UNIFORMS, &count);
 
                 for (int i = 0; i < count; i++)
                 {
@@ -220,10 +245,53 @@ namespace cenpy::graphic::shader
                     glAttachShader(m_pass, shader->getLocation());
                 }
                 glLinkProgram(m_pass);
-
-                for (std::shared_ptr<S> &shader : BasePass<S, U, C, Pass<S, U, C>>::getShaders())
+                for (const std::shared_ptr<S> &shader : BasePass<S, U, C, Pass<S, U, C>>::getShaders())
                 {
                     shader->free();
+                }
+                try
+                {
+                    checkLinkErrors();
+                }
+                catch (const std::exception &e)
+                {
+                    free();
+                    throw e;
+                }
+            }
+
+            /**
+             * @brief Frees the shader program.
+             *
+             * @note This function is called internally by the BasePass class.
+             */
+            void free()
+            {
+                glDeleteProgram(m_pass);
+            }
+
+            /**
+             * @brief Checks for link errors in a PROGRAM.
+             *
+             * This function checks for link errors in a program and throws an exception if any errors are found.
+             *
+             * @throws TraceableException if the program cannot be linked.
+             */
+            void checkLinkErrors() const
+            {
+                GLint success;
+                glGetProgramiv(m_pass, GL_LINK_STATUS, &success);
+
+                if (!success)
+                {
+                    GLint maxLength = 0;
+                    glGetProgramiv(m_pass, GL_INFO_LOG_LENGTH, &maxLength);
+
+                    // The maxLength includes the NULL character
+                    std::vector<GLchar> infoLog(maxLength);
+                    glGetProgramInfoLog(m_pass, maxLength, &maxLength, &infoLog[0]);
+
+                    throw common::exception::TraceableException<std::runtime_error>(std::format("ERROR::SHADER::COMPILATION_FAILED\n{}", &infoLog[0]));
                 }
             }
 

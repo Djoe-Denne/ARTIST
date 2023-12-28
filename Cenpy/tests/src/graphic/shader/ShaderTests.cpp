@@ -12,7 +12,7 @@ namespace mock = cenpy::mock;
 class ShaderTest : public ::testing::Test
 {
 public:
-    void SetUp() override
+    void TearDown() override
     {
         mock::opengl::glFunctionMock::reset();
     }
@@ -31,8 +31,6 @@ TEST_F(ShaderTest, CreateShaderVert)
 
     // Act
     ASSERT_NO_THROW(shader.load());
-
-    shader.free();
 }
 
 TEST_F(ShaderTest, CreateShaderFrag)
@@ -48,8 +46,6 @@ TEST_F(ShaderTest, CreateShaderFrag)
 
     // Act
     ASSERT_NO_THROW(shader.load());
-
-    shader.free();
 }
 
 TEST_F(ShaderTest, CreateShaderGeom)
@@ -65,8 +61,6 @@ TEST_F(ShaderTest, CreateShaderGeom)
 
     // Act
     ASSERT_NO_THROW(shader.load());
-
-    shader.free();
 }
 
 TEST_F(ShaderTest, CreateShaderTesselaionControl)
@@ -82,8 +76,6 @@ TEST_F(ShaderTest, CreateShaderTesselaionControl)
 
     // Act
     ASSERT_NO_THROW(shader.load());
-
-    shader.free();
 }
 
 TEST_F(ShaderTest, CreateShaderCompute)
@@ -99,8 +91,6 @@ TEST_F(ShaderTest, CreateShaderCompute)
 
     // Act
     ASSERT_NO_THROW(shader.load());
-
-    shader.free();
 }
 
 TEST_F(ShaderTest, GetLocation)
@@ -118,8 +108,6 @@ TEST_F(ShaderTest, GetLocation)
     ASSERT_NO_THROW(shader.load());
 
     ASSERT_EQ(shader.getLocation(), 1);
-
-    shader.free();
 }
 
 TEST_F(ShaderTest, GetShaderCode)
@@ -137,17 +125,17 @@ TEST_F(ShaderTest, GetShaderCode)
     ASSERT_NO_THROW(shader.load());
 
     std::string code = R"(#version 330 core
+
+uniform int testUniform;
 layout (location = 0) in vec3 aPos;
 
 void main()
 {
-    gl_Position = vec4(aPos, 1.0);
+    gl_Position = vec4(aPos, 1.0) * float(testUniform);
 }
 )";
 
     ASSERT_EQ(shader.getShaderCode(), code);
-
-    shader.free();
 }
 
 TEST_F(ShaderTest, GetShaderType)
@@ -165,8 +153,28 @@ TEST_F(ShaderTest, GetShaderType)
     ASSERT_NO_THROW(shader.load());
 
     ASSERT_EQ(shader.getShaderType(), shader::ShaderType::VERTEX);
+}
 
-    shader.free();
+TEST_F(ShaderTest, Free)
+{
+    // Arrange
+    shader::opengl::Shader shader("test-datas/shaders/vertex/good/minimal.vert", shader::ShaderType::VERTEX);
+
+    // Expect calls
+    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glDeleteShader_mock(::testing::_)).Times(2);
+
+    ASSERT_NO_THROW(shader.free());
+}
+
+TEST_F(ShaderTest, DeleteMustFree)
+{
+    // Arrange
+    auto shader = new shader::opengl::Shader("test-datas/shaders/vertex/good/minimal.vert", shader::ShaderType::VERTEX);
+
+    // Expect calls
+    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glDeleteShader_mock(::testing::_)).Times(1);
+
+    ASSERT_NO_THROW(delete shader);
 }
 
 #endif //::testing::__mock_gl__
