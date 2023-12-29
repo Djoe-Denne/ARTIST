@@ -90,6 +90,16 @@ namespace cenpy::graphic::shader
             return m_shaders;
         }
 
+        /**
+         * @brief Sets up and activates the shader pass.
+         *
+         * This method should be implemented by derived classes to set up and activate the shader pass.
+         * It is responsible for binding the necessary shader programs, uniforms, and other resources.
+         *
+         * @note This method must be overridden by derived classes.
+         */
+        virtual void use() = 0;
+
     protected:
         /**
          * @brief Constructor for BasePass.
@@ -108,7 +118,7 @@ namespace cenpy::graphic::shader
          *
          * This method loads each shader, attaches the shaders, and reads the uniforms.
          */
-        void load()
+        virtual void load()
         {
             for (std::shared_ptr<S> &shader : BasePass<S, U, C, D>::getShaders())
             {
@@ -203,6 +213,14 @@ namespace cenpy::graphic::shader
                 free();
             }
 
+            /**
+             * @brief Activates the shader pass.
+             */
+            void use() override
+            {
+                glUseProgram(m_location);
+            }
+
         protected:
             /**
              * @brief Reads the uniforms for the pass and stores them in the provided map.
@@ -215,7 +233,7 @@ namespace cenpy::graphic::shader
             {
                 GLint count;
                 // get number of uniforms
-                glGetProgramiv(m_pass, GL_ACTIVE_UNIFORMS, &count);
+                glGetProgramiv(m_location, GL_ACTIVE_UNIFORMS, &count);
 
                 for (int i = 0; i < count; i++)
                 {
@@ -225,9 +243,9 @@ namespace cenpy::graphic::shader
                     GLenum type;
 
                     // get uniform information
-                    glGetActiveUniform(m_pass, i, sizeof(name), &length, &size, &type, name);
+                    glGetActiveUniform(m_location, i, sizeof(name), &length, &size, &type, name);
                     name[length] = '\0';
-                    GLuint location = glGetUniformLocation(m_pass, name);
+                    GLuint location = glGetUniformLocation(m_location, name);
                     uniforms[name] = std::make_shared<U>(location, type, size);
                 }
             }
@@ -239,12 +257,12 @@ namespace cenpy::graphic::shader
              */
             void attachShaders() override
             {
-                m_pass = glCreateProgram();
+                m_location = glCreateProgram();
                 for (const std::shared_ptr<S> &shader : BasePass<S, U, C, Pass<S, U, C>>::getShaders())
                 {
-                    glAttachShader(m_pass, shader->getLocation());
+                    glAttachShader(m_location, shader->getLocation());
                 }
-                glLinkProgram(m_pass);
+                glLinkProgram(m_location);
                 for (const std::shared_ptr<S> &shader : BasePass<S, U, C, Pass<S, U, C>>::getShaders())
                 {
                     shader->free();
@@ -267,7 +285,7 @@ namespace cenpy::graphic::shader
              */
             void free()
             {
-                glDeleteProgram(m_pass);
+                glDeleteProgram(m_location);
             }
 
             /**
@@ -280,23 +298,23 @@ namespace cenpy::graphic::shader
             void checkLinkErrors() const
             {
                 GLint success;
-                glGetProgramiv(m_pass, GL_LINK_STATUS, &success);
+                glGetProgramiv(m_location, GL_LINK_STATUS, &success);
 
                 if (!success)
                 {
                     GLint maxLength = 0;
-                    glGetProgramiv(m_pass, GL_INFO_LOG_LENGTH, &maxLength);
+                    glGetProgramiv(m_location, GL_INFO_LOG_LENGTH, &maxLength);
 
                     // The maxLength includes the NULL character
                     std::vector<GLchar> infoLog(maxLength);
-                    glGetProgramInfoLog(m_pass, maxLength, &maxLength, &infoLog[0]);
+                    glGetProgramInfoLog(m_location, maxLength, &maxLength, &infoLog[0]);
 
                     throw common::exception::TraceableException<std::runtime_error>(std::format("ERROR::SHADER::COMPILATION_FAILED\n{}", &infoLog[0]));
                 }
             }
 
         private:
-            GLuint m_pass; ///< The OpenGL program ID for the pass.
+            GLuint m_location; ///< The OpenGL program ID for the pass.
         };
     } // namespace opengl
 } // namespace cenpy::graphic::shader

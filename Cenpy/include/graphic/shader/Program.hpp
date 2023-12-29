@@ -29,17 +29,17 @@ namespace cenpy::graphic::shader
         template <typename T>
         [[nodiscard]] P &forPass(const int &pass)
         {
-            return m_passes[pass];
+            return *m_passes[pass];
         }
 
-        [[nodiscard]] virtual std::size_t getPassesCount() const
+        [[nodiscard]] virtual int getPassesCount() const
         {
             return m_passes.size();
         }
 
         virtual void use(const int &pass)
         {
-            m_passes[pass].use();
+            m_passes[pass]->use();
             m_currentPass = pass;
         }
 
@@ -52,7 +52,7 @@ namespace cenpy::graphic::shader
         {
             if (hasNext())
             {
-                use(m_currentPass + 1);
+                use(++m_currentPass);
                 return hasNext();
             }
             reset();
@@ -64,17 +64,17 @@ namespace cenpy::graphic::shader
          */
         virtual void reset()
         {
-            m_currentPass = 0;
+            m_currentPass = -1;
         }
 
     protected:
-        BaseProgram(const std::initializer_list<P> &passes) : m_passes(passes)
+        BaseProgram(const std::initializer_list<std::shared_ptr<P>> &passes) : m_passes(passes)
         {
         }
 
     private:
-        std::vector<P> m_passes;
-        u_int16_t m_currentPass = 0;
+        std::vector<std::shared_ptr<P>> m_passes;
+        int m_currentPass = -1;
     };
 
     namespace opengl
@@ -84,7 +84,7 @@ namespace cenpy::graphic::shader
         class Program : public BaseProgram<P, S, U, C, Program<S, U, C, P>>
         {
         public:
-            Program(const std::initializer_list<P> &passes) : BaseProgram<P, S, U, C, Program<S, U, C, P>>(passes)
+            Program(const std::initializer_list<std::shared_ptr<P>> &passes) : BaseProgram<P, S, U, C, Program<S, U, C, P>>(passes)
             {
             }
         };

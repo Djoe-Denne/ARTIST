@@ -1,81 +1,56 @@
 #ifdef __mock_gl__
-#include <any>
-#include <iostream>
-#include <string>
-#include <memory>
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
 
+#include <gtest/gtest.h>
 #include <opengl/glFunctionMock.hpp>
-#include <graphic/shader/MockUniform.hpp>
+#include <graphic/shader/MockPass.hpp>
 #include <graphic/shader/Program.hpp>
 
-namespace shader = cenpy::graphic::shader::opengl;
-namespace mock = cenpy::mock;
-namespace shaderMock = mock::graphic::shader;
-
-template <typename U>
-struct mockUniformSetter : cenpy::graphic::shader::baseSetter<mock::graphic::shader::MockUniform, U>
-{
-};
+namespace shader = cenpy::graphic::shader;
+namespace mock_shader = cenpy::mock::graphic::shader;
 
 class ProgramTest : public ::testing::Test
 {
-public:
+protected:
+    std::shared_ptr<mock_shader::MockPass> mockPass1 = std::make_shared<mock_shader::MockPass>();
+    std::shared_ptr<mock_shader::MockPass> mockPass2 = std::make_shared<mock_shader::MockPass>();
 };
 
-TEST_F(ProgramTest, CreateProgram)
+TEST_F(ProgramTest, UsePassTest)
 {
-    // Arrange
+    shader::opengl::Program<shader::opengl::Shader, shader::opengl::Uniform, shader::opengl::setter, mock_shader::MockPass> program({mockPass1, mockPass2});
 
-    // Act
-    // ASSERT_NO_THROW(shader::Program shader("test-datas/shaders/vertex/good/minimal.vert", "test-datas/shaders/fargment/good/minimal.frag"));
+    EXPECT_CALL(*mockPass1, use()).Times(1);
+    program.use(0);
 
-    // Assert
+    EXPECT_CALL(*mockPass2, use()).Times(1);
+    program.use(1);
 }
 
-TEST_F(ProgramTest, CreateProgramWithBadVertexProgram)
+TEST_F(ProgramTest, IteratePassesTest)
 {
-    // Arrange
+    shader::opengl::Program<shader::opengl::Shader, shader::opengl::Uniform, shader::opengl::setter, mock_shader::MockPass> program({mockPass1, mockPass2});
 
-    // Act
-    // ASSERT_THROW(shader::Program shader("test-datas/shaders/vertex/bad/minimal.vert", "test-datas/shaders/fargment/good/minimal.frag"), std::runtime_error);
+    EXPECT_CALL(*mockPass1, use()).Times(1);
+    EXPECT_CALL(*mockPass2, use()).Times(1);
 
-    // Assert
+    while (program.useNext())
+    {
+    }
+
+    // Checks if it iterates through all passes
+    ASSERT_EQ(program.getPassesCount(), 2);
 }
 
-TEST_F(ProgramTest, CreateProgramWithBadFragmentProgram)
+TEST_F(ProgramTest, ResetProgramTest)
 {
-    // Arrange
+    shader::opengl::Program<shader::opengl::Shader, shader::opengl::Uniform, shader::opengl::setter, mock_shader::MockPass> program({mockPass1, mockPass2});
 
-    // Act
-    // ASSERT_THROW(shader::Program shader("test-datas/shaders/vertex/good/minimal.vert", "test-datas/shaders/fargment/bad/minimal.frag"), std::runtime_error);
+    program.use(1); // Use the second pass
+    program.reset();
 
-    // Assert
+    // After reset, it should return to the first pass
+    EXPECT_CALL(*mockPass1, use()).Times(1);
+    program.useNext();
 }
 
-TEST_F(ProgramTest, CreateProgramWithBadVertexAndFragmentProgram)
-{
-    // Arrange
-
-    // Act
-    // ASSERT_THROW(shader::Program shader("test-datas/shaders/vertex/bad/minimal.vert", "test-datas/shaders/fargment/bad/minimal.frag"), std::runtime_error);
-
-    // Assert
-}
-
-TEST_F(ProgramTest, AddUniform)
-{ /*
-     // Arrange
-     shader::Program<shaderMock::MockUniform, shaderMock::mockUniformSetter> shader("test-datas/shaders/vertex/good/minimal.vert", "test-datas/shaders/fargment/good/minimal.frag");
-
-     // Expected call
-     EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glUniform1f_mock(1, 3.14f))
-         .Times(1);
-
-     // Act
-     shader.prepare().withUniform("uniform_test", 3.14f);*/
-
-    // Assert
-}
 #endif // __mock_gl__
