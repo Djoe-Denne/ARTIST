@@ -58,7 +58,7 @@ TEST_F(PassTest, DeleteMustFree)
     EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glDeleteProgram_mock(::testing::_)).Times(1);
 
     // Act
-    auto pass = new shader::opengl::Pass<mock_shader::MockShader>(vertexShader, fragmentShader);
+    const auto &pass = new shader::opengl::Pass<mock_shader::MockShader>(vertexShader, fragmentShader);
 
     delete pass;
 }

@@ -79,6 +79,7 @@ namespace cenpy::graphic::shader
          */
         virtual void load()
         {
+            // some graphics APIs may not need to load the shader
         }
 
         /**
@@ -86,6 +87,7 @@ namespace cenpy::graphic::shader
          */
         virtual void free()
         {
+            // some graphics APIs may not need to free the shader
         }
 
     protected:
@@ -145,6 +147,9 @@ namespace cenpy::graphic::shader
         class Shader : public BaseShader
         {
         public:
+            Shader() = delete;
+            explicit Shader(const Shader &) = default;
+            Shader(Shader &&) = default;
             /**
              * @brief Constructs a Shader object.
              *
@@ -155,7 +160,7 @@ namespace cenpy::graphic::shader
             {
             }
 
-            ~Shader()
+            ~Shader() override
             {
                 free();
             }

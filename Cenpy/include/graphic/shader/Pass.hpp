@@ -41,13 +41,14 @@ namespace cenpy::graphic::shader
     class BasePass
     {
     public:
+        BasePass() = delete;
+        BasePass(const BasePass &) = default;
+        BasePass &operator=(const BasePass &) = default;
+
         /**
          * @brief Destructor for BasePass.
          */
-        virtual ~BasePass()
-        {
-            freeShader();
-        }
+        virtual ~BasePass() = default;
 
         /**
          * @brief Adds a uniform with the specified name and value to the pass.
@@ -55,12 +56,11 @@ namespace cenpy::graphic::shader
          * @tparam T The type of the uniform value.
          * @param name The name of the uniform.
          * @param value The value of the uniform.
-         * @param number The number of elements in the uniform (default is 1).
          * @return A reference to the BasePass object.
          * @throws std::runtime_error if the uniform is not found.
          */
         template <typename T>
-        D &withUniform(const std::string &name, const T &value, const int &number = 1)
+        D &withUniform(const std::string &name, const T &value)
         {
             if (m_uniforms.contains(name))
             {
@@ -109,7 +109,7 @@ namespace cenpy::graphic::shader
          */
         template <typename... Shaders>
             requires(std::is_same_v<S, Shaders> && ...)
-        BasePass(const std::shared_ptr<Shaders> &...shaders) : m_shaders({shaders...})
+        explicit BasePass(const std::shared_ptr<Shaders> &...shaders) : m_shaders({shaders...})
         {
         }
 
@@ -145,6 +145,7 @@ namespace cenpy::graphic::shader
          */
         virtual void attachShaders()
         {
+            // some Graphic apis may not need to attach shaders
         }
 
         /**
@@ -154,7 +155,7 @@ namespace cenpy::graphic::shader
          * during the lifetime of the shader pass. It should be called when the shader
          * pass is no longer needed to prevent memory leaks.
          */
-        virtual void freeShader()
+        void freeShader()
         {
             for (std::shared_ptr<S> &shader : BasePass<S, U, C, D>::getShaders())
             {
@@ -193,6 +194,9 @@ namespace cenpy::graphic::shader
         class Pass : public BasePass<S, U, C, Pass<S, U, C>>
         {
         public:
+            Pass() = delete;
+            explicit Pass(const &) = default;
+            Pass &operator=(const &) = default;
             /**
              * @brief Constructs a Pass object with the specified shaders.
              *
@@ -203,7 +207,7 @@ namespace cenpy::graphic::shader
              */
             template <typename... Shaders>
                 requires(std::is_same_v<S, Shaders> && ...)
-            Pass(const std::shared_ptr<Shaders> &...shaders) : BasePass<S, U, C, Pass<S, U, C>>(shaders...)
+            explicit Pass(const std::shared_ptr<Shaders> &...shaders) : BasePass<S, U, C, Pass<S, U, C>>(shaders...)
             {
                 BasePass<S, U, C, Pass<S, U, C>>::load();
             }
@@ -274,7 +278,7 @@ namespace cenpy::graphic::shader
                 catch (const std::exception &e)
                 {
                     free();
-                    throw e;
+                    throw;
                 }
             }
 
