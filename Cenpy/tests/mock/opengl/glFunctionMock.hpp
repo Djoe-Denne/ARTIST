@@ -18,6 +18,8 @@
 #define glUniformMatrix2fv cenpy::mock::opengl::glFunctionMock::instance()->glUniformMatrix2fv_mock
 #define glUniformMatrix3fv cenpy::mock::opengl::glFunctionMock::instance()->glUniformMatrix3fv_mock
 #define glUniformMatrix4fv cenpy::mock::opengl::glFunctionMock::instance()->glUniformMatrix4fv_mock
+#define glUseProgram cenpy::mock::opengl::glFunctionMock::instance()->glUseProgram_mock
+#define glValidateProgram cenpy::mock::opengl::glFunctionMock::instance()->glValidateProgram_mock
 #define glAttachShader cenpy::mock::opengl::glFunctionMock::instance()->glAttachShader_mock
 #define glBindAttribLocation cenpy::mock::opengl::glFunctionMock::instance()->glBindAttribLocation_mock
 #define glBlendEquationSeparate cenpy::mock::opengl::glFunctionMock::instance()->glBlendEquationSeparate_mock
@@ -135,6 +137,8 @@ namespace cenpy::mock::opengl
         MOCK_METHOD(void, glUniformMatrix2fv_mock, (GLint, GLsizei, GLboolean, const GLfloat *), ());
         MOCK_METHOD(void, glUniformMatrix3fv_mock, (GLint, GLsizei, GLboolean, const GLfloat *), ());
         MOCK_METHOD(void, glUniformMatrix4fv_mock, (GLint, GLsizei, GLboolean, const GLfloat *), ());
+        MOCK_METHOD(void, glUseProgram_mock, (GLuint), ());
+        MOCK_METHOD(void, glValidateProgram_mock, (GLuint), ());
         MOCK_METHOD(void, glAttachShader_mock, (GLuint, GLuint), ());
         MOCK_METHOD(void, glBindAttribLocation_mock, (GLuint, GLuint, const GLchar *), ());
         MOCK_METHOD(void, glBlendEquationSeparate_mock, (GLenum, GLenum), ());

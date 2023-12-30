@@ -17,7 +17,7 @@ protected:
 
 TEST_F(ProgramTest, UsePassTest)
 {
-    shader::opengl::Program<shader::opengl::Shader, shader::opengl::Uniform, shader::opengl::setter, mock_shader::MockPass> program({mockPass1, mockPass2});
+    shader::opengl::Program<mock_shader::MockShader, shader::opengl::Uniform, shader::opengl::setter, mock_shader::MockPass> program({mockPass1, mockPass2});
 
     EXPECT_CALL(*mockPass1, use()).Times(1);
     program.use(0);
@@ -28,7 +28,7 @@ TEST_F(ProgramTest, UsePassTest)
 
 TEST_F(ProgramTest, IteratePassesTest)
 {
-    shader::opengl::Program<shader::opengl::Shader, shader::opengl::Uniform, shader::opengl::setter, mock_shader::MockPass> program({mockPass1, mockPass2});
+    shader::opengl::Program<mock_shader::MockShader, shader::opengl::Uniform, shader::opengl::setter, mock_shader::MockPass> program({mockPass1, mockPass2});
 
     EXPECT_CALL(*mockPass1, use()).Times(1);
     EXPECT_CALL(*mockPass2, use()).Times(1);
@@ -43,7 +43,7 @@ TEST_F(ProgramTest, IteratePassesTest)
 
 TEST_F(ProgramTest, ResetProgramTest)
 {
-    shader::opengl::Program<shader::opengl::Shader, shader::opengl::Uniform, shader::opengl::setter, mock_shader::MockPass> program({mockPass1, mockPass2});
+    shader::opengl::Program<mock_shader::MockShader, shader::opengl::Uniform, shader::opengl::setter, mock_shader::MockPass> program({mockPass1, mockPass2});
 
     program.use(1); // Use the second pass
     program.reset();

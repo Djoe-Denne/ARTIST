@@ -8,6 +8,11 @@ namespace cenpy::mock::graphic::shader
     class MockShader : public shader::opengl::Shader
     {
     public:
+        MockShader()
+            : Shader("", shader::ShaderType::VERTEX)
+        {
+            ON_CALL(*this, getLocation).WillByDefault(::testing::Return((GLuint)1));
+        }
         MockShader(const std::string &shaderPath, const shader::ShaderType &shaderType)
             : Shader(shaderPath, shaderType)
         {

@@ -195,8 +195,8 @@ namespace cenpy::graphic::shader
         {
         public:
             Pass() = delete;
-            explicit Pass(const &) = default;
-            Pass &operator=(const &) = default;
+            explicit Pass(const Pass &) = default;
+            Pass &operator=(const Pass &) = default;
             /**
              * @brief Constructs a Pass object with the specified shaders.
              *

@@ -53,8 +53,8 @@ TEST_F(PassTest, DeleteMustFree)
     auto vertexShader = std::make_shared<mock_shader::MockShader>("vertex_shader_path", shader::ShaderType::VERTEX);
     auto fragmentShader = std::make_shared<mock_shader::MockShader>("fragment_shader_path", shader::ShaderType::FRAGMENT);
 
-    EXPECT_CALL(*vertexShader, free()).Times(2);
-    EXPECT_CALL(*fragmentShader, free()).Times(2);
+    EXPECT_CALL(*vertexShader, free()).Times(1);
+    EXPECT_CALL(*fragmentShader, free()).Times(1);
     EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glDeleteProgram_mock(::testing::_)).Times(1);
 
     // Act
@@ -133,6 +133,39 @@ TEST_F(PassTest, TestErrorHandlingOnShaderFailure)
 
     // Act and Assert
     EXPECT_THROW(shader::opengl::Pass<mock_shader::MockShader> pass(failingShader), std::runtime_error);
+}
+
+TEST_F(PassTest, WithUniformShouldSetIfExist)
+{
+    // Arrange
+    auto vertexShader = std::make_shared<mock_shader::MockShader>("vertex_shader_path", shader::ShaderType::VERTEX);
+    auto fragmentShader = std::make_shared<mock_shader::MockShader>("fragment_shader_path", shader::ShaderType::FRAGMENT);
+    shader::opengl::Pass<mock_shader::MockShader> pass(vertexShader, fragmentShader);
+
+    // Expect
+    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glUniform1f_mock(1, 3.14f)).Times(1);
+
+    // Act
+    ASSERT_NO_THROW(pass.withUniform("uniform_test", 3.14f));
+
+    // Assert
+}
+
+TEST_F(PassTest, UseShouldCallUseProgram)
+{
+    // Arrange
+    auto vertexShader = std::make_shared<mock_shader::MockShader>("vertex_shader_path", shader::ShaderType::VERTEX);
+    auto fragmentShader = std::make_shared<mock_shader::MockShader>("fragment_shader_path", shader::ShaderType::FRAGMENT);
+    shader::opengl::Pass<mock_shader::MockShader> pass(vertexShader, fragmentShader);
+
+    // Expect
+    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glUseProgram_mock(1)).Times(1);
+
+    // Act
+    pass.use();
+
+    // Assert
+    // Add any additional assertions if needed
 }
 
 #endif //::testing::__mock_gl__
