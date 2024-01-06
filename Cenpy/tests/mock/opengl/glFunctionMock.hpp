@@ -12,9 +12,9 @@
 #define glUniform1d cenpy::mock::opengl::glFunctionMock::instance()->glUniform1d_mock
 #define glUniform1i cenpy::mock::opengl::glFunctionMock::instance()->glUniform1i_mock
 #define glUniform1ui cenpy::mock::opengl::glFunctionMock::instance()->glUniform1ui_mock
-#define glUniform2f cenpy::mock::opengl::glFunctionMock::instance()->glUniform2f_mock
-#define glUniform3f cenpy::mock::opengl::glFunctionMock::instance()->glUniform3f_mock
-#define glUniform4f cenpy::mock::opengl::glFunctionMock::instance()->glUniform4f_mock
+#define glUniform2fv cenpy::mock::opengl::glFunctionMock::instance()->glUniform2fv_mock
+#define glUniform3fv cenpy::mock::opengl::glFunctionMock::instance()->glUniform3fv_mock
+#define glUniform4fv cenpy::mock::opengl::glFunctionMock::instance()->glUniform4fv_mock
 #define glUniformMatrix2fv cenpy::mock::opengl::glFunctionMock::instance()->glUniformMatrix2fv_mock
 #define glUniformMatrix3fv cenpy::mock::opengl::glFunctionMock::instance()->glUniformMatrix3fv_mock
 #define glUniformMatrix4fv cenpy::mock::opengl::glFunctionMock::instance()->glUniformMatrix4fv_mock
@@ -131,9 +131,9 @@ namespace cenpy::mock::opengl
         MOCK_METHOD(void, glUniform1d_mock, (GLint, GLdouble));
         MOCK_METHOD(void, glUniform1i_mock, (GLint, GLint), ());
         MOCK_METHOD(void, glUniform1ui_mock, (GLint, GLuint), ());
-        MOCK_METHOD(void, glUniform2f_mock, (GLint, GLfloat, GLfloat), ());
-        MOCK_METHOD(void, glUniform3f_mock, (GLint, GLfloat, GLfloat, GLfloat), ());
-        MOCK_METHOD(void, glUniform4f_mock, (GLint, GLfloat, GLfloat, GLfloat, GLfloat), ());
+        MOCK_METHOD(void, glUniform2fv_mock, (GLint, GLfloat, const GLfloat *), ());
+        MOCK_METHOD(void, glUniform3fv_mock, (GLint, GLfloat, const GLfloat *), ());
+        MOCK_METHOD(void, glUniform4fv_mock, (GLint, GLfloat, const GLfloat *), ());
         MOCK_METHOD(void, glUniformMatrix2fv_mock, (GLint, GLsizei, GLboolean, const GLfloat *), ());
         MOCK_METHOD(void, glUniformMatrix3fv_mock, (GLint, GLsizei, GLboolean, const GLfloat *), ());
         MOCK_METHOD(void, glUniformMatrix4fv_mock, (GLint, GLsizei, GLboolean, const GLfloat *), ());

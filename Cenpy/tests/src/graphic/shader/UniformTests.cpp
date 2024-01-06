@@ -3,10 +3,14 @@
 #include <iostream>
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <graphic/Api.hpp>
 #include <opengl/glFunctionMock.hpp>
 #include <graphic/shader/Uniform.hpp>
+#include <graphic/context/UniformContext.hpp>
 
-namespace shader = cenpy::graphic::shader::opengl;
+namespace api = cenpy::graphic::api;
+namespace context = cenpy::graphic::opengl::context;
+namespace shader = cenpy::graphic::shader;
 namespace mock = cenpy::mock::opengl;
 
 class UniformTest : public ::testing::Test
@@ -23,7 +27,11 @@ TEST_F(UniformTest, SetFloatUniform)
     // Arrange
     GLuint location = 42;
     GLfloat value = 3.14f;
-    shader::Uniform uniform(location, GL_FLOAT, 1);
+    auto uniformContext = std::make_shared<api::OpenGL::UniformContext>();
+    uniformContext->setUniformID(location);
+    uniformContext->setValue(1.0f);
+
+    shader::Uniform<api::OpenGL> uniform(uniformContext);
 
     // Expected call
     EXPECT_CALL(*mock::glFunctionMock::instance(), glUniform1f_mock(location, value))
@@ -38,7 +46,11 @@ TEST_F(UniformTest, SetDoubleUniform)
     // Arrange
     GLuint location = 42;
     GLdouble value = 3.14;
-    shader::Uniform uniform(location, GL_DOUBLE, 1);
+    auto uniformContext = std::make_shared<api::OpenGL::UniformContext>();
+    uniformContext->setUniformID(location);
+    uniformContext->setValue(1.0);
+
+    shader::Uniform<api::OpenGL> uniform(uniformContext);
 
     // Expected call
     EXPECT_CALL(*mock::glFunctionMock::instance(), glUniform1d_mock(location, value))
@@ -53,7 +65,11 @@ TEST_F(UniformTest, SetIntUniform)
     // Arrange
     GLuint location = 42;
     GLint value = 42;
-    shader::Uniform uniform(location, GL_INT, 1);
+    auto uniformContext = std::make_shared<api::OpenGL::UniformContext>();
+    uniformContext->setUniformID(location);
+    uniformContext->setValue(1);
+
+    shader::Uniform<api::OpenGL> uniform(uniformContext);
 
     // Expected call
     EXPECT_CALL(*mock::glFunctionMock::instance(), glUniform1i_mock(location, value))
@@ -68,7 +84,12 @@ TEST_F(UniformTest, SetUIntUniform)
     // Arrange
     GLuint location = 42;
     GLuint value = 42;
-    shader::Uniform uniform(location, GL_UNSIGNED_INT, 1);
+
+    auto uniformContext = std::make_shared<api::OpenGL::UniformContext>();
+    uniformContext->setUniformID(location);
+    uniformContext->setValue((GLuint)1);
+
+    shader::Uniform<api::OpenGL> uniform(uniformContext);
 
     // Expected call
     EXPECT_CALL(*mock::glFunctionMock::instance(), glUniform1ui_mock(location, value))
@@ -83,10 +104,14 @@ TEST_F(UniformTest, SetVec2Uniform)
     // Arrange
     GLuint location = 42;
     glm::vec2 value(3.14f, 2.71f);
-    shader::Uniform uniform(location, GL_FLOAT_VEC2, 1);
+    auto uniformContext = std::make_shared<api::OpenGL::UniformContext>();
+    uniformContext->setUniformID(location);
+    uniformContext->setValue(glm::vec2(1.0f, 1.0f));
+
+    shader::Uniform<api::OpenGL> uniform(uniformContext);
 
     // Expected call
-    EXPECT_CALL(*mock::glFunctionMock::instance(), glUniform2f_mock(location, value[0], value[1]))
+    EXPECT_CALL(*mock::glFunctionMock::instance(), glUniform2fv_mock(location, 1, &value[0]))
         .Times(1);
 
     // Act
@@ -98,10 +123,14 @@ TEST_F(UniformTest, SetVec3Uniform)
     // Arrange
     GLuint location = 42;
     glm::vec3 value(3.14f, 2.71f, 1.41f);
-    shader::Uniform uniform(location, GL_FLOAT_VEC3, 1);
+    auto uniformContext = std::make_shared<api::OpenGL::UniformContext>();
+    uniformContext->setUniformID(location);
+    uniformContext->setValue(glm::vec3(1.0f, 1.0f, 1.0f));
+
+    shader::Uniform<api::OpenGL> uniform(uniformContext);
 
     // Expected call
-    EXPECT_CALL(*mock::glFunctionMock::instance(), glUniform3f_mock(location, value[0], value[1], value[2]))
+    EXPECT_CALL(*mock::glFunctionMock::instance(), glUniform3fv_mock(location, 1, &value[0]))
         .Times(1);
 
     // Act
@@ -113,10 +142,14 @@ TEST_F(UniformTest, SetVec4Uniform)
     // Arrange
     GLuint location = 42;
     glm::vec4 value(3.14f, 2.71f, 1.41f, 1.61f);
-    shader::Uniform uniform(location, GL_FLOAT_VEC4, 1);
+    auto uniformContext = std::make_shared<api::OpenGL::UniformContext>();
+    uniformContext->setUniformID(location);
+    uniformContext->setValue(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+    shader::Uniform<api::OpenGL> uniform(uniformContext);
 
     // Expected call
-    EXPECT_CALL(*mock::glFunctionMock::instance(), glUniform4f_mock(location, value[0], value[1], value[2], value[3]))
+    EXPECT_CALL(*mock::glFunctionMock::instance(), glUniform4fv_mock(location, 1, &value[0]))
         .Times(1);
 
     // Act
@@ -128,7 +161,11 @@ TEST_F(UniformTest, SetMat2Uniform)
     // Arrange
     GLuint location = 42;
     glm::mat2 value(3.14f, 2.71f, 1.41f, 1.61f);
-    shader::Uniform uniform(location, GL_FLOAT_MAT2, 1);
+    auto uniformContext = std::make_shared<api::OpenGL::UniformContext>();
+    uniformContext->setUniformID(location);
+    uniformContext->setValue(glm::mat2(1.0f, 1.0f, 1.0f, 1.0f));
+
+    shader::Uniform<api::OpenGL> uniform(uniformContext);
 
     // Expected call
     EXPECT_CALL(*mock::glFunctionMock::instance(), glUniformMatrix2fv_mock(location, 1, GL_FALSE, ::testing::_))
@@ -143,7 +180,12 @@ TEST_F(UniformTest, SetMat3Uniform)
     // Arrange
     GLuint location = 42;
     glm::mat3 value(3.14f, 2.71f, 1.41f, 1.61f, 2.71f, 1.41f, 1.61f, 2.71f, 1.41f);
-    shader::Uniform uniform(location, GL_FLOAT_MAT3, 1);
+    auto uniformContext = std::make_shared<api::OpenGL::UniformContext>();
+    uniformContext->setUniformID(location);
+    uniformContext->setValue(glm::mat3(1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+                                       1.0f, 1.0f, 1.0f));
+
+    shader::Uniform<api::OpenGL> uniform(uniformContext);
 
     // Expected call
     EXPECT_CALL(*mock::glFunctionMock::instance(), glUniformMatrix3fv_mock(location, 1, GL_FALSE, ::testing::_))
@@ -158,7 +200,12 @@ TEST_F(UniformTest, SetMat4Uniform)
     // Arrange
     GLuint location = 42;
     glm::mat4 value(3.14f, 2.71f, 1.41f, 1.61f, 2.71f, 1.41f, 1.61f, 2.71f, 1.41f, 1.61f, 2.71f, 1.41f, 1.61f, 2.71f, 1.41f, 1.61f);
-    shader::Uniform uniform(location, GL_FLOAT_MAT4, 1);
+    auto uniformContext = std::make_shared<api::OpenGL::UniformContext>();
+    uniformContext->setUniformID(location);
+    uniformContext->setValue(glm::mat4(1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+                                       1.0f, 1.0f, 1.0f, 1.0f, 1.0, 1.0f, 1.0f, 1.0f));
+
+    shader::Uniform<api::OpenGL> uniform(uniformContext);
 
     // Expected call
     EXPECT_CALL(*mock::glFunctionMock::instance(), glUniformMatrix4fv_mock(location, 1, GL_FALSE, ::testing::_))

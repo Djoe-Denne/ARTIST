@@ -1,7 +1,11 @@
 #include <string>
 #include <graphic/shader/Shader.hpp>
 #include <OpenGLComponentTests.hpp>
+#include <graphic/Api.hpp>
+#include <OpenGLComponentTests.hpp>
 
+namespace api = cenpy::graphic::api;
+namespace context = cenpy::graphic::context;
 namespace shader = cenpy::graphic::shader;
 
 class ShaderTest : public OpenGLComponentTest
@@ -11,14 +15,14 @@ class ShaderTest : public OpenGLComponentTest
 TEST_F(ShaderTest, CreateShaderVert)
 {
     // Arrange
-    shader::opengl::Shader shader("test-datas/shaders/vertex/good/minimal.vert", shader::ShaderType::VERTEX);
+    shader::Shader<api::OpenGL> shader("test-datas/shaders/vertex/good/minimal.vert", context::ShaderType::VERTEX);
 
     // Act
     ASSERT_NO_THROW(shader.load());
 
     // Assert
-    EXPECT_EQ(shader.getLocation(), 1);
-    EXPECT_EQ(shader.getShaderType(), shader::ShaderType::VERTEX);
+    EXPECT_EQ(shader.getContext()->getShaderID(), 1);
+    EXPECT_EQ(shader.getShaderType(), context::ShaderType::VERTEX);
 
     shader.free();
 }
@@ -26,7 +30,7 @@ TEST_F(ShaderTest, CreateShaderVert)
 TEST_F(ShaderTest, CreateShaderBadVert)
 {
     // Arrange
-    shader::opengl::Shader shader("test-datas/shaders/vertex/bad/minimal.vert", shader::ShaderType::VERTEX);
+    shader::Shader<api::OpenGL> shader("test-datas/shaders/vertex/bad/minimal.vert", context::ShaderType::VERTEX);
 
     // Act
     try
@@ -44,8 +48,7 @@ TEST_F(ShaderTest, CreateShaderBadVert)
         FAIL() << "Expected std::runtime_error to be thrown";
     }
     // Assert
-    EXPECT_EQ(shader.getLocation(), 1);
-    EXPECT_EQ(shader.getShaderType(), shader::ShaderType::VERTEX);
+    EXPECT_EQ(shader.getShaderType(), context::ShaderType::VERTEX);
 
     shader.free();
 }
@@ -53,14 +56,14 @@ TEST_F(ShaderTest, CreateShaderBadVert)
 TEST_F(ShaderTest, CreateShaderFrag)
 {
     // Arrange
-    shader::opengl::Shader shader("test-datas/shaders/fragment/good/minimal.frag", shader::ShaderType::FRAGMENT);
+    shader::Shader<api::OpenGL> shader("test-datas/shaders/fragment/good/minimal.frag", context::ShaderType::FRAGMENT);
 
     // Act
     ASSERT_NO_THROW(shader.load());
 
     // Assert
-    EXPECT_EQ(shader.getLocation(), 1);
-    EXPECT_EQ(shader.getShaderType(), shader::ShaderType::FRAGMENT);
+    EXPECT_EQ(shader.getContext()->getShaderID(), 1);
+    EXPECT_EQ(shader.getShaderType(), context::ShaderType::FRAGMENT);
 
     shader.free();
 }
@@ -68,7 +71,7 @@ TEST_F(ShaderTest, CreateShaderFrag)
 TEST_F(ShaderTest, CreateShaderBadFrag)
 {
     // Arrange
-    shader::opengl::Shader shader("test-datas/shaders/fragment/bad/minimal.frag", shader::ShaderType::FRAGMENT);
+    shader::Shader<api::OpenGL> shader("test-datas/shaders/fragment/bad/minimal.frag", context::ShaderType::FRAGMENT);
 
     // Act
     try
@@ -86,8 +89,7 @@ TEST_F(ShaderTest, CreateShaderBadFrag)
         FAIL() << "Expected std::runtime_error to be thrown";
     }
     // Assert
-    EXPECT_EQ(shader.getLocation(), 1);
-    EXPECT_EQ(shader.getShaderType(), shader::ShaderType::FRAGMENT);
+    EXPECT_EQ(shader.getShaderType(), context::ShaderType::FRAGMENT);
 
     shader.free();
 }
@@ -95,14 +97,14 @@ TEST_F(ShaderTest, CreateShaderBadFrag)
 TEST_F(ShaderTest, CreateShaderGeom)
 {
     // Arrange
-    shader::opengl::Shader shader("test-datas/shaders/geometry/good/minimal.geom", shader::ShaderType::GEOMETRY);
+    shader::Shader<api::OpenGL> shader("test-datas/shaders/geometry/good/minimal.geom", context::ShaderType::GEOMETRY);
 
     // Act
     ASSERT_NO_THROW(shader.load());
 
     // Assert
-    EXPECT_EQ(shader.getLocation(), 1);
-    EXPECT_EQ(shader.getShaderType(), shader::ShaderType::GEOMETRY);
+    EXPECT_EQ(shader.getContext()->getShaderID(), 1);
+    EXPECT_EQ(shader.getShaderType(), context::ShaderType::GEOMETRY);
 
     shader.free();
 }
@@ -110,7 +112,7 @@ TEST_F(ShaderTest, CreateShaderGeom)
 TEST_F(ShaderTest, CreateShaderBadGeom)
 {
     // Arrange
-    shader::opengl::Shader shader("test-datas/shaders/geometry/bad/minimal.geom", shader::ShaderType::GEOMETRY);
+    shader::Shader<api::OpenGL> shader("test-datas/shaders/geometry/bad/minimal.geom", context::ShaderType::GEOMETRY);
 
     // Act
     try
@@ -128,8 +130,7 @@ TEST_F(ShaderTest, CreateShaderBadGeom)
         FAIL() << "Expected std::runtime_error to be thrown";
     }
     // Assert
-    EXPECT_EQ(shader.getLocation(), 1);
-    EXPECT_EQ(shader.getShaderType(), shader::ShaderType::GEOMETRY);
+    EXPECT_EQ(shader.getShaderType(), context::ShaderType::GEOMETRY);
 
     shader.free();
 }
@@ -137,14 +138,14 @@ TEST_F(ShaderTest, CreateShaderBadGeom)
 TEST_F(ShaderTest, CreateShaderTesselaionControl)
 {
     // Arrange
-    shader::opengl::Shader shader("test-datas/shaders/tesselaion_control/good/minimal.tesc", shader::ShaderType::TESS_CONTROL);
+    shader::Shader<api::OpenGL> shader("test-datas/shaders/tesselaion_control/good/minimal.tesc", context::ShaderType::TESS_CONTROL);
 
     // Act
     ASSERT_NO_THROW(shader.load());
 
     // Assert
-    EXPECT_EQ(shader.getLocation(), 1);
-    EXPECT_EQ(shader.getShaderType(), shader::ShaderType::TESS_CONTROL);
+    EXPECT_EQ(shader.getContext()->getShaderID(), 1);
+    EXPECT_EQ(shader.getShaderType(), context::ShaderType::TESS_CONTROL);
 
     shader.free();
 }
@@ -152,7 +153,7 @@ TEST_F(ShaderTest, CreateShaderTesselaionControl)
 TEST_F(ShaderTest, CreateShaderBadTesselaionControl)
 {
     // Arrange
-    shader::opengl::Shader shader("test-datas/shaders/tesselaion_control/bad/minimal.tesc", shader::ShaderType::TESS_CONTROL);
+    shader::Shader<api::OpenGL> shader("test-datas/shaders/tesselaion_control/bad/minimal.tesc", context::ShaderType::TESS_CONTROL);
 
     // Act
     try
@@ -170,8 +171,7 @@ TEST_F(ShaderTest, CreateShaderBadTesselaionControl)
         FAIL() << "Expected std::runtime_error to be thrown";
     }
     // Assert
-    EXPECT_EQ(shader.getLocation(), 1);
-    EXPECT_EQ(shader.getShaderType(), shader::ShaderType::TESS_CONTROL);
+    EXPECT_EQ(shader.getShaderType(), context::ShaderType::TESS_CONTROL);
 
     shader.free();
 }
@@ -179,14 +179,14 @@ TEST_F(ShaderTest, CreateShaderBadTesselaionControl)
 TEST_F(ShaderTest, CreateShaderCompute)
 {
     // Arrange
-    shader::opengl::Shader shader("test-datas/shaders/compute/good/minimal.comp", shader::ShaderType::COMPUTE);
+    shader::Shader<api::OpenGL> shader("test-datas/shaders/compute/good/minimal.comp", context::ShaderType::COMPUTE);
 
     // Act
     ASSERT_NO_THROW(shader.load());
 
     // Assert
-    EXPECT_EQ(shader.getLocation(), 1);
-    EXPECT_EQ(shader.getShaderType(), shader::ShaderType::COMPUTE);
+    EXPECT_EQ(shader.getContext()->getShaderID(), 1);
+    EXPECT_EQ(shader.getShaderType(), context::ShaderType::COMPUTE);
 
     shader.free();
 }
@@ -194,7 +194,7 @@ TEST_F(ShaderTest, CreateShaderCompute)
 TEST_F(ShaderTest, CreateShaderBadCompute)
 {
     // Arrange
-    shader::opengl::Shader shader("test-datas/shaders/compute/bad/minimal.comp", shader::ShaderType::COMPUTE);
+    shader::Shader<api::OpenGL> shader("test-datas/shaders/compute/bad/minimal.comp", context::ShaderType::COMPUTE);
 
     // Act
     try
@@ -212,8 +212,7 @@ TEST_F(ShaderTest, CreateShaderBadCompute)
         FAIL() << "Expected std::runtime_error to be thrown";
     }
     // Assert
-    EXPECT_EQ(shader.getLocation(), 1);
-    EXPECT_EQ(shader.getShaderType(), shader::ShaderType::COMPUTE);
+    EXPECT_EQ(shader.getShaderType(), context::ShaderType::COMPUTE);
 
     shader.free();
 }

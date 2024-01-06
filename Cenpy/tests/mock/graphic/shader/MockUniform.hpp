@@ -3,35 +3,19 @@
 
 #include <gmock/gmock.h>
 #include <graphic/shader/Uniform.hpp>
+#include <graphic/shader/component/uniform/MockSetter.hpp>
+#include <graphic/context/MockUniformContext.hpp>
 
 namespace cenpy::mock::graphic::shader
 {
-    using namespace cenpy::graphic::shader;
 
-    class MockUniform;
-
-    template <typename U>
-    struct mockUniformSetter : baseSetter<MockUniform, U>
-    {
-    };
-
-    /**
-     * @brief Specialization for GLfloat with corresponding setter
-     */
-    template <>
-    struct mockUniformSetter<float> : std::true_type
-    {
-        static constexpr auto set =
-            [](const MockUniform &uniform)
-        { glUniform1f(1, 3.14f); };
-    };
-
-    class MockUniform : public BaseUniform
+    template <typename API>
+    class MockUniform : public cenpy::graphic::shader::Uniform<API>
     {
     public:
-        MockUniform(GLuint location, GLenum type, GLint size) : BaseUniform()
+        MockUniform() : cenpy::graphic::shader::Uniform<API>()
         {
         }
-    };
+        };
 
 } // namespace cenpy::graphic::shader

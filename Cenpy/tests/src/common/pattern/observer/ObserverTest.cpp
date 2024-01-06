@@ -63,7 +63,54 @@ private:
     bool toggle;
 };
 
-SUBJECT(FakeClass, getValue1, setValue, toggle)
+class FakeClassDelegate : public cenpy::common::pattern::delegate::ClassDelegate<FakeClass>
+{
+public:
+    FakeClassDelegate(std::shared_ptr<FakeClass> instance) : cenpy::common::pattern::delegate::ClassDelegate<FakeClass>(instance, nullptr, nullptr) { init(); }
+    FakeClassDelegate(std::shared_ptr<FakeClass> instance, cenpy::common::pattern::delegate::MethodDelegateBase::HookType beforeFunc, cenpy::common::pattern::delegate::MethodDelegateBase::HookType afterFunc) : cenpy::common::pattern::delegate::ClassDelegate<FakeClass>(instance, beforeFunc, afterFunc) { init(); }
+    void init()
+    {
+        auto getValue1 = new cenpy::common::pattern::delegate::MethodDelegate(&FakeClass::getValue1);
+        std::shared_ptr<cenpy::common::pattern::delegate::MethodDelegateBase> getValue1Ptr(getValue1);
+        auto setValue = new cenpy::common::pattern::delegate::MethodDelegate(&FakeClass::setValue);
+        std::shared_ptr<cenpy::common::pattern::delegate::MethodDelegateBase> setValuePtr(setValue);
+        auto toggle = new cenpy::common::pattern::delegate::MethodDelegate(&FakeClass::toggle);
+        std::shared_ptr<cenpy::common::pattern::delegate::MethodDelegateBase> togglePtr(toggle);
+        cenpy::common::pattern::delegate::ClassDelegate<FakeClass>::init({{"getValue1", getValue1Ptr}, {"setValue", setValuePtr}, {"toggle", togglePtr}});
+    }
+    virtual ~FakeClassDelegate() = default;
+    template <typename... Args>
+    auto getValue1(Args... args) -> decltype(cenpy::common::pattern::delegate::ClassDelegate<FakeClass>::getInstance()->getValue1(args...))
+    {
+        auto methodDelegate = dynamic_cast<cenpy::common::pattern::delegate::MethodDelegate<decltype(cenpy::common::pattern::delegate::ClassDelegate<FakeClass>::getInstance()->getValue1(args...)), FakeClass, Args...> *>(getMethod("getValue1").get());
+        return (*methodDelegate)(args...);
+    }
+    template <typename... Args>
+    auto setValue(Args... args) -> decltype(cenpy::common::pattern::delegate::ClassDelegate<FakeClass>::getInstance()->setValue(args...))
+    {
+        auto methodDelegate = dynamic_cast<cenpy::common::pattern::delegate::MethodDelegate<decltype(cenpy::common::pattern::delegate::ClassDelegate<FakeClass>::getInstance()->setValue(args...)), FakeClass, Args...> *>(getMethod("setValue").get());
+        return (*methodDelegate)(args...);
+    }
+    template <typename... Args>
+    auto toggle(Args... args) -> decltype(cenpy::common::pattern::delegate::ClassDelegate<FakeClass>::getInstance()->toggle(args...))
+    {
+        auto methodDelegate = dynamic_cast<cenpy::common::pattern::delegate::MethodDelegate<decltype(cenpy::common::pattern::delegate::ClassDelegate<FakeClass>::getInstance()->toggle(args...)), FakeClass, Args...> *>(getMethod("toggle").get());
+        return (*methodDelegate)(args...);
+    }
+};
+class FakeClassSubject : public FakeClassDelegate, public cenpy::common::pattern::observer::Subject<FakeClass>
+{
+public:
+    FakeClassSubject(std::shared_ptr<FakeClass> instance) : cenpy::common::pattern::observer::Subject<FakeClass>(), FakeClassDelegate(instance, nullptr, cenpy::common::pattern::delegate::MethodDelegateBase::HookType(&notifyObserversFor)) { FakeClassDelegate::bind(this); }
+    static void notifyObserversFor(const std::any &it) { std::any_cast<FakeClassSubject *>(it)->notifyObservers(); }
+    void notifyObservers() override
+    {
+        for (const auto &observer : cenpy::common::pattern::observer::Subject<FakeClass>::getObservers())
+        {
+            observer->update(*FakeClassDelegate::getInstance());
+        }
+    }
+};
 
 // Test fixture for the unit tests
 class SubjectTest : public testing::Test

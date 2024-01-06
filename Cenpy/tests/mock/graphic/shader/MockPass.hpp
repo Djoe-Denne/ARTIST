@@ -2,21 +2,30 @@
 
 #include <gmock/gmock.h>
 #include <graphic/shader/Pass.hpp>
+#include <graphic/context/MockPassContext.hpp>
 #include <graphic/shader/MockShader.hpp>
+#include <graphic/MockApi.hpp>
+#include <graphic/shader/component/pass/MockShaderAttacher.hpp>
+#include <graphic/shader/component/pass/MockUniformReader.hpp>
+#include <graphic/shader/component/pass/MockUser.hpp>
+#include <graphic/shader/component/pass/MockFreer.hpp>
+#include <graphic/shader/component/pass/MockLoader.hpp>
 
-namespace cenpy::mock::graphic::shader
+namespace cenpy::mock::graphic::shader::opengl
 {
     namespace shader = cenpy::graphic::shader;
 
-    class MockPass : public shader::BasePass<MockShader, shader::opengl::Uniform, shader::opengl::setter, MockPass>
+    class MockPass : public shader::Pass<graphic::api::MockOpenGL>
     {
     public:
-        MockPass() : shader::BasePass<MockShader, shader::opengl::Uniform, shader::opengl::setter, MockPass>(std::make_shared<MockShader>())
+        MockPass() : shader::Pass<graphic::api::MockOpenGL>({})
         {
         }
 
         MOCK_METHOD(void, use, (), (override));
         MOCK_METHOD(void, load, (), (override));
-        MOCK_METHOD(void, readUniforms, ((std::unordered_map<std::string, std::shared_ptr<shader::BaseUniform>, cenpy::collection_utils::StringHash, cenpy::collection_utils::StringEqual> &)), (const, override));
+
+        MOCK_METHOD((const std::unordered_map<std::string, std::shared_ptr<shader::Uniform<graphic::api::MockOpenGL>>, collection_utils::StringHash, collection_utils::StringEqual> &), getUniforms, (), (const, override));
+        MOCK_METHOD((const std::vector<std::shared_ptr<shader::Shader<graphic::api::MockOpenGL>>> &), getShaders, (), (const, override));
     };
 }

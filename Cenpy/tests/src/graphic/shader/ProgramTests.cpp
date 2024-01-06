@@ -3,10 +3,14 @@
 #include <gtest/gtest.h>
 #include <opengl/glFunctionMock.hpp>
 #include <graphic/shader/MockPass.hpp>
+#include <graphic/context/MockProgramContext.hpp>
 #include <graphic/shader/Program.hpp>
+#include <graphic/MockApi.hpp>
 
+namespace api = cenpy::mock::graphic::api;
+namespace context = cenpy::graphic::context;
 namespace shader = cenpy::graphic::shader;
-namespace mock_shader = cenpy::mock::graphic::shader;
+namespace mock_shader = cenpy::mock::graphic::shader::opengl;
 
 class ProgramTest : public ::testing::Test
 {
@@ -17,7 +21,7 @@ protected:
 
 TEST_F(ProgramTest, UsePassTest)
 {
-    shader::opengl::Program<mock_shader::MockShader, shader::opengl::Uniform, shader::opengl::setter, mock_shader::MockPass> program({mockPass1, mockPass2});
+    shader::Program<api::MockOpenGL> program({mockPass1, mockPass2});
 
     EXPECT_CALL(*mockPass1, use()).Times(1);
     program.use(0);
@@ -28,7 +32,7 @@ TEST_F(ProgramTest, UsePassTest)
 
 TEST_F(ProgramTest, IteratePassesTest)
 {
-    shader::opengl::Program<mock_shader::MockShader, shader::opengl::Uniform, shader::opengl::setter, mock_shader::MockPass> program({mockPass1, mockPass2});
+    shader::Program<api::MockOpenGL> program({mockPass1, mockPass2});
 
     EXPECT_CALL(*mockPass1, use()).Times(1);
     EXPECT_CALL(*mockPass2, use()).Times(1);
@@ -43,7 +47,7 @@ TEST_F(ProgramTest, IteratePassesTest)
 
 TEST_F(ProgramTest, ResetProgramTest)
 {
-    shader::opengl::Program<mock_shader::MockShader, shader::opengl::Uniform, shader::opengl::setter, mock_shader::MockPass> program({mockPass1, mockPass2});
+    shader::Program<api::MockOpenGL> program({mockPass1, mockPass2});
 
     program.use(1); // Use the second pass
     program.reset();

@@ -1,27 +1,31 @@
+#pragma once
+
 #include <gmock/gmock.h>
+#include <graphic/MockApi.hpp>
+#include <graphic/context/MockShaderContext.hpp>
 #include <graphic/shader/Shader.hpp>
 
 namespace cenpy::mock::graphic::shader
 {
+    namespace api = cenpy::mock::graphic::api;
+    namespace context = cenpy::graphic::context;
     namespace shader = cenpy::graphic::shader;
 
-    class MockShader : public shader::opengl::Shader
+    class MockShader : public shader::Shader<api::MockOpenGL>
     {
     public:
         MockShader()
-            : Shader("", shader::ShaderType::VERTEX)
+            : shader::Shader<api::MockOpenGL>("", context::ShaderType::VERTEX)
         {
-            ON_CALL(*this, getLocation).WillByDefault(::testing::Return((GLuint)1));
         }
-        MockShader(const std::string &shaderPath, const shader::ShaderType &shaderType)
-            : Shader(shaderPath, shaderType)
+        MockShader(const std::string &shaderPath, const context::ShaderType &shaderType)
+            : shader::Shader<api::MockOpenGL>(shaderPath, shaderType)
         {
-            ON_CALL(*this, getLocation).WillByDefault(::testing::Return((GLuint)1));
         }
 
         MOCK_METHOD(void, free, (), (override));
         MOCK_METHOD(void, load, (), (override));
-        MOCK_METHOD(GLuint, getLocation, (), (const, override));
+        MOCK_METHOD(const std::shared_ptr<typename api::MockOpenGL::ShaderContext> &, getContext, (), (const, override));
     };
 
 }

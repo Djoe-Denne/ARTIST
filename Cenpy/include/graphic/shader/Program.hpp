@@ -15,48 +15,69 @@
 #include <utils.hpp>
 #include <common/exception/TraceableException.hpp>
 #include <graphic/shader/Pass.hpp>
+#include <graphic/shader/component/program/User.hpp>
+#include <graphic/shader/component/program/Resetter.hpp>
 
 namespace cenpy::graphic::shader
 {
-
-    template <typename P, typename S, typename U, template <typename> typename C, typename D>
-        requires std::is_base_of_v<BaseUniform, U> && std::is_base_of_v<BasePass<S, U, C, P>, P> && std::is_base_of_v<BaseShader, S>
-    class BaseProgram
+    template <typename API>
+    class Program
     {
     public:
-        virtual ~BaseProgram() = default;
+        virtual ~Program() = default;
 
-        template <typename T>
-        [[nodiscard]] P &forPass(const int &pass)
+        Program(const std::initializer_list<std::shared_ptr<Pass<API>>> &passes,
+                std::shared_ptr<typename API::ProgramContext::User> user,
+                std::shared_ptr<typename API::ProgramContext::Resetter> resetter,
+                std::shared_ptr<typename API::ProgramContext> context)
+            : m_user(user), m_resetter(resetter), m_context(context)
         {
-            return *m_passes[pass];
+            for (auto &pass : passes)
+            {
+                m_context->addPass(pass);
+            }
+        }
+
+        Program(const std::initializer_list<std::shared_ptr<Pass<API>>> &passes) : Program(passes,
+                                                                                           std::make_shared<typename API::ProgramContext::User>(),
+                                                                                           std::make_shared<typename API::ProgramContext::Resetter>(),
+                                                                                           std::make_shared<typename API::ProgramContext>())
+        {
+        }
+
+        [[nodiscard]] Pass<API> &forPass(const int &pass)
+        {
+            return *m_context->getPass(pass);
         }
 
         [[nodiscard]] virtual int getPassesCount() const
         {
-            return m_passes.size();
-        }
-
-        virtual void use(const int &pass)
-        {
-            m_passes[pass]->use();
-            m_currentPass = pass;
+            return m_context->getPassesCount();
         }
 
         [[nodiscard]] bool hasNext() const
         {
-            return m_currentPass < getPassesCount() - 1;
+            return m_context->getCurrentPass() + 1 < getPassesCount();
         }
 
         virtual bool useNext()
         {
             if (hasNext())
             {
-                use(++m_currentPass);
+                use(m_context->getCurrentPass() + 1);
                 return hasNext();
             }
             reset();
             return false;
+        }
+
+        virtual void use(const int &pass)
+        {
+            if (m_user)
+            {
+                m_context->setCurrentPass(pass);
+                m_user->useProgram(m_context);
+            }
         }
 
         /**
@@ -64,29 +85,16 @@ namespace cenpy::graphic::shader
          */
         virtual void reset()
         {
-            m_currentPass = -1;
-        }
-
-    protected:
-        BaseProgram(const std::initializer_list<std::shared_ptr<P>> &passes) : m_passes(passes)
-        {
+            if (m_resetter)
+            {
+                m_resetter->resetProgram(m_context);
+            }
         }
 
     private:
-        std::vector<std::shared_ptr<P>> m_passes;
-        int m_currentPass = -1;
+        std::shared_ptr<typename API::ProgramContext::User> m_user;
+        std::shared_ptr<typename API::ProgramContext::Resetter> m_resetter;
+        std::shared_ptr<typename API::ProgramContext> m_context;
     };
 
-    namespace opengl
-    {
-        template <typename S = Shader, typename U = Uniform, template <typename> typename C = setter, typename P = Pass<S, U, C>>
-            requires std::is_base_of_v<BaseUniform, U> && std::is_base_of_v<BasePass<S, U, C, P>, P> && std::is_base_of_v<BaseShader, S>
-        class Program : public BaseProgram<P, S, U, C, Program<S, U, C, P>>
-        {
-        public:
-            Program(const std::initializer_list<std::shared_ptr<P>> &passes) : BaseProgram<P, S, U, C, Program<S, U, C, P>>(passes)
-            {
-            }
-        };
-    } // namespace opengl
 } // namespace cenpy::graphic::shader
