@@ -42,10 +42,7 @@ public:
 class MockedPass : public shader::Pass<api::MockOpenGL>
 {
 public:
-    MockedPass(const std::initializer_list<std::shared_ptr<shader::Shader<api::MockOpenGL>>> shaders)
-        : shader::Pass<api::MockOpenGL>(shaders)
-    {
-    }
+    using shader::Pass<api::MockOpenGL>::Pass;
 
     std::shared_ptr<MockLoader<api::MockOpenGL>> getLoader() const override
     {

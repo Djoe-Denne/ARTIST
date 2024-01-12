@@ -135,8 +135,6 @@ namespace cenpy::graphic
             using UniformReader = shader::opengl::component::pass::OpenGLPassUniformReader;
             using User = shader::opengl::component::pass::OpenGLPassUser;
 
-            OpenGLPassContext() : m_programId(0) {}
-
             void setProgramId(GLuint programId)
             {
                 m_programId = programId;

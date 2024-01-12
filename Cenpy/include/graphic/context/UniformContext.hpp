@@ -35,7 +35,7 @@ namespace cenpy::graphic
                     {
                         std::any_cast<T>(&m_value);
                     }
-                    catch (const std::bad_any_cast &e)
+                    catch (const std::bad_any_cast &)
                     {
                         throw cenpy::common::exception::TraceableException<std::runtime_error>(std::format("ERROR::UNIFORM::SET::TYPE_MISMATCH: The type of the value ({}) does not match the type of the uniform variable ({})", typeid(T).name(), typeid(m_value).name()));
                     }
@@ -50,7 +50,7 @@ namespace cenpy::graphic
                 {
                     std::any_cast<T>(&m_value);
                 }
-                catch (const std::bad_any_cast &e)
+                catch (const std::bad_any_cast &)
                 {
                     throw cenpy::common::exception::TraceableException<std::runtime_error>(std::format("ERROR::UNIFORM::SET::TYPE_MISMATCH: The type of the value ({}) does not match the type of the uniform variable ({})", typeid(value).name(), typeid(m_value).name()));
                 }

@@ -34,7 +34,7 @@ namespace cenpy::graphic::shader
         {
         public:
             OpenGLLoader() = default;
-            OpenGLLoader(const std::shared_ptr<graphic::shader::component::pass::IShaderAttacher<graphic::api::OpenGL>> attacher) : m_attacher(attacher) {}
+            explicit OpenGLLoader(const std::shared_ptr<graphic::shader::component::pass::IShaderAttacher<graphic::api::OpenGL>> attacher) : m_attacher(attacher) {}
 
             void setAttacher(const std::shared_ptr<graphic::shader::component::pass::IShaderAttacher<graphic::api::OpenGL>> attacher) { m_attacher = attacher; }
 

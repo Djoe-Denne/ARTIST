@@ -32,10 +32,7 @@ public:
 class MockedShader : public shader::Shader<api::MockOpenGL>
 {
 public:
-    MockedShader(const std::string &path, context::ShaderType type)
-        : shader::Shader<api::MockOpenGL>(path, type)
-    {
-    }
+    using shader::Shader<api::MockOpenGL>::Shader;
 
     std::shared_ptr<MockLoader<api::MockOpenGL>> getLoader() const override
     {

@@ -40,7 +40,14 @@ namespace cenpy::graphic::shader
         // ... Existing constructors, destructors, methods ...
         virtual ~Pass()
         {
-            free();
+            try
+            {
+                free();
+            }
+            catch (const std::exception &e)
+            {
+                std::cerr << e.what() << std::endl;
+            }
         }
 
         // New or modified methods
@@ -65,7 +72,7 @@ namespace cenpy::graphic::shader
             }
         }
 
-        Pass(const std::initializer_list<std::shared_ptr<Shader<API>>> shaders)
+        explicit Pass(const std::initializer_list<std::shared_ptr<Shader<API>>> shaders)
             : Pass(shaders,
                    std::make_shared<typename API::PassContext::Loader>(),
                    std::make_shared<typename API::PassContext::Freer>(),
@@ -159,14 +166,6 @@ namespace cenpy::graphic::shader
         }
 
     protected:
-        // Component instances
-        std::shared_ptr<typename API::PassContext::Loader> m_loader;               ///< The loader for the pass context.
-        std::shared_ptr<typename API::PassContext::Freer> m_freer;                 ///< The freer for the pass context.
-        std::shared_ptr<typename API::PassContext::ShaderAttacher> m_attacher;     ///< The shader attacher for the pass context.
-        std::shared_ptr<typename API::PassContext::UniformReader> m_uniformReader; ///< The uniform reader for the pass context.
-        std::shared_ptr<typename API::PassContext::User> m_user;                   ///< The user for the pass context.
-        std::shared_ptr<typename API::PassContext> m_context;                      ///< The pass context.
-
         [[nodiscard]] virtual std::shared_ptr<typename API::PassContext::Loader> getLoader() const
         {
             return m_loader;
@@ -191,5 +190,14 @@ namespace cenpy::graphic::shader
         {
             return m_user;
         }
+
+    private:
+        // Component instances
+        std::shared_ptr<typename API::PassContext::Loader> m_loader;               ///< The loader for the pass context.
+        std::shared_ptr<typename API::PassContext::Freer> m_freer;                 ///< The freer for the pass context.
+        std::shared_ptr<typename API::PassContext::ShaderAttacher> m_attacher;     ///< The shader attacher for the pass context.
+        std::shared_ptr<typename API::PassContext::UniformReader> m_uniformReader; ///< The uniform reader for the pass context.
+        std::shared_ptr<typename API::PassContext::User> m_user;                   ///< The user for the pass context.
+        std::shared_ptr<typename API::PassContext> m_context;                      ///< The pass context.
     };
 } // namespace cenpy::graphic::shader

@@ -94,7 +94,6 @@ namespace cenpy::graphic
             using Loader = shader::opengl::component::shader::OpenGLShaderLoader;
             using Freer = shader::opengl::component::shader::OpenGLShaderFreer;
             using Reader = shader::opengl::component::shader::OpenGLShaderReader;
-            OpenGLShaderContext() {}
 
             void setShaderID(GLuint shaderID)
             {

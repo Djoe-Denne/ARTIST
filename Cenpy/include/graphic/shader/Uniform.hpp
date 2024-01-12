@@ -41,7 +41,7 @@ namespace cenpy::graphic::shader
     public:
         virtual ~Uniform() = default;
 
-        Uniform(std::shared_ptr<typename API::UniformContext> context) : m_context(context) {}
+        explicit Uniform(std::shared_ptr<typename API::UniformContext> context) : m_context(context) {}
 
         Uniform() : Uniform(std::make_shared<typename API::UniformContext>())
         {

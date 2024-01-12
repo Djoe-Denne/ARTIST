@@ -82,7 +82,7 @@ namespace cenpy::graphic::shader
                     auto uniformContext = std::make_shared<graphic::api::OpenGL::UniformContext>();
                     uniformContext->setUniformID(location);
                     uniformContext->setGLType(type);
-                    std::shared_ptr<graphic::shader::Uniform<graphic::api::OpenGL>> uniform = std::make_shared<graphic::shader::Uniform<graphic::api::OpenGL>>(uniformContext);
+                    auto uniform = std::make_shared<graphic::shader::Uniform<graphic::api::OpenGL>>(uniformContext);
                     openglContext->addUniform(std::string(uniformName), uniform);
                 }
             }

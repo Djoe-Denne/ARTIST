@@ -38,10 +38,10 @@ namespace cenpy::graphic::shader
             }
         }
 
-        Program(const std::initializer_list<std::shared_ptr<Pass<API>>> &passes) : Program(passes,
-                                                                                           std::make_shared<typename API::ProgramContext::User>(),
-                                                                                           std::make_shared<typename API::ProgramContext::Resetter>(),
-                                                                                           std::make_shared<typename API::ProgramContext>())
+        explicit Program(const std::initializer_list<std::shared_ptr<Pass<API>>> &passes) : Program(passes,
+                                                                                                    std::make_shared<typename API::ProgramContext::User>(),
+                                                                                                    std::make_shared<typename API::ProgramContext::Resetter>(),
+                                                                                                    std::make_shared<typename API::ProgramContext>())
         {
         }
 

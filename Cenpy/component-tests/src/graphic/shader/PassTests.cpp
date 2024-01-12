@@ -62,7 +62,7 @@ TEST_F(PassTest, UniformReadingTest)
 {
     shader::Pass<api::OpenGL> pass({vertexShader, fragmentShader});
     pass.load();
-    auto uniforms = pass.getUniforms();
+    const auto &uniforms = pass.getUniforms();
     // Assuming the shaders have at least one uniform
     ASSERT_FALSE(uniforms.empty());
     // Further checks can be added here based on specific uniforms expected in the shaders

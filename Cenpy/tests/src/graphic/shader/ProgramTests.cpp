@@ -30,16 +30,14 @@ class ProgramTest : public ::testing::Test
 class MockedProgram : public shader::Program<api::MockOpenGL>
 {
 public:
-    MockedProgram(const std::initializer_list<std::shared_ptr<shader::Pass<api::MockOpenGL>>> &passes) : shader::Program<api::MockOpenGL>(passes)
-    {
-    }
+    using shader::Program<api::MockOpenGL>::Program;
 
-    std::shared_ptr<MockResetter<api::MockOpenGL>> getResetter() const
+    std::shared_ptr<MockResetter<api::MockOpenGL>> getResetter() const override
     {
         return shader::Program<api::MockOpenGL>::getResetter();
     }
 
-    std::shared_ptr<MockUser<api::MockOpenGL>> getUser() const
+    std::shared_ptr<MockUser<api::MockOpenGL>> getUser() const override
     {
         return shader::Program<api::MockOpenGL>::getUser();
     }
