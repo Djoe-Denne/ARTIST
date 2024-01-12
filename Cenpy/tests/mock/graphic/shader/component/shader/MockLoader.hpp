@@ -11,9 +11,10 @@
 
 namespace cenpy::mock::graphic::shader::opengl::component::shader
 {
-    class MockLoader : public cenpy::graphic::shader::component::shader::IShaderLoader<graphic::api::MockOpenGL>
+    template <typename API>
+    class MockLoader : public cenpy::graphic::shader::component::shader::IShaderLoader<API>
     {
     public:
-        MOCK_METHOD(void, loadShader, (std::shared_ptr<typename graphic::api::MockOpenGL::ShaderContext>), (override));
+        MOCK_METHOD(void, loadShader, (std::shared_ptr<typename API::ShaderContext>), (override));
     };
 }

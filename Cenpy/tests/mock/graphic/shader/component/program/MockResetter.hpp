@@ -8,9 +8,10 @@
 
 namespace cenpy::mock::graphic::shader::opengl::component::program
 {
-    class MockResetter : public cenpy::graphic::shader::component::program::IProgramResetter<graphic::api::MockOpenGL>
+    template <typename API>
+    class MockResetter : public cenpy::graphic::shader::component::program::IProgramResetter<API>
     {
     public:
-        MOCK_METHOD(void, resetProgram, (std::shared_ptr<typename graphic::api::MockOpenGL::ProgramContext> context), (override));
+        MOCK_METHOD(void, resetProgram, (std::shared_ptr<typename API::ProgramContext> context), (override));
     };
 }

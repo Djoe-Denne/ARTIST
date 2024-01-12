@@ -1,7 +1,9 @@
 #pragma once
 
+#include <GL/glew.h>
 #include <memory>
 #include <graphic/Api.hpp>
+#include <graphic/context/PassContext.hpp>
 
 namespace cenpy::graphic::shader
 {
@@ -52,7 +54,24 @@ namespace cenpy::graphic::shader
              * and attaches each shader to the OpenGL program. If the context casting fails
              * or if any shader context is invalid, an exception is thrown.
              */
-            void attachShaders(std::shared_ptr<typename graphic::api::OpenGL::PassContext> openglContext) override;
+            void attachShaders(std::shared_ptr<typename graphic::api::OpenGL::PassContext> openglContext) override
+            {
+                if (!openglContext)
+                {
+                    throw common::exception::TraceableException<std::runtime_error>("ERROR::SHADER::NON_OPENGL_CONTEXT");
+                }
+
+                GLuint programId = openglContext->getProgramId();
+                if (programId == 0)
+                {
+                    throw common::exception::TraceableException<std::runtime_error>("ERROR::SHADER::INVALID_PROGRAM_ID");
+                }
+
+                for (const auto &shader : openglContext->getShaders())
+                {
+                    glAttachShader(programId, shader->getContext()->getShaderID());
+                }
+            }
         };
     }
 }

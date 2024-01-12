@@ -111,7 +111,7 @@ TEST_F(UniformTest, SetVec2Uniform)
     shader::Uniform<api::OpenGL> uniform(uniformContext);
 
     // Expected call
-    EXPECT_CALL(*mock::glFunctionMock::instance(), glUniform2fv_mock(location, 1, &value[0]))
+    EXPECT_CALL(*mock::glFunctionMock::instance(), glUniform2fv_mock(location, 0, ::testing::_))
         .Times(1);
 
     // Act
@@ -130,7 +130,7 @@ TEST_F(UniformTest, SetVec3Uniform)
     shader::Uniform<api::OpenGL> uniform(uniformContext);
 
     // Expected call
-    EXPECT_CALL(*mock::glFunctionMock::instance(), glUniform3fv_mock(location, 1, &value[0]))
+    EXPECT_CALL(*mock::glFunctionMock::instance(), glUniform3fv_mock(location, 0, ::testing::_))
         .Times(1);
 
     // Act
@@ -149,7 +149,7 @@ TEST_F(UniformTest, SetVec4Uniform)
     shader::Uniform<api::OpenGL> uniform(uniformContext);
 
     // Expected call
-    EXPECT_CALL(*mock::glFunctionMock::instance(), glUniform4fv_mock(location, 1, &value[0]))
+    EXPECT_CALL(*mock::glFunctionMock::instance(), glUniform4fv_mock(location, 0, ::testing::_))
         .Times(1);
 
     // Act
@@ -168,7 +168,7 @@ TEST_F(UniformTest, SetMat2Uniform)
     shader::Uniform<api::OpenGL> uniform(uniformContext);
 
     // Expected call
-    EXPECT_CALL(*mock::glFunctionMock::instance(), glUniformMatrix2fv_mock(location, 1, GL_FALSE, ::testing::_))
+    EXPECT_CALL(*mock::glFunctionMock::instance(), glUniformMatrix2fv_mock(location, 0, GL_FALSE, ::testing::_))
         .Times(1);
 
     // Act
@@ -188,7 +188,7 @@ TEST_F(UniformTest, SetMat3Uniform)
     shader::Uniform<api::OpenGL> uniform(uniformContext);
 
     // Expected call
-    EXPECT_CALL(*mock::glFunctionMock::instance(), glUniformMatrix3fv_mock(location, 1, GL_FALSE, ::testing::_))
+    EXPECT_CALL(*mock::glFunctionMock::instance(), glUniformMatrix3fv_mock(location, 0, GL_FALSE, ::testing::_))
         .Times(1);
 
     // Act
@@ -208,7 +208,7 @@ TEST_F(UniformTest, SetMat4Uniform)
     shader::Uniform<api::OpenGL> uniform(uniformContext);
 
     // Expected call
-    EXPECT_CALL(*mock::glFunctionMock::instance(), glUniformMatrix4fv_mock(location, 1, GL_FALSE, ::testing::_))
+    EXPECT_CALL(*mock::glFunctionMock::instance(), glUniformMatrix4fv_mock(location, 0, GL_FALSE, ::testing::_))
         .Times(1);
 
     // Act

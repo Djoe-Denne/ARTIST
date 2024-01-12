@@ -9,6 +9,7 @@ namespace cenpy::mock::graphic
 {
     namespace opengl::context
     {
+        template <typename API>
         class MockUniformContext;
     }
     namespace shader::opengl::component::uniform
@@ -27,7 +28,7 @@ namespace cenpy::mock::graphic
         struct mockSetter<float> : std::true_type
         {
             static constexpr auto set =
-                [](const cenpy::mock::graphic::opengl::context::MockUniformContext &uniform)
+                [](const cenpy::mock::graphic::opengl::context::MockUniformContext<graphic::api::MockOpenGL> &uniform)
             { glUniform1f(1, 3.14f); };
         };
     }

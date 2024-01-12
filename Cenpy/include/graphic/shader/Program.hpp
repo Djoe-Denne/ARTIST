@@ -91,6 +91,22 @@ namespace cenpy::graphic::shader
             }
         }
 
+        [[nodiscard]] virtual std::shared_ptr<typename API::ProgramContext> getContext() const
+        {
+            return m_context;
+        }
+
+    protected:
+        [[nodiscard]] virtual std::shared_ptr<typename API::ProgramContext::User> getUser() const
+        {
+            return m_user;
+        }
+
+        [[nodiscard]] virtual std::shared_ptr<typename API::ProgramContext::Resetter> getResetter() const
+        {
+            return m_resetter;
+        }
+
     private:
         std::shared_ptr<typename API::ProgramContext::User> m_user;
         std::shared_ptr<typename API::ProgramContext::Resetter> m_resetter;

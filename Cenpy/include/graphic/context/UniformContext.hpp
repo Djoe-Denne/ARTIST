@@ -20,7 +20,7 @@ namespace cenpy::graphic
     }
     namespace context
     {
-
+        template <typename API>
         class UniformContext
         {
         public:
@@ -64,7 +64,7 @@ namespace cenpy::graphic
 
     namespace opengl::context
     {
-        class OpenGLUniformContext : public graphic::context::UniformContext
+        class OpenGLUniformContext : public graphic::context::UniformContext<graphic::api::OpenGL>
         {
         public:
             template <typename T>

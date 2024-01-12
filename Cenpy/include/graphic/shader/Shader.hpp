@@ -54,7 +54,11 @@ namespace cenpy::graphic::shader
          * @brief Destructor for Shader.
          */
 
-        virtual ~Shader() = default;
+        virtual ~Shader()
+        {
+            free();
+        }
+
         /**
          * @brief Constructor for Shader.
          * @param shaderPath Path to the shader source file.
@@ -116,7 +120,7 @@ namespace cenpy::graphic::shader
          * @brief Get the type of the shader.
          * @return The type of the shader.
          */
-        [[nodiscard]] const context::ShaderType &getShaderType() const
+        [[nodiscard]] context::ShaderType getShaderType() const
         {
             return m_context->getShaderType();
         }
@@ -166,6 +170,36 @@ namespace cenpy::graphic::shader
         }
 
     protected:
+        /**
+         * @brief Get the loader object for the shader.
+         *
+         * @return std::shared_ptr<typename API::ShaderContext::Loader> The loader object.
+         */
+        [[nodiscard]] virtual std::shared_ptr<typename API::ShaderContext::Loader> getLoader() const
+        {
+            return m_loader;
+        }
+
+        /**
+         * @brief Get the freer object for the shader.
+         *
+         * @return std::shared_ptr<typename API::ShaderContext::Freer> The freer object.
+         */
+        [[nodiscard]] virtual std::shared_ptr<typename API::ShaderContext::Freer> getFreer() const
+        {
+            return m_freer;
+        }
+
+        /**
+         * @brief Get the reader object for the shader.
+         *
+         * @return std::shared_ptr<typename API::ShaderContext::Reader> The reader object.
+         */
+        [[nodiscard]] virtual std::shared_ptr<typename API::ShaderContext::Reader> getReader() const
+        {
+            return m_reader;
+        }
+
     private:
         std::shared_ptr<typename API::ShaderContext::Loader> m_loader; // Component responsible for loading the shader
         std::shared_ptr<typename API::ShaderContext::Freer> m_freer;   // Component responsible for freeing the shader

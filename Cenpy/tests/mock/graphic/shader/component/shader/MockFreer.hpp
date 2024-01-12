@@ -8,9 +8,10 @@
 
 namespace cenpy::mock::graphic::shader::opengl::component::shader
 {
-    class MockFreer : public cenpy::graphic::shader::component::shader::IShaderFreer<graphic::api::MockOpenGL>
+    template <typename API>
+    class MockFreer : public cenpy::graphic::shader::component::shader::IShaderFreer<API>
     {
     public:
-        MOCK_METHOD(void, freeShader, (std::shared_ptr<typename graphic::api::MockOpenGL::ShaderContext> context), (override));
+        MOCK_METHOD(void, freeShader, (std::shared_ptr<typename API::ShaderContext> context), (override));
     };
 }

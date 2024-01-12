@@ -1,60 +1,91 @@
-#ifdef __mock_gl__
 
+#include <string>
+#include <memory>
 #include <gtest/gtest.h>
-#include <opengl/glFunctionMock.hpp>
-#include <graphic/shader/MockPass.hpp>
-#include <graphic/context/MockProgramContext.hpp>
+#include <gmock/gmock.h>
 #include <graphic/shader/Program.hpp>
+#include <graphic/shader/Pass.hpp>
+#include <graphic/shader/MockPass.hpp>
+#include <graphic/shader/component/program/MockUser.hpp>
+#include <graphic/shader/component/program/MockResetter.hpp>
+#include <graphic/context/MockProgramContext.hpp>
 #include <graphic/MockApi.hpp>
+#include <TestUtils.hpp>
 
 namespace api = cenpy::mock::graphic::api;
 namespace context = cenpy::graphic::context;
 namespace shader = cenpy::graphic::shader;
-namespace mock_shader = cenpy::mock::graphic::shader::opengl;
+namespace mock = cenpy::mock;
+
+using mock::graphic::shader::opengl::MockPass;
+using mock::graphic::shader::opengl::component::program::MockResetter;
+using mock::graphic::shader::opengl::component::program::MockUser;
+
+using cenpy::test::utils::expectSpecificError;
 
 class ProgramTest : public ::testing::Test
 {
-protected:
-    std::shared_ptr<mock_shader::MockPass> mockPass1 = std::make_shared<mock_shader::MockPass>();
-    std::shared_ptr<mock_shader::MockPass> mockPass2 = std::make_shared<mock_shader::MockPass>();
 };
 
-TEST_F(ProgramTest, UsePassTest)
+class MockedProgram : public shader::Program<api::MockOpenGL>
 {
-    shader::Program<api::MockOpenGL> program({mockPass1, mockPass2});
+public:
+    MockedProgram(const std::initializer_list<std::shared_ptr<shader::Pass<api::MockOpenGL>>> &passes) : shader::Program<api::MockOpenGL>(passes)
+    {
+    }
 
-    EXPECT_CALL(*mockPass1, use()).Times(1);
-    program.use(0);
+    std::shared_ptr<MockResetter<api::MockOpenGL>> getResetter() const
+    {
+        return shader::Program<api::MockOpenGL>::getResetter();
+    }
 
-    EXPECT_CALL(*mockPass2, use()).Times(1);
-    program.use(1);
+    std::shared_ptr<MockUser<api::MockOpenGL>> getUser() const
+    {
+        return shader::Program<api::MockOpenGL>::getUser();
+    }
+
+    friend class ProgramTest;
+};
+
+TEST_F(ProgramTest, UseTest)
+{
+    // Arrange
+    auto mockPass1 = std::make_shared<MockPass<api::MockOpenGL>>();
+    auto mockPass2 = std::make_shared<MockPass<api::MockOpenGL>>();
+    MockedProgram program({mockPass1, mockPass2});
+
+    // Expect calls
+    EXPECT_CALL(*program.getUser(), useProgram(::testing::_)).Times(1);
+
+    // Act
+    program.use(0); // Using first pass
 }
 
 TEST_F(ProgramTest, IteratePassesTest)
 {
-    shader::Program<api::MockOpenGL> program({mockPass1, mockPass2});
+    // Arrange
+    auto mockPass1 = std::make_shared<MockPass<api::MockOpenGL>>();
+    auto mockPass2 = std::make_shared<MockPass<api::MockOpenGL>>();
+    MockedProgram program({mockPass1, mockPass2});
 
-    EXPECT_CALL(*mockPass1, use()).Times(1);
-    EXPECT_CALL(*mockPass2, use()).Times(1);
+    // Expect calls
+    EXPECT_CALL(*program.getUser(), useProgram(::testing::_)).Times(2);
 
-    while (program.useNext())
+    // Act
+    while (program.hasNext())
     {
+        program.useNext();
     }
-
-    // Checks if it iterates through all passes
-    ASSERT_EQ(program.getPassesCount(), 2);
 }
 
 TEST_F(ProgramTest, ResetProgramTest)
 {
-    shader::Program<api::MockOpenGL> program({mockPass1, mockPass2});
+    // Arrange
+    MockedProgram program({nullptr});
 
-    program.use(1); // Use the second pass
+    // Expect calls
+    EXPECT_CALL(*program.getResetter(), resetProgram(::testing::_)).Times(1);
+
+    // Act
     program.reset();
-
-    // After reset, it should return to the first pass
-    EXPECT_CALL(*mockPass1, use()).Times(1);
-    program.useNext();
 }
-
-#endif // __mock_gl__

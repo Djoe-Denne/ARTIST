@@ -2,7 +2,6 @@
 
 #pragma once
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
 #include <graphic/Api.hpp>
 #include <common/exception/TraceableException.hpp>
 
@@ -42,37 +41,32 @@ namespace cenpy::graphic
         public:
             virtual ~ShaderContext() = default;
 
-            void setShaderType(ShaderType shaderType)
+            virtual void setShaderType(ShaderType shaderType)
             {
                 m_shaderType = shaderType;
             }
 
-            const graphic::context::ShaderType &getShaderType() const
+            [[nodiscard]] virtual graphic::context::ShaderType getShaderType() const
             {
                 return m_shaderType;
             }
 
-            void setShaderPath(const std::string &shaderPath)
+            virtual void setShaderPath(const std::string &shaderPath)
             {
                 m_shaderPath = shaderPath;
             }
 
-            const std::string &getShaderPath() const
+            [[nodiscard]] virtual const std::string &getShaderPath() const
             {
                 return m_shaderPath;
             }
 
-            void setShaderCode(const std::string &shaderCode)
+            virtual void setShaderCode(const std::string &shaderCode)
             {
                 m_shaderCode = shaderCode;
             }
 
-            const std::string &getShaderCode() const
-            {
-                return m_shaderCode;
-            }
-
-            std::string &getShaderCode()
+            [[nodiscard]] virtual const std::string &getShaderCode() const
             {
                 return m_shaderCode;
             }

@@ -7,9 +7,11 @@
 
 namespace cenpy::mock::graphic::shader::opengl::component::pass
 {
-    class MockShaderAttacher : public cenpy::graphic::shader::component::pass::IShaderAttacher<graphic::api::MockOpenGL>
+    template <typename API>
+    class MockShaderAttacher : public cenpy::graphic::shader::component::pass::IShaderAttacher<API>
     {
     public:
-        MOCK_METHOD(void, attachShaders, (std::shared_ptr<typename graphic::api::MockOpenGL::PassContext> openglContext), (override));
+        MOCK_METHOD(void, attachShaders, (std::shared_ptr<typename API::PassContext> openglContext), (override));
     };
+
 }

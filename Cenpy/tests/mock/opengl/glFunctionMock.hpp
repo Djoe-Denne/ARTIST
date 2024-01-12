@@ -1,3 +1,31 @@
+/**
+ * @file glFunctionMock.hpp
+ * @brief Mocking framework for OpenGL functions using Google Mock.
+ *
+ * This header file defines a mock class for OpenGL functions, enabling
+ * the simulation and testing of OpenGL-dependent code in isolation.
+ * It redefines OpenGL functions to their mock counterparts provided by
+ * the `cenpy::mock::opengl::glFunctionMock` class.
+ *
+ * Usage:
+ * Just include this header in test files to enable the mocking of OpenGL functions.
+ * Ensure also that the `__mock_gl__` macro is defined in the test scope.
+ * This ensures that OpenGL function calls within the test scope are redirected
+ * to the corresponding mock methods, which can be controlled using Google Mock.
+ *
+ * Limitations:
+ * This mocking framework only works if OpenGL functions are used within header files.
+ * If OpenGL functions are used directly in cpp files, they are compiled with
+ * the actual OpenGL macro definitions, bypassing the mocks.
+ *
+ * @note This framework is intended for testing purposes only and should not
+ * be included in production code.
+ *
+ * @author Djoé DENNE
+ * @version 1.0
+ * @date 08/01/2024
+ */
+
 #pragma once
 
 #ifdef __mock_gl__
@@ -61,6 +89,7 @@ namespace cenpy::mock::opengl
     class glFunctionMock
     {
     public:
+        static constexpr std::string UNIFORM_NAME = "uniform_test";
         static std::shared_ptr<glFunctionMock> instance()
         {
             static std::shared_ptr<glFunctionMock> instance = std::make_shared<glFunctionMock>();
@@ -102,7 +131,7 @@ namespace cenpy::mock::opengl
                 .WillByDefault([this](GLuint program, GLuint index, GLsizei bufSize, GLsizei *length, GLint *size, GLenum *type, GLchar *name)
                                {
                 // Example mock name
-                const char* mockUniformName = "uniform_test";
+                const char* mockUniformName = UNIFORM_NAME.c_str();
 
                 // Copy the mock name to the provided 'name' buffer
                 strncpy(name, mockUniformName, bufSize);

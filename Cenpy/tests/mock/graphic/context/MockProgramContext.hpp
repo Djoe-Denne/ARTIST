@@ -11,11 +11,12 @@ namespace cenpy::mock::graphic
 {
     namespace opengl::context
     {
-        class MockProgramContext : public cenpy::graphic::context::ProgramContext<graphic::api::MockOpenGL>
+        template <typename API>
+        class MockProgramContext : public cenpy::graphic::context::ProgramContext<API>
         {
         public:
-            using User = shader::opengl::component::program::MockUser;
-            using Resetter = shader::opengl::component::program::MockResetter;
+            using User = shader::opengl::component::program::MockUser<API>;
+            using Resetter = shader::opengl::component::program::MockResetter<API>;
         };
     }
 }

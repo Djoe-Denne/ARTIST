@@ -16,7 +16,7 @@ namespace cenpy::graphic
 {
     namespace shader::opengl::component::pass
     {
-        class OpenGLPassLoader;
+        class OpenGLLoader;
         class OpenGLPassFreer;
         class OpenGLShaderAttacher;
         class OpenGLPassUniformReader;
@@ -54,7 +54,7 @@ namespace cenpy::graphic
              * @param name Name of the uniform to add.
              * @param uniform Uniform to add.
              */
-            void addUniform(const std::string &name, std::shared_ptr<shader::Uniform<API>> &uniform)
+            void addUniform(const std::string &name, std::shared_ptr<shader::Uniform<API>> uniform)
             {
                 m_uniforms[name] = uniform;
             }
@@ -129,7 +129,7 @@ namespace cenpy::graphic
         class OpenGLPassContext : public graphic::context::PassContext<graphic::api::OpenGL>
         {
         public:
-            using Loader = shader::opengl::component::pass::OpenGLPassLoader;
+            using Loader = shader::opengl::component::pass::OpenGLLoader;
             using Freer = shader::opengl::component::pass::OpenGLPassFreer;
             using ShaderAttacher = shader::opengl::component::pass::OpenGLShaderAttacher;
             using UniformReader = shader::opengl::component::pass::OpenGLPassUniformReader;

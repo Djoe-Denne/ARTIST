@@ -3,10 +3,12 @@
 #include <OpenGLComponentTests.hpp>
 #include <graphic/Api.hpp>
 #include <OpenGLComponentTests.hpp>
+#include <TestUtils.hpp>
 
 namespace api = cenpy::graphic::api;
 namespace context = cenpy::graphic::context;
 namespace shader = cenpy::graphic::shader;
+using cenpy::test::utils::expectSpecificError;
 
 class ShaderTest : public OpenGLComponentTest
 {
@@ -33,20 +35,9 @@ TEST_F(ShaderTest, CreateShaderBadVert)
     shader::Shader<api::OpenGL> shader("test-datas/shaders/vertex/bad/minimal.vert", context::ShaderType::VERTEX);
 
     // Act
-    try
-    {
-        shader.load();
-        FAIL() << "Expected an exception to be thrown";
-    }
-    catch (const std::runtime_error &e)
-    {
-        std::string errorMsg = e.what();
-        EXPECT_NE(errorMsg.find("COMPILATION_FAILED"), std::string::npos) << "Exception message does not contain 'COMPILATION_FAILED'";
-    }
-    catch (...)
-    {
-        FAIL() << "Expected std::runtime_error to be thrown";
-    }
+    expectSpecificError([&shader]()
+                        { shader.load(); },
+                        cenpy::common::exception::TraceableException<std::runtime_error>("ERROR::SHADER::COMPILATION_FAILED"));
     // Assert
     EXPECT_EQ(shader.getShaderType(), context::ShaderType::VERTEX);
 
@@ -74,20 +65,9 @@ TEST_F(ShaderTest, CreateShaderBadFrag)
     shader::Shader<api::OpenGL> shader("test-datas/shaders/fragment/bad/minimal.frag", context::ShaderType::FRAGMENT);
 
     // Act
-    try
-    {
-        shader.load();
-        FAIL() << "Expected an exception to be thrown";
-    }
-    catch (const std::runtime_error &e)
-    {
-        std::string errorMsg = e.what();
-        EXPECT_NE(errorMsg.find("COMPILATION_FAILED"), std::string::npos) << "Exception message does not contain 'COMPILATION_FAILED'";
-    }
-    catch (...)
-    {
-        FAIL() << "Expected std::runtime_error to be thrown";
-    }
+    expectSpecificError([&shader]()
+                        { shader.load(); },
+                        cenpy::common::exception::TraceableException<std::runtime_error>("ERROR::SHADER::COMPILATION_FAILED"));
     // Assert
     EXPECT_EQ(shader.getShaderType(), context::ShaderType::FRAGMENT);
 
@@ -115,20 +95,9 @@ TEST_F(ShaderTest, CreateShaderBadGeom)
     shader::Shader<api::OpenGL> shader("test-datas/shaders/geometry/bad/minimal.geom", context::ShaderType::GEOMETRY);
 
     // Act
-    try
-    {
-        shader.load();
-        FAIL() << "Expected an exception to be thrown";
-    }
-    catch (const std::runtime_error &e)
-    {
-        std::string errorMsg = e.what();
-        EXPECT_NE(errorMsg.find("COMPILATION_FAILED"), std::string::npos) << "Exception message does not contain 'COMPILATION_FAILED'";
-    }
-    catch (...)
-    {
-        FAIL() << "Expected std::runtime_error to be thrown";
-    }
+    expectSpecificError([&shader]()
+                        { shader.load(); },
+                        cenpy::common::exception::TraceableException<std::runtime_error>("ERROR::SHADER::COMPILATION_FAILED"));
     // Assert
     EXPECT_EQ(shader.getShaderType(), context::ShaderType::GEOMETRY);
 
@@ -156,20 +125,9 @@ TEST_F(ShaderTest, CreateShaderBadTesselaionControl)
     shader::Shader<api::OpenGL> shader("test-datas/shaders/tesselaion_control/bad/minimal.tesc", context::ShaderType::TESS_CONTROL);
 
     // Act
-    try
-    {
-        shader.load();
-        FAIL() << "Expected an exception to be thrown";
-    }
-    catch (const std::runtime_error &e)
-    {
-        std::string errorMsg = e.what();
-        EXPECT_NE(errorMsg.find("COMPILATION_FAILED"), std::string::npos) << "Exception message does not contain 'COMPILATION_FAILED'";
-    }
-    catch (...)
-    {
-        FAIL() << "Expected std::runtime_error to be thrown";
-    }
+    expectSpecificError([&shader]()
+                        { shader.load(); },
+                        cenpy::common::exception::TraceableException<std::runtime_error>("ERROR::SHADER::COMPILATION_FAILED"));
     // Assert
     EXPECT_EQ(shader.getShaderType(), context::ShaderType::TESS_CONTROL);
 
@@ -197,20 +155,9 @@ TEST_F(ShaderTest, CreateShaderBadCompute)
     shader::Shader<api::OpenGL> shader("test-datas/shaders/compute/bad/minimal.comp", context::ShaderType::COMPUTE);
 
     // Act
-    try
-    {
-        shader.load();
-        FAIL() << "Expected an exception to be thrown";
-    }
-    catch (const std::runtime_error &e)
-    {
-        std::string errorMsg = e.what();
-        EXPECT_NE(errorMsg.find("COMPILATION_FAILED"), std::string::npos) << "Exception message does not contain 'COMPILATION_FAILED'";
-    }
-    catch (...)
-    {
-        FAIL() << "Expected std::runtime_error to be thrown";
-    }
+    expectSpecificError([&shader]()
+                        { shader.load(); },
+                        cenpy::common::exception::TraceableException<std::runtime_error>("ERROR::SHADER::COMPILATION_FAILED"));
     // Assert
     EXPECT_EQ(shader.getShaderType(), context::ShaderType::COMPUTE);
 

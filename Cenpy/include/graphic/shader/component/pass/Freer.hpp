@@ -2,6 +2,11 @@
 
 #include <memory>
 #include <graphic/Api.hpp>
+#include <GL/glew.h>
+#include <iostream>
+#include <graphic/context/PassContext.hpp>
+#include <graphic/context/ShaderContext.hpp>
+#include <common/exception/TraceableException.hpp>
 
 namespace cenpy::graphic::shader
 {
@@ -44,7 +49,30 @@ namespace cenpy::graphic::shader
         class OpenGLPassFreer : public graphic::shader::component::pass::IPassFreer<graphic::api::OpenGL>
         {
         public:
-            void freePass(std::shared_ptr<typename graphic::api::OpenGL::PassContext> openglContext) override;
+            void freePass(std::shared_ptr<typename graphic::api::OpenGL::PassContext> openglContext) override
+            {
+                if (!openglContext)
+                {
+                    throw common::exception::TraceableException<std::runtime_error>("ERROR::SHADER::NON_OPENGL_CONTEXT");
+                }
+
+                GLuint programId = openglContext->getProgramId();
+                if (programId != 0)
+                {
+                    // Optionally detach shaders before deleting the program
+                    for (const auto &shader : openglContext->getShaders())
+                    {
+                        if (auto oglShaderContext = shader->getContext())
+                        {
+                            glDetachShader(programId, oglShaderContext->getShaderID());
+                        }
+                    }
+
+                    // Delete the OpenGL program
+                    glDeleteProgram(programId);
+                    openglContext->setProgramId(0); // Reset the program ID in the context
+                }
+            }
         };
     }
 }

@@ -8,9 +8,10 @@
 
 namespace cenpy::mock::graphic::shader::opengl::component::program
 {
-    class MockUser : public cenpy::graphic::shader::component::program::IProgramUser<graphic::api::MockOpenGL>
+    template <typename API>
+    class MockUser : public cenpy::graphic::shader::component::program::IProgramUser<API>
     {
     public:
-        MOCK_METHOD(void, useProgram, (std::shared_ptr<typename graphic::api::MockOpenGL::ProgramContext> context), (override));
+        MOCK_METHOD(void, useProgram, (std::shared_ptr<typename API::ProgramContext> context), (override));
     };
 }

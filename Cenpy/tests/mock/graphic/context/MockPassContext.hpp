@@ -14,14 +14,15 @@ namespace cenpy::mock::graphic
 {
     namespace opengl::context
     {
-        class MockPassContext : public cenpy::graphic::context::PassContext<graphic::api::MockOpenGL>
+        template <typename API>
+        class MockPassContext : public cenpy::graphic::context::PassContext<API>
         {
         public:
-            using Loader = shader::opengl::component::pass::MockLoader;
-            using Freer = shader::opengl::component::pass::MockFreer;
-            using ShaderAttacher = shader::opengl::component::pass::MockShaderAttacher;
-            using UniformReader = shader::opengl::component::pass::MockUniformReader;
-            using User = shader::opengl::component::pass::MockUser;
+            using Loader = shader::opengl::component::pass::MockLoader<API>;
+            using Freer = shader::opengl::component::pass::MockFreer<API>;
+            using ShaderAttacher = shader::opengl::component::pass::MockShaderAttacher<API>;
+            using UniformReader = shader::opengl::component::pass::MockUniformReader<API>;
+            using User = shader::opengl::component::pass::MockUser<API>;
         };
     }
 }

@@ -9,9 +9,10 @@
 
 namespace cenpy::mock::graphic::shader::opengl::component::shader
 {
-    class MockReader : public cenpy::graphic::shader::component::shader::IShaderReader<graphic::api::MockOpenGL>
+    template <typename API>
+    class MockReader : public cenpy::graphic::shader::component::shader::IShaderReader<API>
     {
     public:
-        MOCK_METHOD(void, readShader, (std::shared_ptr<typename graphic::api::MockOpenGL::ShaderContext>), (override));
+        MOCK_METHOD(void, readShader, (std::shared_ptr<typename API::ShaderContext>), (override));
     };
 }

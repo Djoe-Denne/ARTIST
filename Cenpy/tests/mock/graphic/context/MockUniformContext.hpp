@@ -16,7 +16,8 @@ namespace cenpy::mock::graphic
 
     namespace opengl::context
     {
-        class MockUniformContext : public cenpy::graphic::context::UniformContext
+        template <typename API>
+        class MockUniformContext : public cenpy::graphic::context::UniformContext<API>
         {
         public:
             template <typename T>

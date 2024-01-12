@@ -20,7 +20,7 @@ namespace cenpy::graphic::shader::component::shader
 
         virtual void readShader(std::shared_ptr<typename API::ShaderContext> context)
         {
-            context->getShaderCode().clear();
+            context->setShaderCode("");
             std::ifstream shaderFile;
 
             // ensure ifstream objects can throw exceptions

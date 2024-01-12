@@ -16,6 +16,6 @@ namespace cenpy::mock::graphic::shader
         MockUniform() : cenpy::graphic::shader::Uniform<API>()
         {
         }
-        };
+    };
 
 } // namespace cenpy::graphic::shader

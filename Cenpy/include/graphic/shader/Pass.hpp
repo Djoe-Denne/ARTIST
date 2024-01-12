@@ -14,7 +14,6 @@
 #pragma once
 
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
 #include <vector>
 #include <string>
 #include <format>
@@ -150,6 +149,15 @@ namespace cenpy::graphic::shader
             return m_context->getShaders();
         }
 
+        /**
+         * @brief Returns the pass context.
+         * @return The pass context.
+         */
+        [[nodiscard]] virtual std::shared_ptr<typename API::PassContext> getContext() const
+        {
+            return m_context;
+        }
+
     protected:
         // Component instances
         std::shared_ptr<typename API::PassContext::Loader> m_loader;               ///< The loader for the pass context.
@@ -158,5 +166,30 @@ namespace cenpy::graphic::shader
         std::shared_ptr<typename API::PassContext::UniformReader> m_uniformReader; ///< The uniform reader for the pass context.
         std::shared_ptr<typename API::PassContext::User> m_user;                   ///< The user for the pass context.
         std::shared_ptr<typename API::PassContext> m_context;                      ///< The pass context.
+
+        [[nodiscard]] virtual std::shared_ptr<typename API::PassContext::Loader> getLoader() const
+        {
+            return m_loader;
+        }
+
+        [[nodiscard]] virtual std::shared_ptr<typename API::PassContext::Freer> getFreer() const
+        {
+            return m_freer;
+        }
+
+        [[nodiscard]] virtual std::shared_ptr<typename API::PassContext::ShaderAttacher> getAttacher() const
+        {
+            return m_attacher;
+        }
+
+        [[nodiscard]] virtual std::shared_ptr<typename API::PassContext::UniformReader> getUniformReader() const
+        {
+            return m_uniformReader;
+        }
+
+        [[nodiscard]] virtual std::shared_ptr<typename API::PassContext::User> getUser() const
+        {
+            return m_user;
+        }
     };
 } // namespace cenpy::graphic::shader

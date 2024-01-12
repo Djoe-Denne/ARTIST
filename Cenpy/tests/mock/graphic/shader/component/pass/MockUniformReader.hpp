@@ -7,9 +7,10 @@
 
 namespace cenpy::mock::graphic::shader::opengl::component::pass
 {
-    class MockUniformReader : public cenpy::graphic::shader::component::pass::IPassUniformReader<graphic::api::MockOpenGL>
+    template <typename API>
+    class MockUniformReader : public cenpy::graphic::shader::component::pass::IPassUniformReader<API>
     {
     public:
-        MOCK_METHOD(void, readUniforms, (std::shared_ptr<typename graphic::api::MockOpenGL::PassContext> openglContext), (override));
+        MOCK_METHOD(void, readUniforms, (std::shared_ptr<typename API::PassContext> openglContext), (override));
     };
 }

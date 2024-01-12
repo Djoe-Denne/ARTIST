@@ -5,6 +5,9 @@
 #include <gmock/gmock.h>
 #include <opengl/glFunctionMock.hpp>
 #include <graphic/shader/Shader.hpp>
+#include <graphic/shader/component/shader/MockReader.hpp>
+#include <graphic/shader/component/shader/MockLoader.hpp>
+#include <graphic/shader/component/shader/MockFreer.hpp>
 #include <graphic/context/MockShaderContext.hpp>
 #include <graphic/MockApi.hpp>
 
@@ -12,6 +15,10 @@ namespace api = cenpy::mock::graphic::api;
 namespace context = cenpy::graphic::context;
 namespace shader = cenpy::graphic::shader;
 namespace mock = cenpy::mock;
+
+using mock::graphic::shader::opengl::component::shader::MockFreer;
+using mock::graphic::shader::opengl::component::shader::MockLoader;
+using mock::graphic::shader::opengl::component::shader::MockReader;
 
 class ShaderTest : public ::testing::Test
 {
@@ -22,150 +29,67 @@ public:
     }
 };
 
-TEST_F(ShaderTest, CreateShaderVert)
+class MockedShader : public shader::Shader<api::MockOpenGL>
+{
+public:
+    MockedShader(const std::string &path, context::ShaderType type)
+        : shader::Shader<api::MockOpenGL>(path, type)
+    {
+    }
+
+    std::shared_ptr<MockLoader<api::MockOpenGL>> getLoader() const override
+    {
+        return shader::Shader<api::MockOpenGL>::getLoader();
+    }
+
+    std::shared_ptr<MockReader<api::MockOpenGL>> getReader() const override
+    {
+        return shader::Shader<api::MockOpenGL>::getReader();
+    }
+
+    std::shared_ptr<MockFreer<api::MockOpenGL>> getFreer() const override
+    {
+        return shader::Shader<api::MockOpenGL>::getFreer();
+    }
+
+    friend class ShaderTest;
+};
+
+TEST_F(ShaderTest, CreateShader)
 {
     // Arrange
-    shader::Shader<api::MockOpenGL> shader("test-datas/shaders/vertex/good/minimal.vert", context::ShaderType::VERTEX);
+    MockedShader shader("test-datas/shaders/vertex/good/minimal.vert", context::ShaderType::VERTEX);
 
     // Expect calls
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glCreateShader_mock(GL_VERTEX_SHADER)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glShaderSource_mock(1, 1, ::testing::_, ::testing::_)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glCompileShader_mock(1)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glGetShaderiv_mock(1, ::testing::_, ::testing::_)).Times(1);
-
+    std::string code("");
+    ON_CALL(*shader.getContext(), getShaderCode()).WillByDefault(::testing::ReturnRef(code));
+    EXPECT_CALL(*shader.getReader(), readShader(::testing::_)).Times(1);
+    EXPECT_CALL(*shader.getLoader(), loadShader(::testing::_)).Times(1);
     // Act
     ASSERT_NO_THROW(shader.load());
 }
 
-TEST_F(ShaderTest, CreateShaderFrag)
+TEST_F(ShaderTest, CreateShader_codeAlreadyRead)
 {
     // Arrange
-    shader::Shader<api::MockOpenGL> shader("test-datas/shaders/fragment/good/minimal.frag", context::ShaderType::FRAGMENT);
+    MockedShader shader("test-datas/shaders/vertex/good/minimal.vert", context::ShaderType::VERTEX);
 
     // Expect calls
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glCreateShader_mock(GL_FRAGMENT_SHADER)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glShaderSource_mock(1, 1, ::testing::_, ::testing::_)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glCompileShader_mock(1)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glGetShaderiv_mock(1, ::testing::_, ::testing::_)).Times(1);
-
+    std::string code("test");
+    ON_CALL(*shader.getContext(), getShaderCode()).WillByDefault(::testing::ReturnRef(code));
+    EXPECT_CALL(*shader.getReader(), readShader(::testing::_)).Times(0);
+    EXPECT_CALL(*shader.getLoader(), loadShader(::testing::_)).Times(1);
     // Act
     ASSERT_NO_THROW(shader.load());
-}
-
-TEST_F(ShaderTest, CreateShaderGeom)
-{
-    // Arrange
-    shader::Shader<api::MockOpenGL> shader("test-datas/shaders/geometry/good/minimal.geom", context::ShaderType::GEOMETRY);
-
-    // Expect calls
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glCreateShader_mock(GL_GEOMETRY_SHADER)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glShaderSource_mock(1, 1, ::testing::_, ::testing::_)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glCompileShader_mock(1)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glGetShaderiv_mock(1, ::testing::_, ::testing::_)).Times(1);
-
-    // Act
-    ASSERT_NO_THROW(shader.load());
-}
-
-TEST_F(ShaderTest, CreateShaderTesselaionControl)
-{
-    // Arrange
-    shader::Shader<api::MockOpenGL> shader("test-datas/shaders/tesselaion_control/good/minimal.tesc", context::ShaderType::TESS_CONTROL);
-
-    // Expect calls
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glCreateShader_mock(GL_TESS_CONTROL_SHADER)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glShaderSource_mock(1, 1, ::testing::_, ::testing::_)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glCompileShader_mock(1)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glGetShaderiv_mock(1, ::testing::_, ::testing::_)).Times(1);
-
-    // Act
-    ASSERT_NO_THROW(shader.load());
-}
-
-TEST_F(ShaderTest, CreateShaderCompute)
-{
-    // Arrange
-    shader::Shader<api::MockOpenGL> shader("test-datas/shaders/compute/good/minimal.comp", context::ShaderType::COMPUTE);
-
-    // Expect calls
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glCreateShader_mock(GL_COMPUTE_SHADER)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glShaderSource_mock(1, 1, ::testing::_, ::testing::_)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glCompileShader_mock(1)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glGetShaderiv_mock(1, ::testing::_, ::testing::_)).Times(1);
-
-    // Act
-    ASSERT_NO_THROW(shader.load());
-}
-
-TEST_F(ShaderTest, GetLocation)
-{
-    // Arrange
-    shader::Shader<api::MockOpenGL> shader("test-datas/shaders/vertex/good/minimal.vert", context::ShaderType::VERTEX);
-
-    // Expect calls
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glCreateShader_mock(GL_VERTEX_SHADER)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glShaderSource_mock(1, 1, ::testing::_, ::testing::_)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glCompileShader_mock(1)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glGetShaderiv_mock(1, ::testing::_, ::testing::_)).Times(1);
-
-    // Act
-    ASSERT_NO_THROW(shader.load());
-
-    ASSERT_EQ(shader.getContext()->getShaderID(), 1);
-}
-
-TEST_F(ShaderTest, GetShaderCode)
-{
-    // Arrange
-    shader::Shader<api::MockOpenGL> shader("test-datas/shaders/vertex/good/minimal.vert", context::ShaderType::VERTEX);
-
-    // Expect calls
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glCreateShader_mock(GL_VERTEX_SHADER)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glShaderSource_mock(1, 1, ::testing::_, ::testing::_)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glCompileShader_mock(1)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glGetShaderiv_mock(1, ::testing::_, ::testing::_)).Times(1);
-
-    // Act
-    ASSERT_NO_THROW(shader.load());
-
-    std::string code = R"(#version 330 core
-
-uniform int testUniform;
-layout (location = 0) in vec3 aPos;
-
-void main()
-{
-    gl_Position = vec4(aPos, 1.0) * float(testUniform);
-}
-)";
-
-    ASSERT_EQ(shader.getShaderCode(), code);
-}
-
-TEST_F(ShaderTest, GetShaderType)
-{
-    // Arrange
-    shader::Shader<api::MockOpenGL> shader("test-datas/shaders/vertex/good/minimal.vert", context::ShaderType::VERTEX);
-
-    // Expect calls
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glCreateShader_mock(GL_VERTEX_SHADER)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glShaderSource_mock(1, 1, ::testing::_, ::testing::_)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glCompileShader_mock(1)).Times(1);
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glGetShaderiv_mock(1, ::testing::_, ::testing::_)).Times(1);
-
-    // Act
-    ASSERT_NO_THROW(shader.load());
-
-    ASSERT_EQ(shader.getShaderType(), context::ShaderType::VERTEX);
 }
 
 TEST_F(ShaderTest, Free)
 {
     // Arrange
-    shader::Shader<api::MockOpenGL> shader("test-datas/shaders/vertex/good/minimal.vert", context::ShaderType::VERTEX);
+    MockedShader shader("test-datas/shaders/vertex/good/minimal.vert", context::ShaderType::VERTEX);
 
     // Expect calls
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glDeleteShader_mock(::testing::_)).Times(2);
+    EXPECT_CALL(*shader.getFreer(), freeShader(::testing::_)).Times(2);
 
     ASSERT_NO_THROW(shader.free());
 }
@@ -173,10 +97,10 @@ TEST_F(ShaderTest, Free)
 TEST_F(ShaderTest, DeleteMustFree)
 {
     // Arrange
-    auto shader = new shader::Shader<api::MockOpenGL>("test-datas/shaders/vertex/good/minimal.vert", context::ShaderType::VERTEX);
+    auto shader = new MockedShader("test-datas/shaders/vertex/good/minimal.vert", context::ShaderType::VERTEX);
 
     // Expect calls
-    EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glDeleteShader_mock(::testing::_)).Times(1);
+    EXPECT_CALL(*shader->getFreer(), freeShader(::testing::_)).Times(1);
 
     ASSERT_NO_THROW(delete shader);
 }

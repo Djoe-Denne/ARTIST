@@ -27,6 +27,7 @@ enable_testing()
 # Add your test files
 file(GLOB_RECURSE test_files ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include
+${CMAKE_CURRENT_SOURCE_DIR}/../tests-common/include
 ${CMAKE_CURRENT_SOURCE_DIR}/include
 ${CMAKE_CURRENT_SOURCE_DIR}/mock)
 

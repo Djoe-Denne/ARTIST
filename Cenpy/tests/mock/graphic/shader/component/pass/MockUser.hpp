@@ -7,9 +7,10 @@
 
 namespace cenpy::mock::graphic::shader::opengl::component::pass
 {
-    class MockUser : public cenpy::graphic::shader::component::pass::IPassUser<graphic::api::MockOpenGL>
+    template <typename API>
+    class MockUser : public cenpy::graphic::shader::component::pass::IPassUser<API>
     {
     public:
-        MOCK_METHOD(void, usePass, (std::shared_ptr<typename graphic::api::MockOpenGL::PassContext>), (override));
+        MOCK_METHOD(void, usePass, (std::shared_ptr<typename API::PassContext>), (override));
     };
 }
