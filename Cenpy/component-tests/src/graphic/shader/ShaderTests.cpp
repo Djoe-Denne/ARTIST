@@ -1,5 +1,5 @@
 #include <string>
-#include <graphic/shader/Shader.hpp>
+#include <graphic/pipeline/Shader.hpp>
 #include <OpenGLComponentTests.hpp>
 #include <graphic/Api.hpp>
 #include <OpenGLComponentTests.hpp>
@@ -7,7 +7,7 @@
 
 namespace api = cenpy::graphic::api;
 namespace context = cenpy::graphic::context;
-namespace shader = cenpy::graphic::shader;
+namespace pipeline = cenpy::graphic::pipeline;
 using cenpy::test::utils::expectSpecificError;
 
 class ShaderTest : public OpenGLComponentTest
@@ -17,7 +17,7 @@ class ShaderTest : public OpenGLComponentTest
 TEST_F(ShaderTest, CreateShaderVert)
 {
     // Arrange
-    shader::Shader<api::OpenGL> shader("test-datas/shaders/vertex/good/minimal.vert", context::ShaderType::VERTEX);
+    pipeline::Shader<api::OpenGL> shader("test-datas/shaders/vertex/good/minimal.vert", context::ShaderType::VERTEX);
 
     // Act
     ASSERT_NO_THROW(shader.load());
@@ -32,7 +32,7 @@ TEST_F(ShaderTest, CreateShaderVert)
 TEST_F(ShaderTest, CreateShaderBadVert)
 {
     // Arrange
-    shader::Shader<api::OpenGL> shader("test-datas/shaders/vertex/bad/minimal.vert", context::ShaderType::VERTEX);
+    pipeline::Shader<api::OpenGL> shader("test-datas/shaders/vertex/bad/minimal.vert", context::ShaderType::VERTEX);
 
     // Act
     expectSpecificError([&shader]()
@@ -47,7 +47,7 @@ TEST_F(ShaderTest, CreateShaderBadVert)
 TEST_F(ShaderTest, CreateShaderFrag)
 {
     // Arrange
-    shader::Shader<api::OpenGL> shader("test-datas/shaders/fragment/good/minimal.frag", context::ShaderType::FRAGMENT);
+    pipeline::Shader<api::OpenGL> shader("test-datas/shaders/fragment/good/minimal.frag", context::ShaderType::FRAGMENT);
 
     // Act
     ASSERT_NO_THROW(shader.load());
@@ -62,7 +62,7 @@ TEST_F(ShaderTest, CreateShaderFrag)
 TEST_F(ShaderTest, CreateShaderBadFrag)
 {
     // Arrange
-    shader::Shader<api::OpenGL> shader("test-datas/shaders/fragment/bad/minimal.frag", context::ShaderType::FRAGMENT);
+    pipeline::Shader<api::OpenGL> shader("test-datas/shaders/fragment/bad/minimal.frag", context::ShaderType::FRAGMENT);
 
     // Act
     expectSpecificError([&shader]()
@@ -77,7 +77,7 @@ TEST_F(ShaderTest, CreateShaderBadFrag)
 TEST_F(ShaderTest, CreateShaderGeom)
 {
     // Arrange
-    shader::Shader<api::OpenGL> shader("test-datas/shaders/geometry/good/minimal.geom", context::ShaderType::GEOMETRY);
+    pipeline::Shader<api::OpenGL> shader("test-datas/shaders/geometry/good/minimal.geom", context::ShaderType::GEOMETRY);
 
     // Act
     ASSERT_NO_THROW(shader.load());
@@ -92,7 +92,7 @@ TEST_F(ShaderTest, CreateShaderGeom)
 TEST_F(ShaderTest, CreateShaderBadGeom)
 {
     // Arrange
-    shader::Shader<api::OpenGL> shader("test-datas/shaders/geometry/bad/minimal.geom", context::ShaderType::GEOMETRY);
+    pipeline::Shader<api::OpenGL> shader("test-datas/shaders/geometry/bad/minimal.geom", context::ShaderType::GEOMETRY);
 
     // Act
     expectSpecificError([&shader]()
@@ -107,7 +107,7 @@ TEST_F(ShaderTest, CreateShaderBadGeom)
 TEST_F(ShaderTest, CreateShaderTesselaionControl)
 {
     // Arrange
-    shader::Shader<api::OpenGL> shader("test-datas/shaders/tesselaion_control/good/minimal.tesc", context::ShaderType::TESS_CONTROL);
+    pipeline::Shader<api::OpenGL> shader("test-datas/shaders/tesselaion_control/good/minimal.tesc", context::ShaderType::TESS_CONTROL);
 
     // Act
     ASSERT_NO_THROW(shader.load());
@@ -122,7 +122,7 @@ TEST_F(ShaderTest, CreateShaderTesselaionControl)
 TEST_F(ShaderTest, CreateShaderBadTesselaionControl)
 {
     // Arrange
-    shader::Shader<api::OpenGL> shader("test-datas/shaders/tesselaion_control/bad/minimal.tesc", context::ShaderType::TESS_CONTROL);
+    pipeline::Shader<api::OpenGL> shader("test-datas/shaders/tesselaion_control/bad/minimal.tesc", context::ShaderType::TESS_CONTROL);
 
     // Act
     expectSpecificError([&shader]()
@@ -137,7 +137,7 @@ TEST_F(ShaderTest, CreateShaderBadTesselaionControl)
 TEST_F(ShaderTest, CreateShaderCompute)
 {
     // Arrange
-    shader::Shader<api::OpenGL> shader("test-datas/shaders/compute/good/minimal.comp", context::ShaderType::COMPUTE);
+    pipeline::Shader<api::OpenGL> shader("test-datas/shaders/compute/good/minimal.comp", context::ShaderType::COMPUTE);
 
     // Act
     ASSERT_NO_THROW(shader.load());
@@ -152,7 +152,7 @@ TEST_F(ShaderTest, CreateShaderCompute)
 TEST_F(ShaderTest, CreateShaderBadCompute)
 {
     // Arrange
-    shader::Shader<api::OpenGL> shader("test-datas/shaders/compute/bad/minimal.comp", context::ShaderType::COMPUTE);
+    pipeline::Shader<api::OpenGL> shader("test-datas/shaders/compute/bad/minimal.comp", context::ShaderType::COMPUTE);
 
     // Act
     expectSpecificError([&shader]()

@@ -4,21 +4,21 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <opengl/glFunctionMock.hpp>
-#include <graphic/shader/Shader.hpp>
-#include <graphic/shader/component/shader/MockReader.hpp>
-#include <graphic/shader/component/shader/MockLoader.hpp>
-#include <graphic/shader/component/shader/MockFreer.hpp>
+#include <graphic/pipeline/Shader.hpp>
+#include <graphic/pipeline/component/shader/MockReader.hpp>
+#include <graphic/pipeline/component/shader/MockLoader.hpp>
+#include <graphic/pipeline/component/shader/MockFreer.hpp>
 #include <graphic/context/MockShaderContext.hpp>
 #include <graphic/MockApi.hpp>
 
 namespace api = cenpy::mock::graphic::api;
 namespace context = cenpy::graphic::context;
-namespace shader = cenpy::graphic::shader;
+namespace pipeline = cenpy::graphic::pipeline;
 namespace mock = cenpy::mock;
 
-using mock::graphic::shader::opengl::component::shader::MockFreer;
-using mock::graphic::shader::opengl::component::shader::MockLoader;
-using mock::graphic::shader::opengl::component::shader::MockReader;
+using mock::graphic::pipeline::opengl::component::shader::MockFreer;
+using mock::graphic::pipeline::opengl::component::shader::MockLoader;
+using mock::graphic::pipeline::opengl::component::shader::MockReader;
 
 class ShaderTest : public ::testing::Test
 {
@@ -29,24 +29,24 @@ public:
     }
 };
 
-class MockedShader : public shader::Shader<api::MockOpenGL>
+class MockedShader : public pipeline::Shader<api::MockOpenGL>
 {
 public:
-    using shader::Shader<api::MockOpenGL>::Shader;
+    using pipeline::Shader<api::MockOpenGL>::Shader;
 
     std::shared_ptr<MockLoader<api::MockOpenGL>> getLoader() const override
     {
-        return shader::Shader<api::MockOpenGL>::getLoader();
+        return pipeline::Shader<api::MockOpenGL>::getLoader();
     }
 
     std::shared_ptr<MockReader<api::MockOpenGL>> getReader() const override
     {
-        return shader::Shader<api::MockOpenGL>::getReader();
+        return pipeline::Shader<api::MockOpenGL>::getReader();
     }
 
     std::shared_ptr<MockFreer<api::MockOpenGL>> getFreer() const override
     {
-        return shader::Shader<api::MockOpenGL>::getFreer();
+        return pipeline::Shader<api::MockOpenGL>::getFreer();
     }
 
     friend class ShaderTest;

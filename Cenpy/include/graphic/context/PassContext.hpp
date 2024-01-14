@@ -9,12 +9,12 @@
 #include <memory>
 #include <utils.hpp>
 #include <graphic/Api.hpp>
-#include <graphic/shader/Shader.hpp>
-#include <graphic/shader/Uniform.hpp>
+#include <graphic/pipeline/Shader.hpp>
+#include <graphic/pipeline/Uniform.hpp>
 
 namespace cenpy::graphic
 {
-    namespace shader::opengl::component::pass
+    namespace pipeline::opengl::component::pass
     {
         class OpenGLLoader;
         class OpenGLPassFreer;
@@ -24,7 +24,7 @@ namespace cenpy::graphic
     }
     namespace context
     {
-        namespace shader = cenpy::graphic::shader;
+        namespace pipeline = cenpy::graphic::pipeline;
         /**
          * @class PassContext
          * @brief Abstract base class for pass context.
@@ -43,7 +43,7 @@ namespace cenpy::graphic
              * @brief Add a shader to the pass.
              * @param shader Shader to add.
              */
-            void addShader(std::shared_ptr<shader::Shader<API>> shader)
+            void addShader(std::shared_ptr<pipeline::Shader<API>> shader)
             {
                 m_shaders.push_back(shader);
             }
@@ -54,7 +54,7 @@ namespace cenpy::graphic
              * @param name Name of the uniform to add.
              * @param uniform Uniform to add.
              */
-            void addUniform(const std::string &name, std::shared_ptr<shader::Uniform<API>> uniform)
+            void addUniform(const std::string &name, std::shared_ptr<pipeline::Uniform<API>> uniform)
             {
                 m_uniforms[name] = uniform;
             }
@@ -64,7 +64,7 @@ namespace cenpy::graphic
              * @param index Index of the shader to get.
              * @return Shader at the given index.
              */
-            [[nodiscard]] std::shared_ptr<shader::Shader<API>> getShader(const int &index) const
+            [[nodiscard]] std::shared_ptr<pipeline::Shader<API>> getShader(const int &index) const
             {
                 return m_shaders[index];
             }
@@ -74,7 +74,7 @@ namespace cenpy::graphic
              * @param name Name of the uniform to get.
              * @return Uniform with the given name.
              */
-            [[nodiscard]] std::shared_ptr<shader::Uniform<API>> getUniform(const std::string &name) const
+            [[nodiscard]] std::shared_ptr<pipeline::Uniform<API>> getUniform(const std::string &name) const
             {
                 if (m_uniforms.contains(name))
                 {
@@ -96,7 +96,7 @@ namespace cenpy::graphic
              * @brief Get the shaders in the pass.
              * @return Shaders in the pass.
              */
-            [[nodiscard]] const std::vector<std::shared_ptr<shader::Shader<API>>> &getShaders() const
+            [[nodiscard]] const std::vector<std::shared_ptr<pipeline::Shader<API>>> &getShaders() const
             {
                 return m_shaders;
             }
@@ -105,14 +105,14 @@ namespace cenpy::graphic
              * @brief Get the uniforms in the pass.
              * @return Uniforms in the pass.
              */
-            [[nodiscard]] const std::unordered_map<std::string, std::shared_ptr<shader::Uniform<API>>, collection_utils::StringHash, collection_utils::StringEqual> &getUniforms() const
+            [[nodiscard]] const std::unordered_map<std::string, std::shared_ptr<pipeline::Uniform<API>>, collection_utils::StringHash, collection_utils::StringEqual> &getUniforms() const
             {
                 return m_uniforms;
             }
 
         private:
-            std::vector<std::shared_ptr<shader::Shader<API>>> m_shaders;
-            std::unordered_map<std::string, std::shared_ptr<shader::Uniform<API>>, collection_utils::StringHash, collection_utils::StringEqual> m_uniforms;
+            std::vector<std::shared_ptr<pipeline::Shader<API>>> m_shaders;
+            std::unordered_map<std::string, std::shared_ptr<pipeline::Uniform<API>>, collection_utils::StringHash, collection_utils::StringEqual> m_uniforms;
         };
     }
 
@@ -123,33 +123,33 @@ namespace cenpy::graphic
          * @brief OpenGL-specific implementation of PassContext.
          *
          * OpenGLPassContext manages the details and state of a shader pass for OpenGL.
-         * This includes handling of OpenGL-specific data such as program IDs, as well
+         * This includes handling of OpenGL-specific data such as pipeline IDs, as well
          * as the list of shaders and uniform variables.
          */
         class OpenGLPassContext : public graphic::context::PassContext<graphic::api::OpenGL>
         {
         public:
-            using Loader = shader::opengl::component::pass::OpenGLLoader;
-            using Freer = shader::opengl::component::pass::OpenGLPassFreer;
-            using ShaderAttacher = shader::opengl::component::pass::OpenGLShaderAttacher;
-            using UniformReader = shader::opengl::component::pass::OpenGLPassUniformReader;
-            using User = shader::opengl::component::pass::OpenGLPassUser;
+            using Loader = pipeline::opengl::component::pass::OpenGLLoader;
+            using Freer = pipeline::opengl::component::pass::OpenGLPassFreer;
+            using ShaderAttacher = pipeline::opengl::component::pass::OpenGLShaderAttacher;
+            using UniformReader = pipeline::opengl::component::pass::OpenGLPassUniformReader;
+            using User = pipeline::opengl::component::pass::OpenGLPassUser;
 
-            void setProgramId(GLuint programId)
+            void setPassID(GLuint passID)
             {
-                m_programId = programId;
+                m_passID = passID;
             }
 
-            GLuint getProgramId() const
+            GLuint getPassID() const
             {
-                return m_programId;
+                return m_passID;
             }
 
             // Implement methods for managing shaders and uniforms
             // ...
 
         private:
-            GLuint m_programId; // OpenGL program ID
+            GLuint m_passID; // OpenGL pipeline ID
         };
     }
 }

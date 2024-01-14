@@ -5,11 +5,11 @@
 #include <memory>
 #include <opengl/glFunctionMock.hpp>
 #include <graphic/context/PassContext.hpp>
-#include <graphic/shader/component/pass/UniformReader.hpp>
+#include <graphic/pipeline/component/pass/UniformReader.hpp>
 #include <TestUtils.hpp>
 
 namespace context = cenpy::graphic::opengl::context;
-namespace pass = cenpy::graphic::shader::opengl::component::pass;
+namespace pass = cenpy::graphic::pipeline::opengl::component::pass;
 namespace mock = cenpy::mock;
 using cenpy::test::utils::expectSpecificError;
 
@@ -26,7 +26,7 @@ TEST_F(UniformReaderTests, ReadUniforms_ValidContext)
 {
     // Arrange
     auto openglContext = std::make_shared<context::OpenGLPassContext>();
-    openglContext->setProgramId(1); // Set a valid program ID
+    openglContext->setPassID(1); // Set a valid pipeline ID
     pass::OpenGLPassUniformReader uniformReader;
 
     // Mock the OpenGL calls to simulate uniforms
@@ -58,10 +58,10 @@ TEST_F(UniformReaderTests, ReadUniforms_NullContext)
                         cenpy::common::exception::TraceableException<std::runtime_error>("ERROR::SHADER::NON_OPENGL_CONTEXT"));
 }
 
-TEST_F(UniformReaderTests, ReadUniforms_InvalidProgramId)
+TEST_F(UniformReaderTests, ReadUniforms_InvalidPassID)
 {
     // Arrange
-    auto openglContext = std::make_shared<context::OpenGLPassContext>(); // No program ID set
+    auto openglContext = std::make_shared<context::OpenGLPassContext>(); // No pipeline ID set
     pass::OpenGLPassUniformReader uniformReader;
 
     // Act & Assert

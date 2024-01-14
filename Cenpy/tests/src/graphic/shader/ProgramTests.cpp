@@ -3,87 +3,87 @@
 #include <memory>
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <graphic/shader/Program.hpp>
-#include <graphic/shader/Pass.hpp>
-#include <graphic/shader/MockPass.hpp>
-#include <graphic/shader/component/program/MockUser.hpp>
-#include <graphic/shader/component/program/MockResetter.hpp>
-#include <graphic/context/MockProgramContext.hpp>
+#include <graphic/pipeline/Pipeline.hpp>
+#include <graphic/pipeline/Pass.hpp>
+#include <graphic/pipeline/MockPass.hpp>
+#include <graphic/pipeline/component/pipeline/MockUser.hpp>
+#include <graphic/pipeline/component/pipeline/MockResetter.hpp>
+#include <graphic/context/MockPipelineContext.hpp>
 #include <graphic/MockApi.hpp>
 #include <TestUtils.hpp>
 
 namespace api = cenpy::mock::graphic::api;
 namespace context = cenpy::graphic::context;
-namespace shader = cenpy::graphic::shader;
+namespace pipeline = cenpy::graphic::pipeline;
 namespace mock = cenpy::mock;
 
-using mock::graphic::shader::opengl::MockPass;
-using mock::graphic::shader::opengl::component::program::MockResetter;
-using mock::graphic::shader::opengl::component::program::MockUser;
+using mock::graphic::pipeline::opengl::MockPass;
+using mock::graphic::pipeline::opengl::component::pipeline::MockResetter;
+using mock::graphic::pipeline::opengl::component::pipeline::MockUser;
 
 using cenpy::test::utils::expectSpecificError;
 
-class ProgramTest : public ::testing::Test
+class PipelineTest : public ::testing::Test
 {
 };
 
-class MockedProgram : public shader::Program<api::MockOpenGL>
+class MockedPipeline : public pipeline::Pipeline<api::MockOpenGL>
 {
 public:
-    using shader::Program<api::MockOpenGL>::Program;
+    using pipeline::Pipeline<api::MockOpenGL>::Pipeline;
 
     std::shared_ptr<MockResetter<api::MockOpenGL>> getResetter() const override
     {
-        return shader::Program<api::MockOpenGL>::getResetter();
+        return pipeline::Pipeline<api::MockOpenGL>::getResetter();
     }
 
     std::shared_ptr<MockUser<api::MockOpenGL>> getUser() const override
     {
-        return shader::Program<api::MockOpenGL>::getUser();
+        return pipeline::Pipeline<api::MockOpenGL>::getUser();
     }
 
-    friend class ProgramTest;
+    friend class PipelineTest;
 };
 
-TEST_F(ProgramTest, UseTest)
+TEST_F(PipelineTest, UseTest)
 {
     // Arrange
     auto mockPass1 = std::make_shared<MockPass<api::MockOpenGL>>();
     auto mockPass2 = std::make_shared<MockPass<api::MockOpenGL>>();
-    MockedProgram program({mockPass1, mockPass2});
+    MockedPipeline pipeline({mockPass1, mockPass2});
 
     // Expect calls
-    EXPECT_CALL(*program.getUser(), useProgram(::testing::_)).Times(1);
+    EXPECT_CALL(*pipeline.getUser(), usePipeline(::testing::_)).Times(1);
 
     // Act
-    program.use(0); // Using first pass
+    pipeline.use(0); // Using first pass
 }
 
-TEST_F(ProgramTest, IteratePassesTest)
+TEST_F(PipelineTest, IteratePassesTest)
 {
     // Arrange
     auto mockPass1 = std::make_shared<MockPass<api::MockOpenGL>>();
     auto mockPass2 = std::make_shared<MockPass<api::MockOpenGL>>();
-    MockedProgram program({mockPass1, mockPass2});
+    MockedPipeline pipeline({mockPass1, mockPass2});
 
     // Expect calls
-    EXPECT_CALL(*program.getUser(), useProgram(::testing::_)).Times(2);
+    EXPECT_CALL(*pipeline.getUser(), usePipeline(::testing::_)).Times(2);
 
     // Act
-    while (program.hasNext())
+    while (pipeline.hasNext())
     {
-        program.useNext();
+        pipeline.useNext();
     }
 }
 
-TEST_F(ProgramTest, ResetProgramTest)
+TEST_F(PipelineTest, ResetPipelineTest)
 {
     // Arrange
-    MockedProgram program({nullptr});
+    MockedPipeline pipeline({nullptr});
 
     // Expect calls
-    EXPECT_CALL(*program.getResetter(), resetProgram(::testing::_)).Times(1);
+    EXPECT_CALL(*pipeline.getResetter(), resetPipeline(::testing::_)).Times(1);
 
     // Act
-    program.reset();
+    pipeline.reset();
 }

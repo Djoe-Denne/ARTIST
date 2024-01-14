@@ -5,15 +5,15 @@
 #include <memory>
 #include <opengl/glFunctionMock.hpp>
 #include <graphic/Api.hpp>
-#include <graphic/shader/MockShader.hpp>
+#include <graphic/pipeline/MockShader.hpp>
 #include <graphic/context/PassContext.hpp>
-#include <graphic/shader/component/pass/Freer.hpp>
+#include <graphic/pipeline/component/pass/Freer.hpp>
 
 namespace api = cenpy::graphic::api;
 namespace mock = cenpy::mock;
 namespace context = cenpy::graphic::opengl::context;
-namespace pass = cenpy::graphic::shader::opengl::component::pass;
-using MockShader = cenpy::mock::graphic::shader::MockShader<api::OpenGL>;
+namespace pass = cenpy::graphic::pipeline::opengl::component::pass;
+using MockShader = cenpy::mock::graphic::pipeline::MockShader<api::OpenGL>;
 
 class PassFreerTests : public ::testing::Test
 {
@@ -31,7 +31,7 @@ TEST_F(PassFreerTests, FreePassTest_validContext)
     auto openglShaderContext = std::make_shared<context::OpenGLShaderContext>();
     auto shader = std::make_shared<MockShader>("shader_path", cenpy::graphic::context::ShaderType::VERTEX);
     openglContext->addShader(shader);
-    openglContext->setProgramId(1);       // Set a mock program ID
+    openglContext->setPassID(1);       // Set a mock pipeline ID
     openglShaderContext->setShaderID(42); // Set a mock shader ID
 
     pass::OpenGLPassFreer passFreer;
@@ -45,7 +45,7 @@ TEST_F(PassFreerTests, FreePassTest_validContext)
     ASSERT_NO_THROW(passFreer.freePass(openglContext));
 
     // Assert
-    ASSERT_EQ(openglContext->getProgramId(), 0);
+    ASSERT_EQ(openglContext->getPassID(), 0);
 }
 
 TEST_F(PassFreerTests, FreePassTest_nullContext)
@@ -57,22 +57,22 @@ TEST_F(PassFreerTests, FreePassTest_nullContext)
     EXPECT_THROW(passFreer.freePass(nullptr), std::runtime_error);
 }
 
-TEST_F(PassFreerTests, FreePassTest_noProgramId)
+TEST_F(PassFreerTests, FreePassTest_noPassID)
 {
     // Arrange
-    auto openglContext = std::make_shared<context::OpenGLPassContext>(); // No program ID set
+    auto openglContext = std::make_shared<context::OpenGLPassContext>(); // No pipeline ID set
     pass::OpenGLPassFreer passFreer;
 
     // Act & Assert
     ASSERT_NO_THROW(passFreer.freePass(openglContext));
-    ASSERT_EQ(openglContext->getProgramId(), 0); // Ensure program ID remains 0
+    ASSERT_EQ(openglContext->getPassID(), 0); // Ensure pipeline ID remains 0
 }
 
 TEST_F(PassFreerTests, FreePassTest_detachShaders)
 {
     // Arrange
     auto openglContext = std::make_shared<context::OpenGLPassContext>();
-    openglContext->setProgramId(1); // Set a mock program ID
+    openglContext->setPassID(1); // Set a mock pipeline ID
     pass::OpenGLPassFreer passFreer;
 
     // Add mock shaders to context
@@ -85,11 +85,11 @@ TEST_F(PassFreerTests, FreePassTest_detachShaders)
     ASSERT_NO_THROW(passFreer.freePass(openglContext));
 }
 
-TEST_F(PassFreerTests, FreePassTest_deleteProgram)
+TEST_F(PassFreerTests, FreePassTest_deletePipeline)
 {
     // Arrange
     auto openglContext = std::make_shared<context::OpenGLPassContext>();
-    openglContext->setProgramId(1); // Set a mock program ID
+    openglContext->setPassID(1); // Set a mock pipeline ID
     pass::OpenGLPassFreer passFreer;
 
     // Expect delete call
@@ -103,7 +103,7 @@ TEST_F(PassFreerTests, FreePassTest_noShaders)
 {
     // Arrange
     auto openglContext = std::make_shared<context::OpenGLPassContext>();
-    openglContext->setProgramId(1); // Set a mock program ID
+    openglContext->setPassID(1); // Set a mock pipeline ID
     pass::OpenGLPassFreer passFreer;
 
     // Expect no detach calls

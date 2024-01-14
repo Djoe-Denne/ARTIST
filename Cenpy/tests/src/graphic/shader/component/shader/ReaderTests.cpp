@@ -6,10 +6,10 @@
 #include <opengl/glFunctionMock.hpp>
 #include <graphic/MockApi.hpp>
 #include <graphic/context/ShaderContext.hpp>
-#include <graphic/shader/component/shader/Reader.hpp>
+#include <graphic/pipeline/component/shader/Reader.hpp>
 
 namespace context = cenpy::graphic::opengl::context;
-namespace shader = cenpy::graphic::shader::opengl::component::shader;
+namespace shader = cenpy::graphic::pipeline::opengl::component::shader;
 namespace mock = cenpy::mock;
 namespace api = cenpy::graphic::api;
 

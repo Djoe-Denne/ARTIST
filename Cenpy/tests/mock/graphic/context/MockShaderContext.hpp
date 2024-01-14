@@ -5,9 +5,9 @@
 #include <gmock/gmock.h>
 #include <graphic/MockApi.hpp>
 #include <graphic/context/ShaderContext.hpp>
-#include <graphic/shader/component/shader/MockLoader.hpp>
-#include <graphic/shader/component/shader/MockFreer.hpp>
-#include <graphic/shader/component/shader/MockReader.hpp>
+#include <graphic/pipeline/component/shader/MockLoader.hpp>
+#include <graphic/pipeline/component/shader/MockFreer.hpp>
+#include <graphic/pipeline/component/shader/MockReader.hpp>
 
 namespace cenpy::mock::graphic::opengl::context
 {
@@ -15,9 +15,9 @@ namespace cenpy::mock::graphic::opengl::context
     class MockShaderContext : public cenpy::graphic::context::ShaderContext<API>
     {
     public:
-        using Loader = shader::opengl::component::shader::MockLoader<API>;
-        using Freer = shader::opengl::component::shader::MockFreer<API>;
-        using Reader = shader::opengl::component::shader::MockReader<API>;
+        using Loader = pipeline::opengl::component::shader::MockLoader<API>;
+        using Freer = pipeline::opengl::component::shader::MockFreer<API>;
+        using Reader = pipeline::opengl::component::shader::MockReader<API>;
 
         MOCK_METHOD(void, setShaderID, (GLuint shaderID), ());
         MOCK_METHOD(GLuint, getShaderID, (), (const));

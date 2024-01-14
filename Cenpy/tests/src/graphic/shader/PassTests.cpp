@@ -4,30 +4,30 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <opengl/glFunctionMock.hpp>
-#include <graphic/shader/Pass.hpp>
-#include <graphic/shader/component/pass/MockShaderAttacher.hpp>
-#include <graphic/shader/component/pass/MockUniformReader.hpp>
-#include <graphic/shader/component/pass/MockUser.hpp>
-#include <graphic/shader/component/pass/MockFreer.hpp>
-#include <graphic/shader/component/pass/MockLoader.hpp>
-#include <graphic/shader/MockShader.hpp>
-#include <graphic/shader/MockUniform.hpp>
+#include <graphic/pipeline/Pass.hpp>
+#include <graphic/pipeline/component/pass/MockShaderAttacher.hpp>
+#include <graphic/pipeline/component/pass/MockUniformReader.hpp>
+#include <graphic/pipeline/component/pass/MockUser.hpp>
+#include <graphic/pipeline/component/pass/MockFreer.hpp>
+#include <graphic/pipeline/component/pass/MockLoader.hpp>
+#include <graphic/pipeline/MockShader.hpp>
+#include <graphic/pipeline/MockUniform.hpp>
 #include <graphic/context/MockPassContext.hpp>
 #include <graphic/MockApi.hpp>
 #include <TestUtils.hpp>
 
 namespace api = cenpy::mock::graphic::api;
 namespace context = cenpy::graphic::context;
-namespace shader = cenpy::graphic::shader;
+namespace pipeline = cenpy::graphic::pipeline;
 namespace mock = cenpy::mock;
 
-using mock::graphic::shader::MockShader;
-using mock::graphic::shader::MockUniform;
-using mock::graphic::shader::opengl::component::pass::MockFreer;
-using mock::graphic::shader::opengl::component::pass::MockLoader;
-using mock::graphic::shader::opengl::component::pass::MockShaderAttacher;
-using mock::graphic::shader::opengl::component::pass::MockUniformReader;
-using mock::graphic::shader::opengl::component::pass::MockUser;
+using mock::graphic::pipeline::MockShader;
+using mock::graphic::pipeline::MockUniform;
+using mock::graphic::pipeline::opengl::component::pass::MockFreer;
+using mock::graphic::pipeline::opengl::component::pass::MockLoader;
+using mock::graphic::pipeline::opengl::component::pass::MockShaderAttacher;
+using mock::graphic::pipeline::opengl::component::pass::MockUniformReader;
+using mock::graphic::pipeline::opengl::component::pass::MockUser;
 
 using cenpy::test::utils::expectSpecificError;
 class PassTest : public ::testing::Test
@@ -39,34 +39,34 @@ public:
     }
 };
 
-class MockedPass : public shader::Pass<api::MockOpenGL>
+class MockedPass : public pipeline::Pass<api::MockOpenGL>
 {
 public:
-    using shader::Pass<api::MockOpenGL>::Pass;
+    using pipeline::Pass<api::MockOpenGL>::Pass;
 
     std::shared_ptr<MockLoader<api::MockOpenGL>> getLoader() const override
     {
-        return shader::Pass<api::MockOpenGL>::getLoader();
+        return pipeline::Pass<api::MockOpenGL>::getLoader();
     }
 
     std::shared_ptr<MockFreer<api::MockOpenGL>> getFreer() const override
     {
-        return shader::Pass<api::MockOpenGL>::getFreer();
+        return pipeline::Pass<api::MockOpenGL>::getFreer();
     }
 
     std::shared_ptr<MockShaderAttacher<api::MockOpenGL>> getAttacher() const override
     {
-        return shader::Pass<api::MockOpenGL>::getAttacher();
+        return pipeline::Pass<api::MockOpenGL>::getAttacher();
     }
 
     std::shared_ptr<MockUniformReader<api::MockOpenGL>> getUniformReader() const override
     {
-        return shader::Pass<api::MockOpenGL>::getUniformReader();
+        return pipeline::Pass<api::MockOpenGL>::getUniformReader();
     }
 
     std::shared_ptr<MockUser<api::MockOpenGL>> getUser() const override
     {
-        return shader::Pass<api::MockOpenGL>::getUser();
+        return pipeline::Pass<api::MockOpenGL>::getUser();
     }
 
     friend class PassTest;

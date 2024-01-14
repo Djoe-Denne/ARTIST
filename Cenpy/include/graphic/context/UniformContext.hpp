@@ -13,7 +13,7 @@
 namespace cenpy::graphic
 {
 
-    namespace shader::opengl::component::uniform
+    namespace pipeline::opengl::component::uniform
     {
         template <typename U>
         class OpenGLUniformSetter;
@@ -68,7 +68,7 @@ namespace cenpy::graphic
         {
         public:
             template <typename T>
-            using Setter = shader::opengl::component::uniform::OpenGLUniformSetter<T>;
+            using Setter = pipeline::opengl::component::uniform::OpenGLUniformSetter<T>;
 
             void setUniformID(GLuint uniformId)
             {

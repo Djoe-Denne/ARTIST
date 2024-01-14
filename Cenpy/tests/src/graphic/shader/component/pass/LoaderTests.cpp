@@ -6,15 +6,15 @@
 #include <opengl/glFunctionMock.hpp>
 #include <graphic/MockApi.hpp>
 #include <graphic/context/PassContext.hpp>
-#include <graphic/shader/component/pass/MockShaderAttacher.hpp>
-#include <graphic/shader/component/pass/Loader.hpp>
+#include <graphic/pipeline/component/pass/MockShaderAttacher.hpp>
+#include <graphic/pipeline/component/pass/Loader.hpp>
 #include <TestUtils.hpp>
 
 namespace mock = cenpy::mock;
-namespace mock_component = cenpy::mock::graphic::shader::opengl::component::pass;
+namespace mock_component = cenpy::mock::graphic::pipeline::opengl::component::pass;
 namespace context = cenpy::graphic::opengl::context;
 namespace api = cenpy::graphic::api;
-namespace pass = cenpy::graphic::shader::opengl::component::pass;
+namespace pass = cenpy::graphic::pipeline::opengl::component::pass;
 
 using cenpy::test::utils::expectSpecificError;
 
@@ -39,10 +39,10 @@ TEST_F(LoaderTests, LoadPassTest_validContext)
     ASSERT_NO_THROW(Loader.loadPass(openglContext));
 
     // Assert
-    ASSERT_EQ(openglContext->getProgramId(), 1);
+    ASSERT_EQ(openglContext->getPassID(), 1);
 }
 
-TEST_F(LoaderTests, LoadPassTest_createProgram)
+TEST_F(LoaderTests, LoadPassTest_createPipeline)
 {
     // Arrange
     auto openglContext = std::make_shared<context::OpenGLPassContext>();
@@ -73,7 +73,7 @@ TEST_F(LoaderTests, LoadPassTest_attached)
     ASSERT_NO_THROW(Loader.loadPass(openglContext));
 }
 
-TEST_F(LoaderTests, LoadPassTest_linkProgram)
+TEST_F(LoaderTests, LoadPassTest_linkPipeline)
 {
     // Arrange
     auto openglContext = std::make_shared<context::OpenGLPassContext>();
@@ -100,7 +100,7 @@ TEST_F(LoaderTests, LoadPassTest_nullContext)
                         cenpy::common::exception::TraceableException<std::runtime_error>(std::format("ERROR::SHADER::PROGRAM::NON_OPENGL_CONTEXT")));
 }
 
-TEST_F(LoaderTests, LoadPassTest_programCreationFailed)
+TEST_F(LoaderTests, LoadPassTest_pipelineCreationFailed)
 {
     // Arrange
     auto openglContext = std::make_shared<context::OpenGLPassContext>();
@@ -109,14 +109,14 @@ TEST_F(LoaderTests, LoadPassTest_programCreationFailed)
 
     pass::OpenGLLoader Loader(shaderAttacher);
 
-    // Expect calls for program creation failure
+    // Expect calls for pipeline creation failure
     EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glCreateProgram_mock())
         .WillOnce(::testing::Return(0));
 
     // Act & Assert
     expectSpecificError([&Loader, &openglContext]()
                         { Loader.loadPass(openglContext); },
-                        cenpy::common::exception::TraceableException<std::runtime_error>(std::format("ERROR::SHADER::PROGRAM_CREATION_FAILED\nFailed to create shader program.")));
+                        cenpy::common::exception::TraceableException<std::runtime_error>(std::format("ERROR::SHADER::PROGRAM_CREATION_FAILED\nFailed to create shader pipeline.")));
 }
 
 TEST_F(LoaderTests, LoadPassTest_linkFailed)

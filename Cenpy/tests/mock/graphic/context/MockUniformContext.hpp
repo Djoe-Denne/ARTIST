@@ -8,7 +8,7 @@
 
 namespace cenpy::mock::graphic
 {
-    namespace shader::opengl::component::uniform
+    namespace pipeline::opengl::component::uniform
     {
         template <typename T>
         struct mockSetter;
@@ -21,7 +21,7 @@ namespace cenpy::mock::graphic
         {
         public:
             template <typename T>
-            using Setter = shader::opengl::component::uniform::mockSetter<T>;
+            using Setter = pipeline::opengl::component::uniform::mockSetter<T>;
 
             MOCK_METHOD(void, setUniformID, (GLuint uniformId), ());
             MOCK_METHOD(GLuint, getUniformID, (), (const));

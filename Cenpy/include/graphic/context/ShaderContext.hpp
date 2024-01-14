@@ -8,7 +8,7 @@
 namespace cenpy::graphic
 {
 
-    namespace shader::opengl::component::shader
+    namespace pipeline::opengl::component::shader
     {
         class OpenGLShaderLoader;
         class OpenGLShaderFreer;
@@ -91,9 +91,9 @@ namespace cenpy::graphic
         class OpenGLShaderContext : public graphic::context::ShaderContext<graphic::api::OpenGL>
         {
         public:
-            using Loader = shader::opengl::component::shader::OpenGLShaderLoader;
-            using Freer = shader::opengl::component::shader::OpenGLShaderFreer;
-            using Reader = shader::opengl::component::shader::OpenGLShaderReader;
+            using Loader = pipeline::opengl::component::shader::OpenGLShaderLoader;
+            using Freer = pipeline::opengl::component::shader::OpenGLShaderFreer;
+            using Reader = pipeline::opengl::component::shader::OpenGLShaderReader;
 
             void setShaderID(GLuint shaderID)
             {

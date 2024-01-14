@@ -11,7 +11,7 @@ namespace cenpy::graphic
         class OpenGLShaderContext;
         class OpenGLPassContext;
         class OpenGLUniformContext;
-        class OpenGLProgramContext;
+        class OpenGLPipelineContext;
     }
     namespace api
     {
@@ -36,7 +36,7 @@ namespace cenpy::graphic
             using ShaderContext = graphic::opengl::context::OpenGLShaderContext;
             using PassContext = graphic::opengl::context::OpenGLPassContext;
             using UniformContext = graphic::opengl::context::OpenGLUniformContext;
-            using ProgramContext = graphic::opengl::context::OpenGLProgramContext;
+            using PipelineContext = graphic::opengl::context::OpenGLPipelineContext;
         };
     }
 }

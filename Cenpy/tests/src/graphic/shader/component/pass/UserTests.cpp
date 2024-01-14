@@ -5,11 +5,11 @@
 #include <memory>
 #include <opengl/glFunctionMock.hpp>
 #include <graphic/context/PassContext.hpp>
-#include <graphic/shader/component/pass/User.hpp>
+#include <graphic/pipeline/component/pass/User.hpp>
 #include <TestUtils.hpp>
 
 namespace context = cenpy::graphic::opengl::context;
-namespace pass = cenpy::graphic::shader::opengl::component::pass;
+namespace pass = cenpy::graphic::pipeline::opengl::component::pass;
 namespace mock = cenpy::mock;
 using cenpy::test::utils::expectSpecificError;
 
@@ -26,10 +26,10 @@ TEST_F(UserTests, UsePass_ValidContext)
 {
     // Arrange
     auto openglContext = std::make_shared<context::OpenGLPassContext>();
-    openglContext->setProgramId(1); // Set a valid program ID
+    openglContext->setPassID(1); // Set a valid pipeline ID
     pass::OpenGLPassUser passUser;
 
-    // Expect call to glUseProgram with the correct program ID
+    // Expect call to glUsePipeline with the correct pipeline ID
     EXPECT_CALL(*mock::opengl::glFunctionMock::instance(), glUseProgram_mock(1)).Times(1);
 
     // Act

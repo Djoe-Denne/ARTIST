@@ -7,15 +7,15 @@
 #include <opengl/glFunctionMock.hpp>
 #include <graphic/context/PassContext.hpp>
 #include <graphic/context/ShaderContext.hpp>
-#include <graphic/shader/MockShader.hpp>
-#include <graphic/shader/component/pass/ShaderAttacher.hpp>
+#include <graphic/pipeline/MockShader.hpp>
+#include <graphic/pipeline/component/pass/ShaderAttacher.hpp>
 #include <TestUtils.hpp>
 
 namespace context = cenpy::graphic::opengl::context;
-namespace pass = cenpy::graphic::shader::opengl::component::pass;
+namespace pass = cenpy::graphic::pipeline::opengl::component::pass;
 namespace mock = cenpy::mock;
-namespace shader = mock::graphic::shader;
-using MockShader = cenpy::mock::graphic::shader::MockShader<cenpy::graphic::api::OpenGL>;
+namespace shader = mock::graphic::pipeline;
+using MockShader = cenpy::mock::graphic::pipeline::MockShader<cenpy::graphic::api::OpenGL>;
 using cenpy::test::utils::expectSpecificError;
 
 class ShaderAttacherTests : public ::testing::Test
@@ -33,7 +33,7 @@ TEST_F(ShaderAttacherTests, AttachShaders_ValidContext)
     auto openglContext = std::make_shared<context::OpenGLPassContext>();
     auto shaderContext = std::make_shared<context::OpenGLShaderContext>();
     auto shader = std::make_shared<MockShader>();
-    openglContext->setProgramId(1);   // Set a valid program ID
+    openglContext->setPassID(1);      // Set a valid pipeline ID
     openglContext->addShader(shader); // Add a mock shader
     shaderContext->setShaderID(42);   // Set a mock shader ID
     pass::OpenGLShaderAttacher shaderAttacher;
@@ -57,10 +57,10 @@ TEST_F(ShaderAttacherTests, AttachShaders_NullContext)
                         cenpy::common::exception::TraceableException<std::runtime_error>("ERROR::SHADER::NON_OPENGL_CONTEXT"));
 }
 
-TEST_F(ShaderAttacherTests, AttachShaders_InvalidProgramId)
+TEST_F(ShaderAttacherTests, AttachShaders_InvalidPassID)
 {
     // Arrange
-    auto openglContext = std::make_shared<context::OpenGLPassContext>(); // No program ID set
+    auto openglContext = std::make_shared<context::OpenGLPassContext>(); // No pipeline ID set
     pass::OpenGLShaderAttacher shaderAttacher;
 
     // Act & Assert
@@ -73,7 +73,7 @@ TEST_F(ShaderAttacherTests, AttachShaders_NoShaders)
 {
     // Arrange
     auto openglContext = std::make_shared<context::OpenGLPassContext>();
-    openglContext->setProgramId(1); // Set a valid program ID
+    openglContext->setPassID(1); // Set a valid pipeline ID
     pass::OpenGLShaderAttacher shaderAttacher;
 
     // Act & Assert
