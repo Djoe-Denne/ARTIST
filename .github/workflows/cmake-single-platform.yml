@@ -30,6 +30,7 @@ jobs:
         sudo apt-get install -y ninja-build
         sudo apt-get install -y xvfb libgl1-mesa-dri libgl1-mesa-glx mesa-utils libgl1-mesa-dev libglu1-mesa-dev
         sudo apt-get install -y valgrind
+        sudo apt-get install -y lcov
         sudo pip install conan==1.62.0
         conan profile new default --detect
         echo "[conf]\n" >> ~/.conan/profiles/default
@@ -67,8 +68,33 @@ jobs:
       # Execute tests defined by the CMake configuration.
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: build/bin/cenpy-common_component_tests
+    
+    - name: Generate Coverage Report
+      working-directory: ${{github.workspace}}
+      run: |
+        ls
+        lcov --directory . --capture --output-file coverage.info
+        lcov --remove coverage.info '/usr/*' --output-file coverage.info
+        lcov --remove coverage.info '*conan*' --output-file coverage.info
+        lcov --remove coverage.info '*test*' --output-file coverage.info
+        lcov --list coverage.info 
 
     - name: Valgrind Test
       working-directory: ${{github.workspace}}
       run: valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes build/bin/cenpy-common_tests
-      
+    
+    - name: Analyze with SonarCloud
+      # You can pin the exact commit or the version.
+      # uses: SonarSource/sonarcloud-github-action@de2e56b42aa84d0b1c5b622644ac17e505c9a049
+      uses: SonarSource/sonarcloud-github-action@de2e56b42aa84d0b1c5b622644ac17e505c9a049
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   # Generate a token on Sonarcloud.io, add it to the secrets of this repo with the name SONAR_TOKEN (Settings > Secrets > Actions > add new repository secret)
+      with:
+        # Additional arguments for the sonarcloud scanner
+        args:
+          # Unique keys of your project and organization. You can find them in SonarCloud > Information (bottom-left menu)
+          # mandatory
+          -Dsonar.projectKey=Djoe-Denne_Cenpy
+          -Dsonar.organization=djoe-denne06
+          -Dsonar.coverageReportPaths=./coverage.info

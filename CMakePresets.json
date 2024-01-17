@@ -66,7 +66,8 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "MOCK_GL": "ON",
-                "MOCK_APPDATA": "ON"
+                "MOCK_APPDATA": "ON",
+                "COVERAGE": "ON"
             },
             "condition": {
                 "type": "equals",
