@@ -70,7 +70,7 @@ jobs:
       run: build/bin/cenpy-common_component_tests
     
     - name: Generate Coverage Report
-      working-directory: ${{github.workspace}}/build/Cenpy/tests/CMakeFiles/cenpy-common_tests.dir/src/common
+      working-directory: ${{github.workspace}}/build/Cenpy/tests/CMakeFiles/cenpy-common_tests.dir/src
       run: |
         ls
         lcov --directory . --capture --output-file coverage.info
