@@ -11,6 +11,7 @@
 #include <graphic/Api.hpp>
 #include <graphic/pipeline/Shader.hpp>
 #include <graphic/pipeline/Uniform.hpp>
+#include <graphic/pipeline/Attribute.hpp>
 
 namespace cenpy::graphic
 {
@@ -20,6 +21,7 @@ namespace cenpy::graphic
         class OpenGLPassFreer;
         class OpenGLShaderAttacher;
         class OpenGLPassUniformReader;
+        class OpenGLPassAttributeReader;
         class OpenGLPassUser;
     }
     namespace context
@@ -60,6 +62,17 @@ namespace cenpy::graphic
             }
 
             /**
+             * @brief Add attribute to the pass.
+             *
+             * @param name Name of the attribute to add.
+             * @param attribute Attribute to add.
+             */
+            void addAttribute(const std::string &name, std::shared_ptr<pipeline::Attribute<API>> attribute)
+            {
+                m_attributes[name] = attribute;
+            }
+
+            /**
              * @brief Get the shader at the given index.
              * @param index Index of the shader to get.
              * @return Shader at the given index.
@@ -79,6 +92,20 @@ namespace cenpy::graphic
                 if (m_uniforms.contains(name))
                 {
                     return m_uniforms.at(name);
+                }
+                return nullptr;
+            }
+
+            /**
+             * @brief Get the attribute with the given name.
+             * @param name Name of the attribute to get.
+             * @return Attribute with the given name.
+             */
+            [[nodiscard]] std::shared_ptr<pipeline::Attribute<API>> getAttribute(const std::string &name) const
+            {
+                if (m_attributes.contains(name))
+                {
+                    return m_attributes.at(name);
                 }
                 return nullptr;
             }
@@ -110,9 +137,19 @@ namespace cenpy::graphic
                 return m_uniforms;
             }
 
+            /**
+             * @brief Get the attributes in the pass.
+             * @return Attributes in the pass.
+             */
+            [[nodiscard]] const std::unordered_map<std::string, std::shared_ptr<pipeline::Attribute<API>>, collection_utils::StringHash, collection_utils::StringEqual> &getAttributes() const
+            {
+                return m_attributes;
+            }
+
         private:
             std::vector<std::shared_ptr<pipeline::Shader<API>>> m_shaders;
             std::unordered_map<std::string, std::shared_ptr<pipeline::Uniform<API>>, collection_utils::StringHash, collection_utils::StringEqual> m_uniforms;
+            std::unordered_map<std::string, std::shared_ptr<pipeline::Attribute<API>>, collection_utils::StringHash, collection_utils::StringEqual> m_attributes;
         };
     }
 
@@ -133,6 +170,7 @@ namespace cenpy::graphic
             using Freer = pipeline::opengl::component::pass::OpenGLPassFreer;
             using ShaderAttacher = pipeline::opengl::component::pass::OpenGLShaderAttacher;
             using UniformReader = pipeline::opengl::component::pass::OpenGLPassUniformReader;
+            using AttributeReader = pipeline::opengl::component::pass::OpenGLPassAttributeReader;
             using User = pipeline::opengl::component::pass::OpenGLPassUser;
 
             void setPassID(GLuint passID)
@@ -144,9 +182,6 @@ namespace cenpy::graphic
             {
                 return m_passID;
             }
-
-            // Implement methods for managing shaders and uniforms
-            // ...
 
         private:
             GLuint m_passID; // OpenGL pipeline ID

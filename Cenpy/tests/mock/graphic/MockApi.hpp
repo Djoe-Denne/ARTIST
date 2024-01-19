@@ -15,6 +15,8 @@ namespace cenpy::mock::graphic
         template <typename API>
         class MockUniformContext;
         template <typename API>
+        class MockAttributeContext;
+        template <typename API>
         class MockPipelineContext;
     }
     namespace api
@@ -40,6 +42,7 @@ namespace cenpy::mock::graphic
             using ShaderContext = graphic::opengl::context::MockShaderContext<MockOpenGL>;
             using PassContext = graphic::opengl::context::MockPassContext<MockOpenGL>;
             using UniformContext = graphic::opengl::context::MockUniformContext<MockOpenGL>;
+            using AttributeContext = graphic::opengl::context::MockAttributeContext<MockOpenGL>;
             using PipelineContext = graphic::opengl::context::MockPipelineContext<MockOpenGL>;
         };
     }

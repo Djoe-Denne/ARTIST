@@ -8,6 +8,7 @@
 #include <graphic/pipeline/component/pass/MockFreer.hpp>
 #include <graphic/pipeline/component/pass/MockShaderAttacher.hpp>
 #include <graphic/pipeline/component/pass/MockUniformReader.hpp>
+#include <graphic/pipeline/component/pass/MockAttributeReader.hpp>
 #include <graphic/pipeline/component/pass/MockUser.hpp>
 
 namespace cenpy::mock::graphic::opengl::context
@@ -20,6 +21,7 @@ namespace cenpy::mock::graphic::opengl::context
         using Freer = pipeline::opengl::component::pass::MockFreer<API>;
         using ShaderAttacher = pipeline::opengl::component::pass::MockShaderAttacher<API>;
         using UniformReader = pipeline::opengl::component::pass::MockUniformReader<API>;
+        using AttributeReader = pipeline::opengl::component::pass::MockAttributeReader<API>;
         using User = pipeline::opengl::component::pass::MockUser<API>;
     };
 }

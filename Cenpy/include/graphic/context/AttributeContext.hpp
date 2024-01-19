@@ -6,15 +6,16 @@
 #include <format>
 #include <any>
 #include <memory>
-#include <optional>
 #include <common/exception/TraceableException.hpp>
 
 namespace cenpy::graphic
 {
     namespace pipeline::opengl::component::attribute
     {
-        template <typename T>
-        class OpenGLAttributeSetter<T>;
+        class OpenGLBinder;
+        template <typename A>
+        class OpenGLSetter;
+        class OpenGLUnbinder;
     }
     namespace context
     {
@@ -65,9 +66,10 @@ namespace cenpy::graphic
         class OpenGLAttributeContext : public graphic::context::AttributeContext<graphic::api::OpenGL>
         {
         public:
-            template <typename T>
-            using Setter = pipeline::opengl::component::attribute::OpenGLAttributeSetter<T>;
-
+            using Binder = pipeline::opengl::component::attribute::OpenGLBinder;
+            template <typename A>
+            using Setter = pipeline::opengl::component::attribute::OpenGLSetter<A>;
+            using Unbinder = pipeline::opengl::component::attribute::OpenGLUnbinder;
             void setAttributeID(GLuint attributeId)
             {
                 m_attributeId = attributeId;
@@ -80,7 +82,7 @@ namespace cenpy::graphic
 
             GLuint getBufferID() const
             {
-                return m_bufferId.or_else(-1);
+                return m_bufferId;
             }
 
             void setBufferID(GLuint bufferId)
@@ -108,26 +110,26 @@ namespace cenpy::graphic
                 m_type = type;
             }
 
-            void setDrawingUsage(GLenum drawingUsage)
+            void setGLUsage(GLenum usage)
             {
-                if(drawingUsage != GL_STREAM_DRAW && drawingUsage != GL_STATIC_DRAW && drawingUsage != GL_DYNAMIC_DRAW)
+                if (usage != GL_STREAM_DRAW && usage != GL_STATIC_DRAW && usage != GL_DYNAMIC_DRAW)
                 {
-                    throw cenpy::common::exception::TraceableException<std::runtime_error>(std::format("ERROR::ATTRIBUTE::SET::DRAWING_MODE_NOT_SUPPORTED: The drawing mode ({}) is not supported", drawingUsage));
+                    throw cenpy::common::exception::TraceableException<std::runtime_error>(std::format("ERROR::ATTRIBUTE::SET::DRAWING_MODE_NOT_SUPPORTED: The drawing mode ({}) is not supported", usage));
                 }
-                m_drawingUsage = drawingUsage;
+                m_usage = usage;
             }
 
-            GLenum getDrawingUsage() const
+            GLenum getGLUsage() const
             {
-                return m_drawingUsage;
+                return m_usage;
             }
 
         private:
-            GLuint m_attributeId;             ///< OpenGL attribute ID
-            GLuint m_size;                    ///< The size of the attribute variable.
-            GLenum m_type;                    ///< The type of the attribute variable.
-            std::optional<GLuint> m_bufferId; ///< OpenGL VBO buffer ID
-            GLenum m_drawingUsage;             ///< The drawing mode of the attribute variable.
+            GLuint m_attributeId; ///< OpenGL attribute ID
+            GLuint m_size;        ///< The size of the attribute variable.
+            GLenum m_type;        ///< The type of the attribute variable.
+            GLuint m_bufferId;    ///< OpenGL VBO buffer ID
+            GLenum m_usage;       ///< The drawing mode of the attribute variable.
         };
     }
 }

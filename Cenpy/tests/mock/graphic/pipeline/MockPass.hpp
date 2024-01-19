@@ -6,6 +6,7 @@
 #include <graphic/pipeline/MockShader.hpp>
 #include <graphic/pipeline/component/pass/MockShaderAttacher.hpp>
 #include <graphic/pipeline/component/pass/MockUniformReader.hpp>
+#include <graphic/pipeline/component/pass/MockAttributeReader.hpp>
 #include <graphic/pipeline/component/pass/MockUser.hpp>
 #include <graphic/pipeline/component/pass/MockFreer.hpp>
 #include <graphic/pipeline/component/pass/MockLoader.hpp>

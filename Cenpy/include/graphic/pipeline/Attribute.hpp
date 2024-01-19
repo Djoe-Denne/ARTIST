@@ -14,15 +14,19 @@ namespace cenpy::graphic::pipeline
     public:
         // Constructor
         Attribute(std::shared_ptr<typename API::AttributeContext::Binder> binder,
-                  std::shared_ptr<typename API::AttributeContext::Setter> setter,
                   std::shared_ptr<typename API::AttributeContext::Unbinder> unbinder,
                   std::shared_ptr<typename API::AttributeContext> context)
-            : m_binder(binder), m_setter(setter), m_unbinder(unbinder), m_context(context) {}
+            : m_binder(binder), m_unbinder(unbinder), m_context(context) {}
 
         Attribute() : Attribute(std::make_shared<typename API::AttributeContext::Binder>(),
-                                std::make_shared<typename API::AttributeContext::Setter>(),
                                 std::make_shared<typename API::AttributeContext::Unbinder>(),
                                 std::make_shared<typename API::AttributeContext>())
+        {
+        }
+
+        Attribute(std::shared_ptr<typename API::AttributeContext> context) : Attribute(std::make_shared<typename API::AttributeContext::Binder>(),
+                                                                                       std::make_shared<typename API::AttributeContext::Unbinder>(),
+                                                                                       context)
         {
         }
 
@@ -30,23 +34,22 @@ namespace cenpy::graphic::pipeline
         {
             if (m_binder)
             {
-                m_binder->bind();
+                m_binder->bind(m_context);
             }
         }
 
-        void set()
+        template <typename T>
+        void set(std::shared_ptr<T> value)
         {
-            if (m_setter)
-            {
-                m_setter->set();
-            }
+            m_context->template setValue<T>(value);
+            API::AttributeContext::template Setter<std::shared_ptr<T>>::set(m_context);
         }
 
         void unbind()
         {
             if (m_unbinder)
             {
-                m_unbinder->unbind();
+                m_unbinder->unbind(m_context);
             }
         }
 
@@ -61,11 +64,6 @@ namespace cenpy::graphic::pipeline
             return m_binder;
         }
 
-        [[nodiscard]] virtual std::shared_ptr<typename API::AttributeContext::Setter> getSetter() const
-        {
-            return m_setter;
-        }
-
         [[nodiscard]] virtual std::shared_ptr<typename API::AttributeContext::Unbinder> getUnbinder() const
         {
             return m_unbinder;
@@ -73,7 +71,6 @@ namespace cenpy::graphic::pipeline
 
     private:
         std::shared_ptr<typename API::AttributeContext::Binder> m_binder;
-        std::shared_ptr<typename API::AttributeContext::Setter> m_setter;
         std::shared_ptr<typename API::AttributeContext::Unbinder> m_unbinder;
         std::shared_ptr<typename API::AttributeContext> m_context;
     };

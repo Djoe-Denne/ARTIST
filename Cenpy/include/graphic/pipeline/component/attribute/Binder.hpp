@@ -13,36 +13,34 @@ namespace cenpy::graphic::pipeline
 {
     namespace component::attribute
     {
-        template <typename API, typename A>
-        class IAttributeBinder
+        template <typename API>
+        class IBinder
         {
         public:
-            virtual ~IAttributeBinder() = default;
+            virtual ~IBinder() = default;
 
-            virtual void bindAttribute(const typename API::AttributeContext &attribute) = 0;
+            virtual void bindAttribute(std::shared_ptr<typename graphic::api::OpenGL::AttributeContext> attribute) = 0;
         };
     }
 
     namespace opengl::component::attribute
     {
-        template <typename A>
-        class OpenGLAttributeBinder : public graphic::pipeline::component::attribute::baseBinder<graphic::api::OpenGL, A>
+        class OpenGLBinder : public graphic::pipeline::component::attribute::IBinder<graphic::api::OpenGL>
         {
         public:
-            void bindAttribute(const typename graphic::api::OpenGL::AttributeContext &attribute) override
+            void bindAttribute(std::shared_ptr<typename graphic::api::OpenGL::AttributeContext> attribute) override
             {
                 if (!attribute)
                 {
                     throw cenpy::common::exception::TraceableException<std::runtime_error>(std::format("ERROR::ATTRIBUTE::SET::NON_OPENGL_CONTEXT"));
                 }
-                std::shared_ptr<A> attrValue = attribute.getValue<A>();
-                if (attribute.getBufferId() == -1)
+                if (attribute->getBufferID() == 0)
                 {
                     unsigned int VBO;
                     glGenBuffers(1, &VBO);
-                    attribute.setBufferId(VBO);
+                    attribute->setBufferID(VBO);
                 }
-                glBindBuffer(GL_ARRAY_BUFFER, attribute.getBufferId());
+                glBindBuffer(GL_ARRAY_BUFFER, attribute->getBufferID());
             }
         };
     }

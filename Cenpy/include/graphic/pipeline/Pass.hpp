@@ -24,10 +24,12 @@
 #include <common/exception/TraceableException.hpp>
 #include <graphic/pipeline/Shader.hpp>
 #include <graphic/pipeline/Uniform.hpp>
+#include <graphic/pipeline/Attribute.hpp>
 #include <graphic/pipeline/component/pass/Loader.hpp>
 #include <graphic/pipeline/component/pass/Freer.hpp>
 #include <graphic/pipeline/component/pass/ShaderAttacher.hpp>
 #include <graphic/pipeline/component/pass/UniformReader.hpp>
+#include <graphic/pipeline/component/pass/AttributeReader.hpp>
 #include <graphic/pipeline/component/pass/User.hpp>
 #include <graphic/Api.hpp>
 
@@ -58,6 +60,7 @@ namespace cenpy::graphic::pipeline
              std::shared_ptr<typename API::PassContext::Freer> freer,
              std::shared_ptr<typename API::PassContext::ShaderAttacher> attacher,
              std::shared_ptr<typename API::PassContext::UniformReader> uniformReader,
+             std::shared_ptr<typename API::PassContext::AttributeReader> attributeReader,
              std::shared_ptr<typename API::PassContext::User> user,
              std::shared_ptr<typename API::PassContext> context) : m_loader(loader),
                                                                    m_freer(freer),
@@ -78,6 +81,7 @@ namespace cenpy::graphic::pipeline
                    std::make_shared<typename API::PassContext::Freer>(),
                    std::make_shared<typename API::PassContext::ShaderAttacher>(),
                    std::make_shared<typename API::PassContext::UniformReader>(),
+                   std::make_shared<typename API::PassContext::AttributeReader>(),
                    std::make_shared<typename API::PassContext::User>(),
                    std::make_shared<typename API::PassContext>())
         {
@@ -147,6 +151,16 @@ namespace cenpy::graphic::pipeline
         }
 
         /**
+         * @brief Returns a const reference to the map of attributes in the pass.
+         *
+         * @return A const reference to the map of attributes.
+         */
+        [[nodiscard]] virtual const std::unordered_map<std::string, std::shared_ptr<Attribute<API>>, collection_utils::StringHash, collection_utils::StringEqual> &getAttributes() const
+        {
+            return m_context->getAttributes();
+        }
+
+        /**
          * @brief Returns a const reference to the vector of shaders in the pass.
          *
          * @return A const reference to the vector of shaders.
@@ -186,6 +200,11 @@ namespace cenpy::graphic::pipeline
             return m_uniformReader;
         }
 
+        [[nodiscard]] virtual std::shared_ptr<typename API::PassContext::AttributeReader> getAttributeReader() const
+        {
+            return m_attributeReader;
+        }
+
         [[nodiscard]] virtual std::shared_ptr<typename API::PassContext::User> getUser() const
         {
             return m_user;
@@ -193,11 +212,12 @@ namespace cenpy::graphic::pipeline
 
     private:
         // Component instances
-        std::shared_ptr<typename API::PassContext::Loader> m_loader;               ///< The loader for the pass context.
-        std::shared_ptr<typename API::PassContext::Freer> m_freer;                 ///< The freer for the pass context.
-        std::shared_ptr<typename API::PassContext::ShaderAttacher> m_attacher;     ///< The shader attacher for the pass context.
-        std::shared_ptr<typename API::PassContext::UniformReader> m_uniformReader; ///< The uniform reader for the pass context.
-        std::shared_ptr<typename API::PassContext::User> m_user;                   ///< The user for the pass context.
-        std::shared_ptr<typename API::PassContext> m_context;                      ///< The pass context.
+        std::shared_ptr<typename API::PassContext::Loader> m_loader;                   ///< The loader for the pass context.
+        std::shared_ptr<typename API::PassContext::Freer> m_freer;                     ///< The freer for the pass context.
+        std::shared_ptr<typename API::PassContext::ShaderAttacher> m_attacher;         ///< The shader attacher for the pass context.
+        std::shared_ptr<typename API::PassContext::UniformReader> m_uniformReader;     ///< The uniform reader for the pass context.
+        std::shared_ptr<typename API::PassContext::AttributeReader> m_attributeReader; ///< The attribute reader for the pass context.
+        std::shared_ptr<typename API::PassContext::User> m_user;                       ///< The user for the pass context.
+        std::shared_ptr<typename API::PassContext> m_context;                          ///< The pass context.
     };
 } // namespace cenpy::graphic::pipeline
