@@ -1,11 +1,11 @@
 /**
- * @file Pass.hpp
+ * @file IPass.hpp
  * @brief Defines the interface and OpenGL implementation for shader passes in a multi-pass rendering system.
  *
- * This file introduces the concept of a 'Pass', representing a sequence of shader operations in a rendering pipeline.
- * It includes the abstract Pass class template and its OpenGL specialization. The design is flexible to support
+ * This file introduces the concept of a 'IPass', representing a sequence of shader operations in a rendering pipeline.
+ * It includes the abstract IPass class template and its OpenGL specialization. The design is flexible to support
  * other graphics APIs such as Vulkan, DirectX, and Metal under respective namespaces.
- * The 'Pass' is an integral part of the multipass shader system.
+ * The 'IPass' is an integral part of the multipass shader system.
  *
  * @author Djoé DENNE
  * @date 13/12/2023
@@ -25,49 +25,20 @@
 #include <graphic/pipeline/Shader.hpp>
 #include <graphic/pipeline/Uniform.hpp>
 #include <graphic/pipeline/Attribute.hpp>
-#include <graphic/pipeline/component/pass/Loader.hpp>
-#include <graphic/pipeline/component/pass/Freer.hpp>
-#include <graphic/pipeline/component/pass/ShaderAttacher.hpp>
-#include <graphic/pipeline/component/pass/UniformReader.hpp>
-#include <graphic/pipeline/component/pass/AttributeReader.hpp>
-#include <graphic/pipeline/component/pass/User.hpp>
-#include <graphic/Api.hpp>
+#include <graphic/context/PassContext.hpp>
+#include <graphic/validator/ComponentConcept.hpp>
 
 namespace cenpy::graphic::pipeline
 {
     template <typename API>
-    class Pass
+    class IPass
     {
     public:
-        // ... Existing constructors, destructors, methods ...
-        virtual ~Pass()
-        {
-            try
-            {
-                free();
-            }
-            catch (const std::exception &e)
-            {
-                std::cerr << e.what() << std::endl;
-            }
-        }
-
         // New or modified methods
 
         // Constructor accepting components
-        Pass(const std::initializer_list<std::shared_ptr<Shader<API>>> &shaders,
-             std::shared_ptr<typename API::PassContext::Loader> loader,
-             std::shared_ptr<typename API::PassContext::Freer> freer,
-             std::shared_ptr<typename API::PassContext::ShaderAttacher> attacher,
-             std::shared_ptr<typename API::PassContext::UniformReader> uniformReader,
-             std::shared_ptr<typename API::PassContext::AttributeReader> attributeReader,
-             std::shared_ptr<typename API::PassContext::User> user,
-             std::shared_ptr<typename API::PassContext> context) : m_loader(loader),
-                                                                   m_freer(freer),
-                                                                   m_attacher(attacher),
-                                                                   m_uniformReader(uniformReader),
-                                                                   m_user(user),
-                                                                   m_context(context)
+        IPass(const std::initializer_list<std::shared_ptr<IShader<API>>> &shaders,
+              std::shared_ptr<typename API::PassContext> context) : m_context(context)
         {
             for (auto &shader : shaders)
             {
@@ -75,17 +46,10 @@ namespace cenpy::graphic::pipeline
             }
         }
 
-        explicit Pass(const std::initializer_list<std::shared_ptr<Shader<API>>> shaders)
-            : Pass(shaders,
-                   std::make_shared<typename API::PassContext::Loader>(),
-                   std::make_shared<typename API::PassContext::Freer>(),
-                   std::make_shared<typename API::PassContext::ShaderAttacher>(),
-                   std::make_shared<typename API::PassContext::UniformReader>(),
-                   std::make_shared<typename API::PassContext::AttributeReader>(),
-                   std::make_shared<typename API::PassContext::User>(),
-                   std::make_shared<typename API::PassContext>())
+        explicit IPass(const std::initializer_list<std::shared_ptr<IShader<API>>> shaders)
+            : IPass(shaders,
+                    std::make_shared<typename API::PassContext>())
         {
-            m_loader->setAttacher(m_attacher);
         }
 
         virtual void load()
@@ -94,30 +58,18 @@ namespace cenpy::graphic::pipeline
             {
                 shader->load();
             }
-            if (m_loader)
-            {
-                m_loader->loadPass(m_context);
-            }
-            if (m_uniformReader)
-            {
-                m_uniformReader->readUniforms(m_context);
-            }
+            load(m_context);
+            readUniforms(m_context);
         }
 
         virtual void use()
         {
-            if (m_user)
-            {
-                m_user->usePass(m_context);
-            }
+            use(m_context);
         }
 
         virtual void free()
         {
-            if (m_freer)
-            {
-                m_freer->freePass(m_context);
-            }
+            free(m_context);
         }
 
         /**
@@ -126,16 +78,16 @@ namespace cenpy::graphic::pipeline
          * @tparam T The type of the uniform value.
          * @param name The name of the uniform.
          * @param value The value of the uniform.
-         * @return A reference to the Pass object.
+         * @return A reference to the IPass object.
          * @throws std::runtime_error if the uniform is not found.
          */
         template <typename T>
-        Pass<API> &withUniform(const std::string &name, const T &value)
+        std::shared_ptr<IPass<API>> withUniform(const std::string &name, const T &value)
         {
             if (auto uniform = m_context->getUniform(name))
             {
                 uniform->template set<T>(value);
-                return *this;
+                return shared();
             }
             throw common::exception::TraceableException<std::runtime_error>(std::format("ERROR::SHADER::UNIFORM_NOT_FOUND\nUniform {} not found", name));
         }
@@ -155,7 +107,7 @@ namespace cenpy::graphic::pipeline
          *
          * @return A const reference to the map of attributes.
          */
-        [[nodiscard]] virtual const std::unordered_map<std::string, std::shared_ptr<Attribute<API>>, collection_utils::StringHash, collection_utils::StringEqual> &getAttributes() const
+        [[nodiscard]] virtual const std::unordered_map<std::string, std::shared_ptr<IAttribute<API>>, collection_utils::StringHash, collection_utils::StringEqual> &getAttributes() const
         {
             return m_context->getAttributes();
         }
@@ -165,7 +117,7 @@ namespace cenpy::graphic::pipeline
          *
          * @return A const reference to the vector of shaders.
          */
-        [[nodiscard]] virtual const std::vector<std::shared_ptr<Shader<API>>> &getShaders() const
+        [[nodiscard]] virtual const std::vector<std::shared_ptr<IShader<API>>> &getShaders() const
         {
             return m_context->getShaders();
         }
@@ -180,44 +132,74 @@ namespace cenpy::graphic::pipeline
         }
 
     protected:
-        [[nodiscard]] virtual std::shared_ptr<typename API::PassContext::Loader> getLoader() const
-        {
-            return m_loader;
-        }
-
-        [[nodiscard]] virtual std::shared_ptr<typename API::PassContext::Freer> getFreer() const
-        {
-            return m_freer;
-        }
-
-        [[nodiscard]] virtual std::shared_ptr<typename API::PassContext::ShaderAttacher> getAttacher() const
-        {
-            return m_attacher;
-        }
-
-        [[nodiscard]] virtual std::shared_ptr<typename API::PassContext::UniformReader> getUniformReader() const
-        {
-            return m_uniformReader;
-        }
-
-        [[nodiscard]] virtual std::shared_ptr<typename API::PassContext::AttributeReader> getAttributeReader() const
-        {
-            return m_attributeReader;
-        }
-
-        [[nodiscard]] virtual std::shared_ptr<typename API::PassContext::User> getUser() const
-        {
-            return m_user;
-        }
+        virtual void load(std::shared_ptr<typename API::PassContext> context) = 0;
+        virtual void readUniforms(std::shared_ptr<typename API::PassContext> context) = 0;
+        virtual void free(std::shared_ptr<typename API::PassContext> context) = 0;
+        virtual void use(std::shared_ptr<typename API::PassContext> context) = 0;
+        virtual std::shared_ptr<IPass<API>> shared() const = 0;
 
     private:
-        // Component instances
-        std::shared_ptr<typename API::PassContext::Loader> m_loader;                   ///< The loader for the pass context.
-        std::shared_ptr<typename API::PassContext::Freer> m_freer;                     ///< The freer for the pass context.
-        std::shared_ptr<typename API::PassContext::ShaderAttacher> m_attacher;         ///< The shader attacher for the pass context.
-        std::shared_ptr<typename API::PassContext::UniformReader> m_uniformReader;     ///< The uniform reader for the pass context.
-        std::shared_ptr<typename API::PassContext::AttributeReader> m_attributeReader; ///< The attribute reader for the pass context.
-        std::shared_ptr<typename API::PassContext::User> m_user;                       ///< The user for the pass context.
-        std::shared_ptr<typename API::PassContext> m_context;                          ///< The pass context.
+        std::shared_ptr<typename API::PassContext> m_context; ///< The pass context.
+    };
+
+    template <typename API, auto PROFILE>
+        requires(API::Validator::template validatePass<API, PROFILE>())
+    class Pass : public IPass<API>
+    {
+    public:
+        using IPass<API>::IPass;
+        using IPass<API>::load;
+        using IPass<API>::free;
+        using IPass<API>::use;
+
+        virtual ~Pass()
+        {
+            try
+            {
+                free();
+            }
+            catch (const std::exception &e)
+            {
+                std::cerr << e.what() << std::endl;
+            }
+        }
+
+    protected:
+        void load(std::shared_ptr<typename API::PassContext> context) override
+        {
+            if constexpr (graphic::validator::HasComponent<typename API::PassContext::Loader<PROFILE>>)
+            {
+                API::PassContext::template Loader<PROFILE>::on(context);
+            }
+        }
+
+        void readUniforms(std::shared_ptr<typename API::PassContext> context) override
+        {
+            if constexpr (graphic::validator::HasComponent<typename API::PassContext::UniformReader<PROFILE>>)
+            {
+                API::PassContext::template UniformReader<PROFILE>::on(context);
+            }
+        }
+
+        void free(std::shared_ptr<typename API::PassContext> context) override
+        {
+            if constexpr (graphic::validator::HasComponent<typename API::PassContext::Freer<PROFILE>>)
+            {
+                API::PassContext::template Freer<PROFILE>::on(context);
+            }
+        }
+
+        void use(std::shared_ptr<typename API::PassContext> context) override
+        {
+            if constexpr (graphic::validator::HasComponent<typename API::PassContext::User<PROFILE>>)
+            {
+                API::PassContext::template User<PROFILE>::on(context);
+            }
+        }
+
+        std::shared_ptr<IPass<API>> shared() const override
+        {
+            return std::make_shared<Pass<API, PROFILE>>(*this);
+        }
     };
 } // namespace cenpy::graphic::pipeline

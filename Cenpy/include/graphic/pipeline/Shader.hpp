@@ -20,9 +20,7 @@
 #include <fstream>
 #include <common/exception/TraceableException.hpp>
 #include <graphic/context/ShaderContext.hpp>
-#include <graphic/pipeline/component/shader/Loader.hpp>
-#include <graphic/pipeline/component/shader/Freer.hpp>
-#include <graphic/pipeline/component/shader/Reader.hpp>
+#include <graphic/validator/ComponentConcept.hpp>
 
 namespace cenpy::graphic::pipeline
 {
@@ -47,18 +45,9 @@ namespace cenpy::graphic::pipeline
      * - Resource Management: Utilizes smart pointers for automatic resource management and safer code.
      */
     template <typename API>
-    class Shader
+    class IShader
     {
     public:
-        /**
-         * @brief Destructor for Shader.
-         */
-
-        virtual ~Shader()
-        {
-            free();
-        }
-
         /**
          * @brief Constructor for Shader.
          * @param shaderPath Path to the shader source file.
@@ -67,14 +56,8 @@ namespace cenpy::graphic::pipeline
          * @param freer Unique pointer to the shader freer component.
          * @param context Unique pointer to the ShaderContext, managing API-specific shader details.
          */
-        Shader(const std::string &shaderPath, context::ShaderType shaderType,
-               std::shared_ptr<typename API::ShaderContext::Loader> loader,
-               std::shared_ptr<typename API::ShaderContext::Freer> freer,
-               std::shared_ptr<typename API::ShaderContext::Reader> reader,
-               std::shared_ptr<typename API::ShaderContext> context) : m_loader(loader),
-                                                                       m_freer(freer),
-                                                                       m_reader(reader),
-                                                                       m_context(context)
+        IShader(const std::string &shaderPath, context::ShaderType shaderType,
+                std::shared_ptr<typename API::ShaderContext> context) : m_context(context)
         {
             m_context->setShaderType(shaderType);
             m_context->setShaderPath(shaderPath);
@@ -98,12 +81,9 @@ namespace cenpy::graphic::pipeline
          * This line creates a shader object for OpenGL, automatically setting up the OpenGL
          * shader context, loader, and freer.
          */
-        Shader(const std::string &shaderPath, context::ShaderType shaderType)
-            : Shader(shaderPath, shaderType,
-                     std::make_shared<typename API::ShaderContext::Loader>(),
-                     std::make_shared<typename API::ShaderContext::Freer>(),
-                     std::make_shared<typename API::ShaderContext::Reader>(),
-                     std::make_shared<typename API::ShaderContext>())
+        IShader(const std::string &shaderPath, context::ShaderType shaderType)
+            : IShader(shaderPath, shaderType,
+                      std::make_shared<typename API::ShaderContext>())
         {
         }
 
@@ -148,13 +128,13 @@ namespace cenpy::graphic::pipeline
          */
         virtual void load()
         {
-            if (m_context && m_loader)
+            if (m_context)
             {
                 if (m_context->getShaderCode().empty())
                 {
-                    m_reader->readShader(m_context);
+                    read(m_context);
                 }
-                m_loader->loadShader(m_context);
+                load(m_context);
             }
         }
 
@@ -165,45 +145,56 @@ namespace cenpy::graphic::pipeline
         {
             if (m_context)
             {
-                m_freer->freeShader(m_context);
+                free(m_context);
             }
         }
 
     protected:
-        /**
-         * @brief Get the loader object for the shader.
-         *
-         * @return std::shared_ptr<typename API::ShaderContext::Loader> The loader object.
-         */
-        [[nodiscard]] virtual std::shared_ptr<typename API::ShaderContext::Loader> getLoader() const
-        {
-            return m_loader;
-        }
-
-        /**
-         * @brief Get the freer object for the shader.
-         *
-         * @return std::shared_ptr<typename API::ShaderContext::Freer> The freer object.
-         */
-        [[nodiscard]] virtual std::shared_ptr<typename API::ShaderContext::Freer> getFreer() const
-        {
-            return m_freer;
-        }
-
-        /**
-         * @brief Get the reader object for the shader.
-         *
-         * @return std::shared_ptr<typename API::ShaderContext::Reader> The reader object.
-         */
-        [[nodiscard]] virtual std::shared_ptr<typename API::ShaderContext::Reader> getReader() const
-        {
-            return m_reader;
-        }
+        virtual void load(std::shared_ptr<typename API::ShaderContext> context) = 0;
+        virtual void free(std::shared_ptr<typename API::ShaderContext> context) = 0;
+        virtual void read(std::shared_ptr<typename API::ShaderContext> context) = 0;
 
     private:
-        std::shared_ptr<typename API::ShaderContext::Loader> m_loader; // Component responsible for loading the shader
-        std::shared_ptr<typename API::ShaderContext::Freer> m_freer;   // Component responsible for freeing the shader
-        std::shared_ptr<typename API::ShaderContext::Reader> m_reader; // Component responsible for reading the shader
-        std::shared_ptr<typename API::ShaderContext> m_context;        // API-specific shader context
+        std::shared_ptr<typename API::ShaderContext> m_context; // API-specific shader context
+    };
+
+    template <typename API, auto PROFILE>
+        requires(API::Validator::template validateShader<API, PROFILE>())
+    class Shader : public IShader<API>
+    {
+    public:
+        using IShader<API>::IShader;
+        using IShader<API>::load;
+        using IShader<API>::free;
+
+        ~Shader()
+        {
+            free();
+        }
+
+    protected:
+        void free(std::shared_ptr<typename API::ShaderContext> context) override
+        {
+            if constexpr (graphic::validator::HasComponent<typename API::ShaderContext::template Freer<PROFILE>>)
+            {
+                API::ShaderContext::template Freer<PROFILE>::on(context);
+            }
+        }
+
+        void load(std::shared_ptr<typename API::ShaderContext> context) override
+        {
+            if constexpr (graphic::validator::HasComponent<typename API::ShaderContext::template Loader<PROFILE>>)
+            {
+                API::ShaderContext::template Loader<PROFILE>::on(context);
+            }
+        }
+
+        void read(std::shared_ptr<typename API::ShaderContext> context) override
+        {
+            if constexpr (graphic::validator::HasComponent<typename API::ShaderContext::template Reader<PROFILE>>)
+            {
+                API::ShaderContext::template Reader<PROFILE>::on(context);
+            }
+        }
     };
 } // namespace cenpy::graphic::pipeline

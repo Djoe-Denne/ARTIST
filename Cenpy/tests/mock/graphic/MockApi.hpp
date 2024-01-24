@@ -1,23 +1,28 @@
 // Api.hpp
 
 #pragma once
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
 
+namespace cenpy::graphic::opengl::validator
+{
+    struct Validator;
+}
 namespace cenpy::mock::graphic
 {
-    namespace opengl::context
+    namespace opengl
     {
-        template <typename API>
-        class MockShaderContext;
-        template <typename API>
-        class MockPassContext;
-        template <typename API>
-        class MockUniformContext;
-        template <typename API>
-        class MockAttributeContext;
-        template <typename API>
-        class MockPipelineContext;
+        namespace validator
+        {
+            using cenpy::graphic::opengl::validator::Validator;
+        }
+
+        namespace context
+        {
+            class MockShaderContext;
+            class MockPassContext;
+            class MockUniformContext;
+            class MockAttributeContext;
+            class MockPipelineContext;
+        }
     }
     namespace api
     {
@@ -39,11 +44,12 @@ namespace cenpy::mock::graphic
         class MockOpenGL
         {
         public:
-            using ShaderContext = graphic::opengl::context::MockShaderContext<MockOpenGL>;
-            using PassContext = graphic::opengl::context::MockPassContext<MockOpenGL>;
-            using UniformContext = graphic::opengl::context::MockUniformContext<MockOpenGL>;
-            using AttributeContext = graphic::opengl::context::MockAttributeContext<MockOpenGL>;
-            using PipelineContext = graphic::opengl::context::MockPipelineContext<MockOpenGL>;
+            using ShaderContext = graphic::opengl::context::MockShaderContext;
+            using PassContext = graphic::opengl::context::MockPassContext;
+            using UniformContext = graphic::opengl::context::MockUniformContext;
+            using AttributeContext = graphic::opengl::context::MockAttributeContext;
+            using PipelineContext = graphic::opengl::context::MockPipelineContext;
+            using Validator = graphic::opengl::validator::Validator;
         };
     }
 }

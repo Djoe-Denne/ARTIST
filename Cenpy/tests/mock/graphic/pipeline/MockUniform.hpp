@@ -3,8 +3,7 @@
 
 #include <gmock/gmock.h>
 #include <graphic/pipeline/Uniform.hpp>
-#include <graphic/pipeline/component/uniform/MockSetter.hpp>
-#include <graphic/context/MockUniformContext.hpp>
+#include <graphic/opengl/context/MockUniformContext.hpp>
 
 namespace cenpy::mock::graphic::pipeline
 {

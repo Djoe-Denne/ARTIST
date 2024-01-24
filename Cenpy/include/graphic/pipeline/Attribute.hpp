@@ -1,56 +1,48 @@
 #pragma once
 
 #include <memory>
-#include <graphic/pipeline/component/attribute/Binder.hpp>
-#include <graphic/pipeline/component/attribute/Setter.hpp>
-#include <graphic/pipeline/component/attribute/Unbinder.hpp>
+#include <graphic/Api.hpp>
+#include <graphic/context/AttributeContext.hpp>
+#include <graphic/validator/ComponentConcept.hpp>
 
 namespace cenpy::graphic::pipeline
 {
 
     template <typename API>
-    class Attribute
+    class IAttribute
     {
     public:
         // Constructor
-        Attribute(std::shared_ptr<typename API::AttributeContext::Binder> binder,
-                  std::shared_ptr<typename API::AttributeContext::Unbinder> unbinder,
-                  std::shared_ptr<typename API::AttributeContext> context)
-            : m_binder(binder), m_unbinder(unbinder), m_context(context) {}
+        IAttribute(std::shared_ptr<typename API::AttributeContext> context)
+            : m_context(context) {}
 
-        Attribute() : Attribute(std::make_shared<typename API::AttributeContext::Binder>(),
-                                std::make_shared<typename API::AttributeContext::Unbinder>(),
-                                std::make_shared<typename API::AttributeContext>())
-        {
-        }
-
-        Attribute(std::shared_ptr<typename API::AttributeContext> context) : Attribute(std::make_shared<typename API::AttributeContext::Binder>(),
-                                                                                       std::make_shared<typename API::AttributeContext::Unbinder>(),
-                                                                                       context)
+        IAttribute() : IAttribute(std::make_shared<typename API::AttributeContext>())
         {
         }
 
         void bind()
         {
-            if (m_binder)
-            {
-                m_binder->bind(m_context);
-            }
+            bind(m_context);
         }
 
         template <typename T>
         void set(std::shared_ptr<T> value)
         {
             m_context->template setValue<T>(value);
-            API::AttributeContext::template Setter<std::shared_ptr<T>>::set(m_context);
+
+            if constexpr (graphic::validator::HasComponent<typename API::AttributeContext::Setter<std::shared_ptr<int>>>)
+            {
+                API::AttributeContext::template Setter<std::shared_ptr<int>>::on(m_context);
+            }
+            else
+            {
+                throw common::exception::TraceableException<std::runtime_error>("ERROR::ATTRIBUTE::UNSUPPORTED_TYPE");
+            }
         }
 
         void unbind()
         {
-            if (m_unbinder)
-            {
-                m_unbinder->unbind(m_context);
-            }
+            unbind(m_context);
         }
 
         [[nodiscard]] virtual std::shared_ptr<typename API::AttributeContext> getContext() const
@@ -59,19 +51,38 @@ namespace cenpy::graphic::pipeline
         }
 
     protected:
-        [[nodiscard]] virtual std::shared_ptr<typename API::AttributeContext::Binder> getBinder() const
-        {
-            return m_binder;
-        }
-
-        [[nodiscard]] virtual std::shared_ptr<typename API::AttributeContext::Unbinder> getUnbinder() const
-        {
-            return m_unbinder;
-        }
+        virtual void unbind(std::shared_ptr<typename API::AttributeContext> context) = 0;
+        virtual void bind(std::shared_ptr<typename API::AttributeContext> context) = 0;
 
     private:
-        std::shared_ptr<typename API::AttributeContext::Binder> m_binder;
-        std::shared_ptr<typename API::AttributeContext::Unbinder> m_unbinder;
         std::shared_ptr<typename API::AttributeContext> m_context;
+    };
+
+    template <typename API, auto PROFILE>
+        requires(API::Validator::template validateAttribute<API, PROFILE>())
+    class Attribute : public IAttribute<API>
+    {
+    public:
+        using IAttribute<API>::IAttribute;
+        using IAttribute<API>::bind;
+        using IAttribute<API>::unbind;
+        using IAttribute<API>::set;
+
+    protected:
+        void bind(std::shared_ptr<typename API::AttributeContext> context) override
+        {
+            if constexpr (graphic::validator::HasComponent<typename API::AttributeContext::Binder<PROFILE>>)
+            {
+                API::AttributeContext::template Binder<PROFILE>::on(context);
+            }
+        }
+
+        void unbind(std::shared_ptr<typename API::AttributeContext> context) override
+        {
+            if constexpr (graphic::validator::HasComponent<typename API::AttributeContext::Unbinder<PROFILE>>)
+            {
+                API::AttributeContext::template Unbinder<PROFILE>::on(context);
+            }
+        }
     };
 }

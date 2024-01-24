@@ -20,9 +20,12 @@
 #include <any>
 #include <unordered_map>
 #include <glm/glm.hpp>
-#include <graphic/pipeline/component/uniform/Setter.hpp>
 #include <graphic/context/UniformContext.hpp>
+#include <graphic/validator/ComponentConcept.hpp>
 #include <common/exception/TraceableException.hpp>
+
+#include <graphic/opengl/pipeline/component/uniform/Setter.hpp>
+#include <graphic/opengl/validator/Validator.hpp>
 
 namespace cenpy::graphic::pipeline
 {
@@ -36,11 +39,10 @@ namespace cenpy::graphic::pipeline
      * setting and getting uniform values with type safety, enforced through specialized setters.
      */
     template <typename API>
+        requires(API::Validator::template validateUniform<API>())
     class Uniform
     {
     public:
-        virtual ~Uniform() = default;
-
         explicit Uniform(std::shared_ptr<typename API::UniformContext> context) : m_context(context) {}
 
         Uniform() : Uniform(std::make_shared<typename API::UniformContext>())
@@ -59,8 +61,15 @@ namespace cenpy::graphic::pipeline
         template <typename T>
         void set(const T &value)
         {
-            m_context->template setValue<T>(value);
-            API::UniformContext::template Setter<T>::set(*m_context);
+            if constexpr (graphic::validator::HasComponent<typename API::UniformContext::template Setter<T>>)
+            {
+                m_context->template setValue<T>(value);
+                API::UniformContext::template Setter<T>::on(m_context);
+            }
+            else
+            {
+                throw common::exception::TraceableException<std::runtime_error>("ERROR::UNIFORM::UNSUPPORTED_TYPE");
+            }
         }
 
         /**
@@ -78,7 +87,13 @@ namespace cenpy::graphic::pipeline
             return m_context->template getValue<T>();
         }
 
+        std::shared_ptr<typename API::UniformContext> getContext() const
+        {
+            return m_context;
+        }
+
     private:
         std::shared_ptr<typename API::UniformContext> m_context; // API-specific shader context
     };
+
 } // namespace cenpy::graphic::pipeline

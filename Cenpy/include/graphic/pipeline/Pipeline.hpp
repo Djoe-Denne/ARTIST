@@ -1,36 +1,26 @@
 #pragma once
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
 #include <vector>
 #include <string>
 #include <format>
 #include <iostream>
-#include <fstream>
-#include <sstream>
-#include <cmath>
-#include <type_traits>
 #include <unordered_map>
 #include <memory>
 #include <utils.hpp>
 #include <common/exception/TraceableException.hpp>
 #include <graphic/pipeline/Pass.hpp>
-#include <graphic/pipeline/component/pipeline/User.hpp>
-#include <graphic/pipeline/component/pipeline/Resetter.hpp>
+#include <graphic/context/PipelineContext.hpp>
+#include <graphic/validator/ComponentConcept.hpp>
 
 namespace cenpy::graphic::pipeline
 {
     template <typename API>
-    class Pipeline
+    class IPipeline
     {
     public:
-        virtual ~Pipeline() = default;
-
-        Pipeline(const std::initializer_list<std::shared_ptr<Pass<API>>> &passes,
-                std::shared_ptr<typename API::PipelineContext::User> user,
-                std::shared_ptr<typename API::PipelineContext::Resetter> resetter,
-                std::shared_ptr<typename API::PipelineContext> context)
-            : m_user(user), m_resetter(resetter), m_context(context)
+        IPipeline(const std::initializer_list<std::shared_ptr<IPass<API>>> &passes,
+                  std::shared_ptr<typename API::PipelineContext> context)
+            : m_context(context)
         {
             for (auto &pass : passes)
             {
@@ -38,16 +28,14 @@ namespace cenpy::graphic::pipeline
             }
         }
 
-        explicit Pipeline(const std::initializer_list<std::shared_ptr<Pass<API>>> &passes) : Pipeline(passes,
-                                                                                                    std::make_shared<typename API::PipelineContext::User>(),
-                                                                                                    std::make_shared<typename API::PipelineContext::Resetter>(),
-                                                                                                    std::make_shared<typename API::PipelineContext>())
+        explicit IPipeline(const std::initializer_list<std::shared_ptr<IPass<API>>> &passes) : IPipeline(passes,
+                                                                                                         std::make_shared<typename API::PipelineContext>())
         {
         }
 
-        [[nodiscard]] Pass<API> &forPass(const int &pass)
+        [[nodiscard]] std::shared_ptr<IPass<API>> forPass(const int &pass)
         {
-            return *m_context->getPass(pass);
+            return m_context->getPass(pass);
         }
 
         [[nodiscard]] virtual int getPassesCount() const
@@ -73,11 +61,8 @@ namespace cenpy::graphic::pipeline
 
         virtual void use(const int &pass)
         {
-            if (m_user)
-            {
-                m_context->setCurrentPass(pass);
-                m_user->usePipeline(m_context);
-            }
+            m_context->setCurrentPass(pass);
+            use(m_context);
         }
 
         /**
@@ -85,10 +70,7 @@ namespace cenpy::graphic::pipeline
          */
         virtual void reset()
         {
-            if (m_resetter)
-            {
-                m_resetter->resetPipeline(m_context);
-            }
+            reset(m_context);
         }
 
         [[nodiscard]] virtual std::shared_ptr<typename API::PipelineContext> getContext() const
@@ -97,20 +79,38 @@ namespace cenpy::graphic::pipeline
         }
 
     protected:
-        [[nodiscard]] virtual std::shared_ptr<typename API::PipelineContext::User> getUser() const
-        {
-            return m_user;
-        }
-
-        [[nodiscard]] virtual std::shared_ptr<typename API::PipelineContext::Resetter> getResetter() const
-        {
-            return m_resetter;
-        }
+        virtual void use(std::shared_ptr<typename API::PipelineContext> context) = 0;
+        virtual void reset(std::shared_ptr<typename API::PipelineContext> context) = 0;
 
     private:
-        std::shared_ptr<typename API::PipelineContext::User> m_user;
-        std::shared_ptr<typename API::PipelineContext::Resetter> m_resetter;
         std::shared_ptr<typename API::PipelineContext> m_context;
+    };
+
+    template <typename API, auto PROFILE>
+        requires(API::Validator::template validatePipeline<API, PROFILE>())
+    class Pipeline : public IPipeline<API>
+    {
+    public:
+        using IPipeline<API>::IPipeline;
+        using IPipeline<API>::use;
+        using IPipeline<API>::reset;
+
+    protected:
+        void use(std::shared_ptr<typename API::PipelineContext> context) override
+        {
+            if constexpr (graphic::validator::HasComponent<typename API::PipelineContext::User<PROFILE>>)
+            {
+                API::PipelineContext::template User<PROFILE>::on(context);
+            }
+        }
+
+        void reset(std::shared_ptr<typename API::PipelineContext> context) override
+        {
+            if constexpr (graphic::validator::HasComponent<typename API::PipelineContext::Resetter<PROFILE>>)
+            {
+                API::PipelineContext::template Resetter<PROFILE>::on(context);
+            }
+        }
     };
 
 } // namespace cenpy::graphic::pipeline

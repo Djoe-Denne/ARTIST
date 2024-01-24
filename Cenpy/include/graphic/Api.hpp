@@ -1,18 +1,23 @@
 // Api.hpp
 
 #pragma once
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
 
 namespace cenpy::graphic
 {
-    namespace opengl::context
+    namespace opengl
     {
-        class OpenGLShaderContext;
-        class OpenGLPassContext;
-        class OpenGLUniformContext;
-        class OpenGLAttributeContext;
-        class OpenGLPipelineContext;
+        namespace validator
+        {
+            struct Validator;
+        }
+        namespace context
+        {
+            class OpenGLShaderContext;
+            class OpenGLPassContext;
+            class OpenGLUniformContext;
+            class OpenGLAttributeContext;
+            class OpenGLPipelineContext;
+        }
     }
     namespace api
     {
@@ -39,6 +44,7 @@ namespace cenpy::graphic
             using UniformContext = graphic::opengl::context::OpenGLUniformContext;
             using AttributeContext = graphic::opengl::context::OpenGLAttributeContext;
             using PipelineContext = graphic::opengl::context::OpenGLPipelineContext;
+            using Validator = graphic::opengl::validator::Validator;
         };
     }
 }
