@@ -172,10 +172,6 @@ namespace cenpy::graphic::pipeline
             free();
         }
 
-        Shader() = default;
-        Shader(const Shader<API, PROFILE> &) = default;
-        Shader(Shader<API, PROFILE> &&) = default;
-
     protected:
         void free(std::shared_ptr<typename API::ShaderContext> context) override
         {
