@@ -166,6 +166,10 @@ namespace cenpy::graphic::pipeline
             }
         }
 
+        Pass() = default;
+        Pass(const Pass<API, PROFILE> &) = default;
+        Pass(Pass<API, PROFILE> &&) = default;
+
     protected:
         void load(std::shared_ptr<typename API::PassContext> context) override
         {

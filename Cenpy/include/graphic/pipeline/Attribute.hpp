@@ -13,7 +13,7 @@ namespace cenpy::graphic::pipeline
     {
     public:
         // Constructor
-        IAttribute(std::shared_ptr<typename API::AttributeContext> context)
+        explicit IAttribute(std::shared_ptr<typename API::AttributeContext> context)
             : m_context(context) {}
 
         IAttribute() : IAttribute(std::make_shared<typename API::AttributeContext>())

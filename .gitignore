@@ -6,3 +6,5 @@ out/
 
 # Ignore test folders
 test/
+
+*.gcno
