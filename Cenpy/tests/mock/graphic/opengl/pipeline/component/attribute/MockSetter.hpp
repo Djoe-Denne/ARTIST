@@ -9,6 +9,7 @@
 
 namespace cenpy::mock::graphic::opengl::pipeline::component::attribute
 {
+    template <typename A>
     class MockSetter
     {
     public:

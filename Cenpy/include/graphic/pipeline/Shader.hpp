@@ -88,33 +88,6 @@ namespace cenpy::graphic::pipeline
         }
 
         /**
-         * @brief Get the path of the shader file.
-         * @return The path of the shader file.
-         */
-        [[nodiscard]] const std::string &getShaderPath() const
-        {
-            return m_context->getShaderPath();
-        }
-
-        /**
-         * @brief Get the type of the shader.
-         * @return The type of the shader.
-         */
-        [[nodiscard]] context::ShaderType getShaderType() const
-        {
-            return m_context->getShaderType();
-        }
-
-        /**
-         * @brief Get the code of the shader.
-         * @return The code of the shader.
-         */
-        [[nodiscard]] const std::string &getShaderCode() const
-        {
-            return m_context->getShaderCode();
-        }
-
-        /**
          * @brief Get the shader Context.
          * @return The shader Context.
          */

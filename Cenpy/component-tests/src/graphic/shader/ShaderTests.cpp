@@ -37,7 +37,7 @@ TEST_F(ShaderTest, CreateShaderVert)
 
     // Assert
     EXPECT_EQ(shader.getContext()->getShaderID(), 1);
-    EXPECT_EQ(shader.getShaderType(), context::ShaderType::VERTEX);
+    EXPECT_EQ(shader.getContext()->getShaderType(), context::ShaderType::VERTEX);
 
     shader.free();
 }
@@ -52,7 +52,7 @@ TEST_F(ShaderTest, CreateShaderBadVert)
                         { shader.load(); },
                         cenpy::common::exception::TraceableException<std::runtime_error>("ERROR::SHADER::COMPILATION_FAILED"));
     // Assert
-    EXPECT_EQ(shader.getShaderType(), context::ShaderType::VERTEX);
+    EXPECT_EQ(shader.getContext()->getShaderType(), context::ShaderType::VERTEX);
 
     shader.free();
 }
@@ -67,7 +67,7 @@ TEST_F(ShaderTest, CreateShaderFrag)
 
     // Assert
     EXPECT_EQ(shader.getContext()->getShaderID(), 1);
-    EXPECT_EQ(shader.getShaderType(), context::ShaderType::FRAGMENT);
+    EXPECT_EQ(shader.getContext()->getShaderType(), context::ShaderType::FRAGMENT);
 
     shader.free();
 }
@@ -82,7 +82,7 @@ TEST_F(ShaderTest, CreateShaderBadFrag)
                         { shader.load(); },
                         cenpy::common::exception::TraceableException<std::runtime_error>("ERROR::SHADER::COMPILATION_FAILED"));
     // Assert
-    EXPECT_EQ(shader.getShaderType(), context::ShaderType::FRAGMENT);
+    EXPECT_EQ(shader.getContext()->getShaderType(), context::ShaderType::FRAGMENT);
 
     shader.free();
 }
@@ -97,7 +97,7 @@ TEST_F(ShaderTest, CreateShaderGeom)
 
     // Assert
     EXPECT_EQ(shader.getContext()->getShaderID(), 1);
-    EXPECT_EQ(shader.getShaderType(), context::ShaderType::GEOMETRY);
+    EXPECT_EQ(shader.getContext()->getShaderType(), context::ShaderType::GEOMETRY);
 
     shader.free();
 }
@@ -112,7 +112,7 @@ TEST_F(ShaderTest, CreateShaderBadGeom)
                         { shader.load(); },
                         cenpy::common::exception::TraceableException<std::runtime_error>("ERROR::SHADER::COMPILATION_FAILED"));
     // Assert
-    EXPECT_EQ(shader.getShaderType(), context::ShaderType::GEOMETRY);
+    EXPECT_EQ(shader.getContext()->getShaderType(), context::ShaderType::GEOMETRY);
 
     shader.free();
 }
@@ -127,7 +127,7 @@ TEST_F(ShaderTest, CreateShaderTesselaionControl)
 
     // Assert
     EXPECT_EQ(shader.getContext()->getShaderID(), 1);
-    EXPECT_EQ(shader.getShaderType(), context::ShaderType::TESS_CONTROL);
+    EXPECT_EQ(shader.getContext()->getShaderType(), context::ShaderType::TESS_CONTROL);
 
     shader.free();
 }
@@ -142,7 +142,7 @@ TEST_F(ShaderTest, CreateShaderBadTesselaionControl)
                         { shader.load(); },
                         cenpy::common::exception::TraceableException<std::runtime_error>("ERROR::SHADER::COMPILATION_FAILED"));
     // Assert
-    EXPECT_EQ(shader.getShaderType(), context::ShaderType::TESS_CONTROL);
+    EXPECT_EQ(shader.getContext()->getShaderType(), context::ShaderType::TESS_CONTROL);
 
     shader.free();
 }
@@ -157,7 +157,7 @@ TEST_F(ShaderTest, CreateShaderCompute)
 
     // Assert
     EXPECT_EQ(shader.getContext()->getShaderID(), 1);
-    EXPECT_EQ(shader.getShaderType(), context::ShaderType::COMPUTE);
+    EXPECT_EQ(shader.getContext()->getShaderType(), context::ShaderType::COMPUTE);
 
     shader.free();
 }
@@ -172,7 +172,7 @@ TEST_F(ShaderTest, CreateShaderBadCompute)
                         { shader.load(); },
                         cenpy::common::exception::TraceableException<std::runtime_error>("ERROR::SHADER::COMPILATION_FAILED"));
     // Assert
-    EXPECT_EQ(shader.getShaderType(), context::ShaderType::COMPUTE);
+    EXPECT_EQ(shader.getContext()->getShaderType(), context::ShaderType::COMPUTE);
 
     shader.free();
 }

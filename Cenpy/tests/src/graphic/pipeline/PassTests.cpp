@@ -17,6 +17,7 @@
 #include <graphic/opengl/pipeline/component/pass/MockLoader.hpp>
 #include <graphic/pipeline/MockShader.hpp>
 #include <graphic/pipeline/MockUniform.hpp>
+#include <graphic/pipeline/MockAttribute.hpp>
 #include <graphic/opengl/context/MockPassContext.hpp>
 #include <graphic/MockApi.hpp>
 #include <TestUtils.hpp>
@@ -32,6 +33,7 @@ using mock::graphic::opengl::pipeline::component::pass::MockLoader;
 using mock::graphic::opengl::pipeline::component::pass::MockShaderAttacher;
 using mock::graphic::opengl::pipeline::component::pass::MockUniformReader;
 using mock::graphic::opengl::pipeline::component::pass::MockUser;
+using mock::graphic::pipeline::MockAttribute;
 using mock::graphic::pipeline::MockShader;
 using mock::graphic::pipeline::MockUniform;
 
@@ -120,6 +122,60 @@ TEST_F(PassTest, FreePass)
 
     // Act
     ASSERT_NO_THROW(pass.free());
+}
+
+TEST_F(PassTest, GetUniforms)
+{
+    // Arrange
+    auto mockShader = std::make_shared<MockShader<api::MockOpenGL>>();
+    auto mockUniform = std::make_shared<MockUniform<api::MockOpenGL>>();
+    pipeline::Pass<api::MockOpenGL, Classic> pass({mockShader});
+
+    // Expect calls
+    EXPECT_CALL(*api::MockOpenGL::PassContext::UniformReader<Classic>::instance(), mockOn(::testing::_)).WillOnce(::testing::Invoke([&](std::shared_ptr<context::PassContext<api::MockOpenGL>> context)
+                                                                                                                                    { context->addUniform("test", mockUniform); }));
+
+    pass.load();
+    // Act
+    ASSERT_EQ(pass.getUniforms().size(), 1);
+    ASSERT_TRUE(pass.getUniforms().contains("test"));
+}
+
+TEST_F(PassTest, GetAttributes)
+{
+    // Arrange
+    auto mockShader = std::make_shared<MockShader<api::MockOpenGL>>();
+    auto mockAttribute = std::make_shared<MockAttribute<api::MockOpenGL>>();
+    pipeline::Pass<api::MockOpenGL, Classic> pass({mockShader});
+
+    // Expect calls
+    EXPECT_CALL(*api::MockOpenGL::PassContext::AttributeReader<Classic>::instance(), mockOn(::testing::_)).WillOnce(::testing::Invoke([&](std::shared_ptr<context::PassContext<api::MockOpenGL>> context)
+                                                                                                                                      { context->addAttribute("test", mockAttribute); }));
+
+    pass.load();
+    // Act
+    ASSERT_EQ(pass.getAttributes().size(), 1);
+    ASSERT_TRUE(pass.getAttributes().contains("test"));
+}
+
+TEST_F(PassTest, GetShader)
+{
+    // Arrange
+    auto mockShader = std::make_shared<MockShader<api::MockOpenGL>>();
+    pipeline::Pass<api::MockOpenGL, Classic> pass({mockShader});
+
+    // Act
+    ASSERT_EQ(pass.getShaders()[0], mockShader);
+}
+
+TEST_F(PassTest, GetContext)
+{
+    // Arrange
+    auto mockShader = std::make_shared<MockShader<api::MockOpenGL>>();
+    pipeline::Pass<api::MockOpenGL, Classic> pass({mockShader});
+
+    // Act
+    ASSERT_NE(pass.getContext(), nullptr);
 }
 
 #endif //::testing::__mock_gl__

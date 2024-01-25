@@ -73,3 +73,17 @@ TEST_F(PipelineTest, ResetPipelineTest)
     // Act
     pipeline.reset();
 }
+
+TEST_F(PipelineTest, GetContext)
+{
+    // Arrange
+    auto mockPass1 = std::make_shared<MockPass<api::MockOpenGL>>();
+    auto mockPass2 = std::make_shared<MockPass<api::MockOpenGL>>();
+    pipeline::Pipeline<api::MockOpenGL, Classic> pipeline({mockPass1, mockPass2});
+
+    // Act
+    auto context = pipeline.getContext();
+
+    // Assert
+    ASSERT_NE(context, nullptr);
+}

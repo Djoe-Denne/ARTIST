@@ -17,7 +17,8 @@ namespace cenpy::mock::graphic::opengl::context
     public:
         template <auto PROFILE>
         using Binder = opengl::pipeline::component::attribute::MockBinder<PROFILE>;
-        using Setter = opengl::pipeline::component::attribute::MockSetter;
+        template <typename A>
+        using Setter = opengl::pipeline::component::attribute::MockSetter<A>;
         template <auto PROFILE>
         using Unbinder = opengl::pipeline::component::attribute::MockUnbinder<PROFILE>;
 
