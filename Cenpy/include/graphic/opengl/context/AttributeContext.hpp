@@ -49,7 +49,7 @@ namespace cenpy::graphic
                 m_bufferId = bufferId;
             }
 
-            void setSize(GLuint size)
+            void setGLSize(GLuint size)
             {
                 m_size = size;
             }

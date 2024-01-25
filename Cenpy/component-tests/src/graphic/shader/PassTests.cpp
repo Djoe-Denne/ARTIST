@@ -22,6 +22,8 @@
 #include <graphic/opengl/context/PassContext.hpp>
 #include <OpenGLComponentTests.hpp>
 
+#include <filesystem>
+
 namespace api = cenpy::graphic::api;
 namespace context = cenpy::graphic::context;
 namespace pipeline = cenpy::graphic::pipeline;
@@ -35,6 +37,8 @@ protected:
 
     void SetUp() override
     {
+        // print current working directory
+        std::cout << "Current working directory: " << std::filesystem::current_path() << std::endl;
         OpenGLComponentTest::SetUp();
         vertexShader = std::make_shared<pipeline::Shader<api::OpenGL, profile::Shader::Classic>>("test-datas/shaders/vertex/good/minimal.vert", context::ShaderType::VERTEX);
         fragmentShader = std::make_shared<pipeline::Shader<api::OpenGL, profile::Shader::Classic>>("test-datas/shaders/fragment/good/minimal.frag", context::ShaderType::FRAGMENT);
@@ -85,6 +89,28 @@ TEST_F(PassTest, UniformReadingTest)
     // Assuming the shaders have at least one uniform
     ASSERT_FALSE(uniforms.empty());
     // Further checks can be added here based on specific uniforms expected in the shaders
+    // For example, we could check if the uniform is a int named "testUniform"
+    ASSERT_TRUE(uniforms.contains("testUniform"));
+    auto uniform = uniforms.at("testUniform");
+    ASSERT_NE(uniform, nullptr);
+    ASSERT_NE(uniform->getContext(), nullptr);
+    ASSERT_EQ(uniform->getContext()->getGLType(), GL_INT);
+}
+
+TEST_F(PassTest, AttributeReadingTest)
+{
+    pipeline::Pass<api::OpenGL, profile::Pass::Classic> pass({vertexShader, fragmentShader});
+    pass.load();
+    const auto &attributes = pass.getAttributes();
+    // Assuming the shaders have at least one attribute
+    ASSERT_FALSE(attributes.empty());
+    // Further checks can be added here based on specific attributes expected in the shaders
+    // For example, we could check if the attribute is a vec3 named "aPos"
+    ASSERT_TRUE(attributes.contains("aPos"));
+    auto attribute = attributes.at("aPos");
+    ASSERT_NE(attribute, nullptr);
+    ASSERT_NE(attribute->getContext(), nullptr);
+    ASSERT_EQ(attribute->getContext()->getGLType(), GL_FLOAT_VEC3);
 }
 
 TEST_F(PassTest, FreeResourcesTest)

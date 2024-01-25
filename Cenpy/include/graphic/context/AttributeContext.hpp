@@ -22,26 +22,29 @@ namespace cenpy::graphic::context
             {
                 try
                 {
-                    std::any_cast<T>(&m_value);
+                    return std::any_cast<std::shared_ptr<T>>(m_value);
                 }
                 catch (const std::bad_any_cast &)
                 {
-                    throw cenpy::common::exception::TraceableException<std::runtime_error>(std::format("ERROR::UNIFORM::SET::TYPE_MISMATCH: The type of the value ({}) does not match the type of the attribute variable ({})", typeid(T).name(), typeid(m_value).name()));
+                    throw cenpy::common::exception::TraceableException<std::runtime_error>(std::format("ERROR::ATTRIBUTE::SET::TYPE_MISMATCH: The type of the value ({}) does not match the type of the attribute variable ({})", typeid(T).name(), typeid(m_value).name()));
                 }
             }
-            return std::any_cast<std::shared_ptr<T>>(m_value);
+            return nullptr;
         }
 
         template <typename T>
         void setValue(std::shared_ptr<T> value)
         {
-            try
+            if (m_value.has_value())
             {
-                std::any_cast<std::shared_ptr<T>>(m_value);
-            }
-            catch (const std::bad_any_cast &)
-            {
-                throw cenpy::common::exception::TraceableException<std::runtime_error>(std::format("ERROR::UNIFORM::SET::TYPE_MISMATCH: The type of the value ({}) does not match the type of the attribute variable ({})", typeid(value).name(), typeid(m_value).name()));
+                try
+                {
+                    std::any_cast<std::shared_ptr<T>>(m_value);
+                }
+                catch (const std::bad_any_cast &)
+                {
+                    throw cenpy::common::exception::TraceableException<std::runtime_error>(std::format("ERROR::ATTRIBUTE::SET::TYPE_MISMATCH: The type of the value ({}) does not match the type of the attribute variable ({})", typeid(value).name(), typeid(m_value).name()));
+                }
             }
             m_value = value;
         }

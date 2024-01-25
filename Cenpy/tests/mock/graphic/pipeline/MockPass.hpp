@@ -31,6 +31,7 @@ namespace cenpy::mock::graphic::pipeline::opengl
 
     protected:
         MOCK_METHOD(void, readUniforms, (std::shared_ptr<typename API::PassContext> context), (override));
+        MOCK_METHOD(void, readAttributes, (std::shared_ptr<typename API::PassContext> context), (override));
         MOCK_METHOD(void, free, (std::shared_ptr<typename API::PassContext> context), (override));
         MOCK_METHOD(void, use, (std::shared_ptr<typename API::PassContext> context), (override));
         MOCK_METHOD(void, load, (std::shared_ptr<typename API::PassContext> context), (override));

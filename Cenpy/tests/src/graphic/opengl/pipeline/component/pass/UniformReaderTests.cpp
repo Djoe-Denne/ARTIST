@@ -59,7 +59,7 @@ TEST_F(UniformReaderTests, ReadUniforms_NullContext)
     // Act & Assert
     expectSpecificError([]()
                         { pass::OpenGLPassUniformReader<Classic>::on(nullptr); },
-                        cenpy::common::exception::TraceableException<std::runtime_error>("ERROR::SHADER::NON_OPENGL_CONTEXT"));
+                        cenpy::common::exception::TraceableException<std::runtime_error>("ERROR::PASS::NON_OPENGL_CONTEXT"));
 }
 
 TEST_F(UniformReaderTests, ReadUniforms_InvalidPassID)
@@ -70,7 +70,7 @@ TEST_F(UniformReaderTests, ReadUniforms_InvalidPassID)
     // Act & Assert
     expectSpecificError([&openglContext]()
                         { pass::OpenGLPassUniformReader<Classic>::on(openglContext); },
-                        cenpy::common::exception::TraceableException<std::runtime_error>("ERROR::SHADER::INVALID_PROGRAM_ID"));
+                        cenpy::common::exception::TraceableException<std::runtime_error>("ERROR::PASS::INVALID_PROGRAM_ID"));
 }
 
 #endif // __mock_gl__

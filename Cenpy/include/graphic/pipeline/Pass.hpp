@@ -60,6 +60,7 @@ namespace cenpy::graphic::pipeline
             }
             load(m_context);
             readUniforms(m_context);
+            readAttributes(m_context);
         }
 
         virtual void use()
@@ -134,6 +135,7 @@ namespace cenpy::graphic::pipeline
     protected:
         virtual void load(std::shared_ptr<typename API::PassContext> context) = 0;
         virtual void readUniforms(std::shared_ptr<typename API::PassContext> context) = 0;
+        virtual void readAttributes(std::shared_ptr<typename API::PassContext> context) = 0;
         virtual void free(std::shared_ptr<typename API::PassContext> context) = 0;
         virtual void use(std::shared_ptr<typename API::PassContext> context) = 0;
         virtual std::shared_ptr<IPass<API>> shared() const = 0;
@@ -178,6 +180,14 @@ namespace cenpy::graphic::pipeline
             if constexpr (graphic::validator::HasComponent<typename API::PassContext::UniformReader<PROFILE>>)
             {
                 API::PassContext::template UniformReader<PROFILE>::on(context);
+            }
+        }
+
+        void readAttributes(std::shared_ptr<typename API::PassContext> context) override
+        {
+            if constexpr (graphic::validator::HasComponent<typename API::PassContext::AttributeReader<PROFILE>>)
+            {
+                API::PassContext::template AttributeReader<PROFILE>::on(context);
             }
         }
 

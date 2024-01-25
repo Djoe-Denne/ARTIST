@@ -8,6 +8,7 @@
 #include <graphic/pipeline/Attribute.hpp>
 #include <graphic/opengl/profile/Pass.hpp>
 #include <graphic/opengl/profile/Attribute.hpp>
+#include <graphic/opengl/context/AttributeContext.hpp>
 
 namespace cenpy::graphic::opengl::pipeline::component::pass
 {
@@ -30,13 +31,13 @@ namespace cenpy::graphic::opengl::pipeline::component::pass
         {
             if (!openglContext)
             {
-                throw common::exception::TraceableException<std::runtime_error>("ERROR::SHADER::NON_OPENGL_CONTEXT");
+                throw common::exception::TraceableException<std::runtime_error>("ERROR::PASS::NON_OPENGL_CONTEXT");
             }
 
             GLuint passID = openglContext->getPassID();
             if (passID == 0)
             {
-                throw common::exception::TraceableException<std::runtime_error>("ERROR::SHADER::INVALID_PROGRAM_ID");
+                throw common::exception::TraceableException<std::runtime_error>("ERROR::PASS::INVALID_PROGRAM_ID");
             }
 
             GLint numAttributes = 0;
@@ -54,6 +55,10 @@ namespace cenpy::graphic::opengl::pipeline::component::pass
 
                 // Create an Attribute object and store it in the context
                 auto attributeContext = std::make_shared<graphic::api::OpenGL::AttributeContext>();
+                attributeContext->setAttributeID(location);
+                attributeContext->setGLSize(size);
+                attributeContext->setGLType(type);
+
                 // Known limitation of OpenGL: Attributes profile are driven by Pass profile
                 auto attribute = std::make_shared<graphic::pipeline::Attribute<graphic::api::OpenGL, graphic::opengl::profile::Attribute::Classic>>(attributeContext);
                 openglContext->addAttribute(std::string(attributeName), attribute);

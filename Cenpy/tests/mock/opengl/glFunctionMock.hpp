@@ -76,6 +76,10 @@
 #define glGetVertexAttribdv cenpy::mock::opengl::glFunctionMock::instance()->glGetVertexAttribdv_mock
 #define glGetVertexAttribfv cenpy::mock::opengl::glFunctionMock::instance()->glGetVertexAttribfv_mock
 #define glGetVertexAttribiv cenpy::mock::opengl::glFunctionMock::instance()->glGetVertexAttribiv_mock
+#define glGenBuffers cenpy::mock::opengl::glFunctionMock::instance()->glGenBuffers_mock
+#define glBindBuffer cenpy::mock::opengl::glFunctionMock::instance()->glBindBuffer_mock
+#define glBufferData cenpy::mock::opengl::glFunctionMock::instance()->glBufferData_mock
+#define glVertexAttribPointer cenpy::mock::opengl::glFunctionMock::instance()->glVertexAttribPointer_mock
 #define glIsProgram cenpy::mock::opengl::glFunctionMock::instance()->glIsProgram_mock
 #define glIsShader cenpy::mock::opengl::glFunctionMock::instance()->glIsShader_mock
 #define glLinkProgram cenpy::mock::opengl::glFunctionMock::instance()->glLinkProgram_mock
@@ -90,6 +94,7 @@ namespace cenpy::mock::opengl
     {
     public:
         static constexpr std::string UNIFORM_NAME = "uniform_test";
+        static constexpr std::string ATTRIBUTE_NAME = "attribute_test";
         static std::shared_ptr<glFunctionMock> instance()
         {
             static std::shared_ptr<glFunctionMock> instance = std::make_shared<glFunctionMock>();
@@ -112,7 +117,7 @@ namespace cenpy::mock::opengl
             ON_CALL(*this, glGetActiveAttrib_mock).WillByDefault([this](GLuint program, GLuint index, GLsizei bufSize, GLsizei *length, GLint *size, GLenum *type, GLchar *name)
                                                                  {
                 // Example mock name
-                const char* mockAttribName = "attribut_test";
+                const char* mockAttribName = ATTRIBUTE_NAME.c_str();
 
                 // Copy the mock name to the provided 'name' buffer
                 strncpy(name, mockAttribName, bufSize);
@@ -196,6 +201,10 @@ namespace cenpy::mock::opengl
         MOCK_METHOD(void, glGetVertexAttribdv_mock, (GLuint, GLenum, GLdouble *), ());
         MOCK_METHOD(void, glGetVertexAttribfv_mock, (GLuint, GLenum, GLfloat *), ());
         MOCK_METHOD(void, glGetVertexAttribiv_mock, (GLuint, GLenum, GLint *), ());
+        MOCK_METHOD(void, glGenBuffers_mock, (GLsizei, GLuint *), ());
+        MOCK_METHOD(void, glBindBuffer_mock, (GLenum, GLuint), ());
+        MOCK_METHOD(void, glBufferData_mock, (GLenum, GLsizeiptr, const GLvoid *, GLenum), ());
+        MOCK_METHOD(void, glVertexAttribPointer_mock, (GLuint, GLint, GLenum, GLboolean, GLsizei, const GLvoid *), ());
         MOCK_METHOD(GLboolean, glIsProgram_mock, (GLuint), ());
         MOCK_METHOD(GLboolean, glIsShader_mock, (GLuint), ());
         MOCK_METHOD(void, glLinkProgram_mock, (GLuint), ());

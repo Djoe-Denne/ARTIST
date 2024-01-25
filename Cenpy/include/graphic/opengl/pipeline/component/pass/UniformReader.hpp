@@ -29,13 +29,13 @@ namespace cenpy::graphic::opengl::pipeline::component::pass
         {
             if (!openglContext)
             {
-                throw common::exception::TraceableException<std::runtime_error>("ERROR::SHADER::NON_OPENGL_CONTEXT");
+                throw common::exception::TraceableException<std::runtime_error>("ERROR::PASS::NON_OPENGL_CONTEXT");
             }
 
             GLuint passID = openglContext->getPassID();
             if (passID == 0)
             {
-                throw common::exception::TraceableException<std::runtime_error>("ERROR::SHADER::INVALID_PROGRAM_ID");
+                throw common::exception::TraceableException<std::runtime_error>("ERROR::PASS::INVALID_PROGRAM_ID");
             }
 
             GLint numUniforms = 0;
