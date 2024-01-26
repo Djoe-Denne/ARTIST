@@ -1,4 +1,4 @@
-![Build, Test](https://github.com/Djoe-Denne/Cenpy/actions/workflows/cmake-single-platform.yml/badge.svg) ![SonarCloud Analysis](https://github.com/Djoe-Denne/Cenpy/actions/workflows/sonar.yml/badge.svg) [![codecov](https://codecov.io/gh/Djoe-Denne/Cenpy/graph/badge.svg?token=MAAKQX3H20)](https://codecov.io/gh/Djoe-Denne/Cenpy)
+![Build, Test](https://github.com/Djoe-Denne/Cenpy/actions/workflows/cmake-single-platform.yml/badge.svg) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Djoe-Denne_Cenpy&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Djoe-Denne_Cenpy) [![codecov](https://codecov.io/gh/Djoe-Denne/Cenpy/graph/badge.svg?token=MAAKQX3H20)](https://codecov.io/gh/Djoe-Denne/Cenpy)
 
 
 # Cen'py Game Engine
