@@ -8,6 +8,6 @@ magic_enum/0.9.5
 yaml-cpp/0.7.0
 pugixml/1.14
 
-
 [generators]
 cmake
+

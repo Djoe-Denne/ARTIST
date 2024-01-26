@@ -1,13 +1,9 @@
-﻿# CMakeList.txt : fichier projet CMake de niveau supérieur, effectuez une configuration globale
-# et incluez les sous-projets ici.
-#
-cmake_minimum_required (VERSION 3.25)
+﻿cmake_minimum_required (VERSION 3.25)
 
 option(MOCK_GL "Mock OpenGL" OFF)
 option(MOCK_APPDATA "Mock AppData" OFF)
 # Add an option for coverage
 option(COVERAGE "Enable coverage reporting" OFF)
-#option(TEST_DATA_PATH "Test data path" "")
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake/modules)
 include(CodeCoverage)

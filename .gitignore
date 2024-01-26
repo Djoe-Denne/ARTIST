@@ -7,4 +7,6 @@ out/
 # Ignore test folders
 test/
 
+html/
+
 *.gcno
