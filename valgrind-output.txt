@@ -1,0 +1,285 @@
+==76920== Memcheck, a memory error detector
+==76920== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==76920== Using Valgrind-3.19.0-8d3c8034b8-20220411 and LibVEX; rerun with -h for copyright info
+==76920== Command: out/build/linux-debug/bin/cenpy-common_tests
+==76920== Parent PID: 9683
+==76920== 
+--76920-- 
+--76920-- Valgrind options:
+--76920--    --tool=memcheck
+--76920--    --leak-check=full
+--76920--    --show-leak-kinds=all
+--76920--    --track-origins=yes
+--76920--    --verbose
+--76920--    --log-file=valgrind-output.txt
+--76920-- Contents of /proc/version:
+--76920--   Linux version 6.1.0-17-amd64 (debian-kernel@lists.debian.org) (gcc-12 (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP PREEMPT_DYNAMIC Debian 6.1.69-1 (2023-12-30)
+--76920-- 
+--76920-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-lzcnt-rdtscp-sse3-ssse3-avx-avx2-bmi-f16c-rdrand-rdseed
+--76920-- Page sizes: currently 4096, max supported 4096
+--76920-- Valgrind library directory: /usr/libexec/valgrind
+--76920-- Reading syms from /mnt/D420507D2050690E/Users/djden/source/repos/Cenpy/out/build/linux-debug/bin/cenpy-common_tests
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+--76920--   Considering /usr/lib/debug/.build-id/9e/8cea20c5d657bc8721389f628f97ff617e2049.debug ..
+--76920--   .. build-id is valid
+--76920-- Reading syms from /usr/libexec/valgrind/memcheck-amd64-linux
+--76920--   Considering /usr/lib/debug/.build-id/82/26c2aa6b808ebd5a6fafb694a7fb3287f33590.debug ..
+--76920--   .. build-id is valid
+--76920--    object doesn't have a dynamic symbol table
+--76920-- Scheduler: using generic scheduler lock implementation.
+--76920-- Reading suppressions file: /usr/libexec/valgrind/default.supp
+==76920== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-76920-by-hulrien-on-???
+==76920== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-76920-by-hulrien-on-???
+==76920== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-76920-by-hulrien-on-???
+==76920== 
+==76920== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==76920== don't want to do, unless you know exactly what you're doing,
+==76920== or are doing some strange experiment):
+==76920==   /usr/bin/vgdb --pid=76920 ...command...
+==76920== 
+==76920== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==76920==   /path/to/gdb out/build/linux-debug/bin/cenpy-common_tests
+==76920== and then give GDB the following command
+==76920==   target remote | /usr/bin/vgdb --pid=76920
+==76920== --pid is optional if only one valgrind process is running
+==76920== 
+--76920-- REDIR: 0x40236e0 (ld-linux-x86-64.so.2:strlen) redirected to 0x580bb0e2 (vgPlain_amd64_linux_REDIR_FOR_strlen)
+--76920-- REDIR: 0x4021ec0 (ld-linux-x86-64.so.2:index) redirected to 0x580bb0fc (vgPlain_amd64_linux_REDIR_FOR_index)
+--76920-- Reading syms from /usr/libexec/valgrind/vgpreload_core-amd64-linux.so
+--76920--   Considering /usr/lib/debug/.build-id/ad/f1388be4d8781737b0c83fe111a5a9c6e930aa.debug ..
+--76920--   .. build-id is valid
+--76920-- Reading syms from /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so
+--76920--   Considering /usr/lib/debug/.build-id/d8/ec66cffcb23a75c3f15940674d6028709121f8.debug ..
+--76920--   .. build-id is valid
+==76920== WARNING: new redirection conflicts with existing -- ignoring it
+--76920--     old: 0x040236e0 (strlen              ) R-> (0000.0) 0x580bb0e2 vgPlain_amd64_linux_REDIR_FOR_strlen
+--76920--     new: 0x040236e0 (strlen              ) R-> (2007.0) 0x048468a0 strlen
+--76920-- REDIR: 0x40220e0 (ld-linux-x86-64.so.2:strcmp) redirected to 0x4847780 (strcmp)
+--76920-- REDIR: 0x4021350 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x484b1a0 (mempcpy)
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libX11-xcb.so.1.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libxcb.so.1.1.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libfontenc.so.1.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libICE.so.6.3.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libSM.so.6.0.1
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXau.so.6.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXaw7.so.7.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXt.so.6.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXcomposite.so.1.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXcursor.so.1.0.2
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXdamage.so.1.1.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXfixes.so.3.1.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXdmcp.so.6.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXext.so.6.4.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXi.so.6.1.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXinerama.so.1.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libxkbfile.so.1.0.2
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXmu.so.6.2.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXmuu.so.1.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXpm.so.4.11.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXrandr.so.2.2.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXrender.so.1.3.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXRes.so.1.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXss.so.1.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXtst.so.6.1.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXv.so.1.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXvMC.so.1.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libXxf86vm.so.1.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libxcb-xkb.so.1.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libxcb-icccm.so.4.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libxcb-image.so.0.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libxcb-shm.so.0.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libxcb-keysyms.so.1.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libxcb-randr.so.0.1.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libxcb-render.so.0.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libxcb-render-util.so.0.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libxcb-shape.so.0.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libxcb-sync.so.1.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libxcb-xfixes.so.0.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libxcb-xinerama.so.0.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libxcb-util.so.1.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libxcb-dri3.so.0.1.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libxcb-cursor.so.0.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libuuid.so.1.3.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libGLU.so.1.3.1
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/mesa-diverted/x86_64-linux-gnu/libGL.so.1.7.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/local/lib64/libstdc++.so.6.0.32
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libm.so.6
+--76920--   Considering /usr/lib/debug/.build-id/ea/87e1b3daf095cd53f1f99ab34a88827eccce80.debug ..
+--76920--   .. build-id is valid
+--76920-- Reading syms from /usr/local/lib64/libgcc_s.so.1
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libc.so.6
+--76920--   Considering /usr/lib/debug/.build-id/51/657f818beb1ae70372216a99b7412b8a100a20.debug ..
+--76920--   .. build-id is valid
+==76920== WARNING: new redirection conflicts with existing -- ignoring it
+--76920--     old: 0x0569c450 (memalign            ) R-> (1011.0) 0x04845bc0 memalign
+--76920--     new: 0x0569c450 (memalign            ) R-> (1017.0) 0x04845b90 aligned_alloc
+==76920== WARNING: new redirection conflicts with existing -- ignoring it
+--76920--     old: 0x0569c450 (memalign            ) R-> (1011.0) 0x04845bc0 memalign
+--76920--     new: 0x0569c450 (memalign            ) R-> (1017.0) 0x04845b60 aligned_alloc
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libz.so.1.2.13
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libbsd.so.0.11.7
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libOpenGL.so.0.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libGLdispatch.so.0.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libGLX.so.0.0.0
+--76920--    object doesn't have a symbol table
+--76920-- Reading syms from /usr/lib/x86_64-linux-gnu/libmd.so.0.0.5
+--76920--    object doesn't have a symbol table
+--76920-- REDIR: 0x56a23a0 (libc.so.6:strnlen) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x56a2430 (libc.so.6:strpbrk) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x56a0550 (libc.so.6:strcmp) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x56b5320 (libc.so.6:wcsnlen) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x569f690 (libc.so.6:memset) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x56b3c60 (libc.so.6:wcslen) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x569ecc0 (libc.so.6:memcpy@@GLIBC_2.14) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x56b3a90 (libc.so.6:wcschr) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x56a0440 (libc.so.6:index) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x56a2460 (libc.so.6:rindex) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x56b3b20 (libc.so.6:wcscmp) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x569f8d0 (libc.so.6:stpncpy) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x56b4070 (libc.so.6:wmemchr) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x56a2250 (libc.so.6:strncmp) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x569f940 (libc.so.6:strcasecmp) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x56a17b0 (libc.so.6:strcspn) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x56b3bb0 (libc.so.6:wcscpy) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x56a03c0 (libc.so.6:strcat) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x56a2140 (libc.so.6:strncasecmp_l) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x569ebd0 (libc.so.6:bcmp) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x569f600 (libc.so.6:memrchr) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x56a04c0 (libc.so.6:strchrnul) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x56a1730 (libc.so.6:strcpy) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x569f9e0 (libc.so.6:strcasecmp_l) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x56a2010 (libc.so.6:strlen) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x56a22f0 (libc.so.6:strncpy) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x569f850 (libc.so.6:stpcpy) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x569f3e0 (libc.so.6:memmove) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+==76920== Preferring higher priority redirection:
+--76920--     old: 0x057555c0 (__memcpy_avx_unalign) R-> (2018.0) 0x04848a60 __memcpy_avx_unaligned_erms
+--76920--     new: 0x057555c0 (__memcpy_avx_unalign) R-> (2018.1) 0x0484a2b0 memmove
+--76920-- REDIR: 0x569eb50 (libc.so.6:memchr) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x56a2620 (libc.so.6:strspn) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x569f4f0 (libc.so.6:mempcpy) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x56a20a0 (libc.so.6:strncasecmp) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x569f790 (libc.so.6:rawmemchr) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x575b690 (libc.so.6:__strrchr_avx2) redirected to 0x48462e0 (rindex)
+--76920-- REDIR: 0x5758d40 (libc.so.6:__strlen_avx2) redirected to 0x4846780 (strlen)
+--76920-- REDIR: 0x569b770 (libc.so.6:malloc) redirected to 0x4840740 (malloc)
+--76920-- REDIR: 0x569bf70 (libc.so.6:realloc) redirected to 0x48457b0 (realloc)
+--76920-- REDIR: 0x57555c0 (libc.so.6:__memcpy_avx_unaligned_erms) redirected to 0x484a2b0 (memmove)
+--76920-- REDIR: 0x5758450 (libc.so.6:__strcmp_avx2) redirected to 0x4847680 (strcmp)
+--76920-- REDIR: 0x5754e60 (libc.so.6:__memcmp_avx2_movbe) redirected to 0x4849aa0 (bcmp)
+--76920-- REDIR: 0x575a410 (libc.so.6:__strncmp_avx2) redirected to 0x4846ed0 (strncmp)
+--76920-- REDIR: 0x5abc6c0 (libstdc++.so.6:operator new(unsigned long)) redirected to 0x4840ec0 (operator new(unsigned long))
+--76920-- REDIR: 0x5abaa40 (libstdc++.so.6:operator delete(void*, unsigned long)) redirected to 0x4843930 (operator delete(void*, unsigned long))
+--76920-- REDIR: 0x5754bc0 (libc.so.6:__memchr_avx2) redirected to 0x4847800 (memchr)
+--76920-- REDIR: 0x5755fc0 (libc.so.6:__memset_avx2_unaligned_erms) redirected to 0x484a1c0 (memset)
+--76920-- REDIR: 0x5abaa30 (libstdc++.so.6:operator delete(void*)) redirected to 0x48436b0 (operator delete(void*))
+--76920-- REDIR: 0x569c520 (libc.so.6:calloc) redirected to 0x4845540 (calloc)
+--76920-- REDIR: 0x5758020 (libc.so.6:__strchr_avx2) redirected to 0x4846460 (index)
+--76920-- REDIR: 0x5756fa0 (libc.so.6:__strcasecmp_avx2) redirected to 0x4847050 (strcasecmp)
+--76920-- REDIR: 0x5758260 (libc.so.6:__strchrnul_avx2) redirected to 0x484aca0 (strchrnul)
+--76920-- REDIR: 0x5755570 (libc.so.6:__mempcpy_avx_unaligned_erms) redirected to 0x484adb0 (mempcpy)
+--76920-- REDIR: 0x5abc700 (libstdc++.so.6:operator new(unsigned long, std::nothrow_t const&)) redirected to 0x4841740 (operator new(unsigned long, std::nothrow_t const&))
+--76920-- REDIR: 0x5abc720 (libstdc++.so.6:operator new[](unsigned long)) redirected to 0x48421a0 (operator new[](unsigned long))
+--76920-- REDIR: 0x5abaa60 (libstdc++.so.6:operator delete[](void*)) redirected to 0x48446f0 (operator delete[](void*))
+--76920-- REDIR: 0x569bd30 (libc.so.6:free) redirected to 0x4843110 (free)
+--76920-- REDIR: 0x5756610 (libc.so.6:__stpncpy_avx2) redirected to 0x484a0a0 (stpncpy)
+--76920-- REDIR: 0x575aa60 (libc.so.6:__strncpy_avx2) redirected to 0x4846a50 (strncpy)
+--76920-- REDIR: 0x56a2dc0 (libc.so.6:strstr) redirected to 0x48371b0 (_vgnU_ifunc_wrapper)
+--76920-- REDIR: 0x56b3030 (libc.so.6:__strstr_sse2_unaligned) redirected to 0x484b3a0 (strstr)
+--76920-- REDIR: 0x57579b0 (libc.so.6:__strcat_avx2) redirected to 0x4846490 (strcat)
+==76920== 
+==76920== HEAP SUMMARY:
+==76920==     in use at exit: 64 bytes in 2 blocks
+==76920==   total heap usage: 8,055 allocs, 8,053 frees, 1,647,716 bytes allocated
+==76920== 
+==76920== Searching for pointers to 2 not-freed blocks
+==76920== Checked 11,867,688 bytes
+==76920== 
+==76920== 8 bytes in 1 blocks are still reachable in loss record 1 of 2
+==76920==    at 0x4840F2F: operator new(unsigned long) (vg_replace_malloc.c:422)
+==76920==    by 0x80E346: testing::internal::GetFailureReporter() (gmock-internal-utils.cc:123)
+==76920==    by 0x4D2B64: testing::internal::Expect(bool, char const*, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (gmock-internal-utils.h:258)
+==76920==    by 0x814A02: testing::internal::UntypedFunctionMockerBase::VerifyAndClearExpectationsLocked() (gmock-spec-builders.cc:424)
+==76920==    by 0x815EB3: testing::Mock::VerifyAndClearExpectationsLocked(void*) (gmock-spec-builders.cc:654)
+==76920==    by 0x815BAB: testing::Mock::VerifyAndClearExpectations(void*) (gmock-spec-builders.cc:623)
+==76920==    by 0x4D40A4: cenpy::mock::opengl::glFunctionMock::reset() (glFunctionMock.hpp:106)
+==76920==    by 0x5FFE4C: LoaderTests::TearDown() (LoaderTests.cpp:28)
+==76920==    by 0x8A68A0: void testing::internal::HandleSehExceptionsInMethodIfSupported<testing::Test, void>(testing::Test*, void (testing::Test::*)(), char const*) (gtest.cc:2612)
+==76920==    by 0x899133: void testing::internal::HandleExceptionsInMethodIfSupported<testing::Test, void>(testing::Test*, void (testing::Test::*)(), char const*) (gtest.cc:2648)
+==76920==    by 0x853A77: testing::Test::Run() (gtest.cc:2695)
+==76920==    by 0x854FDC: testing::TestInfo::Run() (gtest.cc:2836)
+==76920== 
+==76920== 56 bytes in 1 blocks are still reachable in loss record 2 of 2
+==76920==    at 0x4840F2F: operator new(unsigned long) (vg_replace_malloc.c:422)
+==76920==    by 0x8154C0: testing::(anonymous namespace)::UninterestingCallReactionMap() (gmock-spec-builders.cc:552)
+==76920==    by 0x8158CE: testing::Mock::GetReactionOnUninterestingCalls(void const*) (gmock-spec-builders.cc:601)
+==76920==    by 0x4F35C9: testing::internal::FunctionMocker<void (unsigned int, unsigned int)>::InvokeWith(std::tuple<unsigned int, unsigned int>&&) (gmock-spec-builders.h:1802)
+==76920==    by 0x4E527F: testing::internal::FunctionMocker<void (unsigned int, unsigned int)>::Invoke(unsigned int, unsigned int) (gmock-spec-builders.h:1548)
+==76920==    by 0x4DCE18: cenpy::mock::opengl::glFunctionMock::glBindBuffer_mock(unsigned int, unsigned int) (glFunctionMock.hpp:205)
+==76920==    by 0x4DE208: cenpy::graphic::opengl::pipeline::component::attribute::OpenGLBinder<(cenpy::graphic::opengl::profile::Attribute)0>::on(std::shared_ptr<cenpy::graphic::opengl::context::OpenGLAttributeContext>) (Binder.hpp:36)
+==76920==    by 0x4CC90D: AttributeBinderTests_BindAttributeTest_createBuffer_Test::TestBody() (BinderTests.cpp:46)
+==76920==    by 0x8A68A0: void testing::internal::HandleSehExceptionsInMethodIfSupported<testing::Test, void>(testing::Test*, void (testing::Test::*)(), char const*) (gtest.cc:2612)
+==76920==    by 0x899133: void testing::internal::HandleExceptionsInMethodIfSupported<testing::Test, void>(testing::Test*, void (testing::Test::*)(), char const*) (gtest.cc:2648)
+==76920==    by 0x8539FA: testing::Test::Run() (gtest.cc:2687)
+==76920==    by 0x854FDC: testing::TestInfo::Run() (gtest.cc:2836)
+==76920== 
+==76920== LEAK SUMMARY:
+==76920==    definitely lost: 0 bytes in 0 blocks
+==76920==    indirectly lost: 0 bytes in 0 blocks
+==76920==      possibly lost: 0 bytes in 0 blocks
+==76920==    still reachable: 64 bytes in 2 blocks
+==76920==         suppressed: 0 bytes in 0 blocks
+==76920== 
+==76920== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

@@ -57,7 +57,7 @@ namespace cenpy::graphic::opengl::pipeline::component::pass
             glGetProgramiv(passID, GL_LINK_STATUS, &isLinked);
             if (isLinked == GL_FALSE)
             {
-                GLint maxLength = 10000;
+                GLint maxLength = 0;
                 glGetProgramiv(passID, GL_INFO_LOG_LENGTH, &maxLength);
 
                 std::vector<GLchar> infoLog(maxLength);

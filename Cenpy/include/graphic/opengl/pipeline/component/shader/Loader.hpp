@@ -5,6 +5,7 @@
 #include <string>
 #include <format>
 #include <memory>
+#include <vector>
 #include <graphic/Api.hpp>
 #include <graphic/opengl/context/ShaderContext.hpp>
 #include <graphic/opengl/profile/Shader.hpp>
@@ -49,13 +50,17 @@ namespace cenpy::graphic::opengl::pipeline::component::shader
     private:
         static bool checkCompileErrors(GLuint shaderID)
         {
-            GLint success;
+            GLint success = 0;
             glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
             if (!success)
             {
-                GLchar infoLog[512];
-                glGetShaderInfoLog(shaderID, 512, nullptr, infoLog);
-                std::cerr << "Shader compilation error: " << infoLog << std::endl;
+                GLint maxLength = 10000;
+                glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &maxLength);
+
+                std::vector<GLchar> infoLog(maxLength);
+                glGetShaderInfoLog(shaderID, maxLength, &maxLength, &infoLog[0]);
+
+                std::cerr << "Shader compilation error: " << infoLog.data() << std::endl;
                 return false;
             }
             return true;
